@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                         rendered="#{dspPcrfSrvConfigController.render == 0}"
+                                         actionListener="#{dspPcrfSrvConfigController.preAdd()}" update="pnl_center"
+                                         icon="fa fa-plus" styleClass="btn-primary">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <p:panel header="#{PP_DSP_PCRF_SRV_CONFIG.title_dsp_pcrf_svr_config}"
+                         rendered="#{dspPcrfSrvConfigController.render == 0}"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable id="table_noti" widgetVar="table_noti" paginatorAlwaysVisible="true"
+                                 value="#{dspPcrfSrvConfigController.lstDspPcrfSrvConfig}" rows="10"
+                                 var="noti" rowKey="#{noti.id}" rowIndexVar="rowIndex"
+                                 filteredValue="#{dspPcrfSrvConfigController.lstDspPcrfSrvConfigFilter}"
+                                 emptyMessage="#{PP_COMMONS.empty_message}" paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{dspPcrfSrvConfigController.lstDspPcrfSrvConfig.size()}">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.index}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.sys_type}" sortBy="#{noti.sysType}"
+                                  filterBy="#{noti.sysType}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{noti.sysType}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.service_type}" sortBy="#{noti.serviceType}"
+                                  filterBy="#{noti.serviceType}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{noti.serviceType}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.service_name}" sortBy="#{noti.serviceName}"
+                                  filterBy="#{noti.serviceName}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{noti.serviceName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.service_name_unique}"
+                                  sortBy="#{noti.serviceNameUnique}"
+                                  filterBy="#{noti.serviceNameUnique}" filterMatchMode="contains"
+                                  style="width:250px;">
+                            <h:outputText value="#{noti.serviceNameUnique}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.pin_prefix}" sortBy="#{noti.pinPrefix}"
+                                  filterBy="#{noti.pinPrefix}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{noti.pinPrefix}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.add_on}" sortBy="#{noti.addOn}"
+                                  filterBy="#{noti.addOn}" filterMatchMode="contains" style="width:130px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_noti').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.yes}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.no}" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DSP_PCRF_SRV_CONFIG.yes}" rendered="#{noti.addOn eq '1'}"/>
+                            <h:outputText value="#{PP_DSP_PCRF_SRV_CONFIG.no}" rendered="#{noti.addOn eq '0'}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.status}" sortBy="#{noti.status}"
+                                  filterBy="#{noti.status}" filterMatchMode="contains" style="width:130px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_noti').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DSP_PCRF_SRV_CONFIG.enable}" rendered="#{noti.status eq '1'}"/>
+                            <h:outputText value="#{PP_DSP_PCRF_SRV_CONFIG.disable}" rendered="#{noti.status eq '0'}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.description}" sortBy="#{noti.description}"
+                                  filterBy="#{noti.description}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.description}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DSP_PCRF_SRV_CONFIG.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink process="@this" id="btn_edit" style="margin-right:15px;"
+                                           actionListener="#{dspPcrfSrvConfigController.preUpdate(noti)}"
+                                           update=":form_main:pnl_center" styleClass="fa fa-pencil">
+                                <p:resetInput target=":form_main:table_noti"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                            <p:commandLink id="btn_del" process="@this" styleClass="fa fa-trash"
+                                           style="margin-right:15px;" update=":form_main:pnl_center"
+                                           actionListener="#{dspPcrfSrvConfigController.delete(noti)}"
+                                           oncomplete="clearFilters('table_noti');">
+                                <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                           message="#{PP_COMMONS.confirm_delete}"/>
+                                <p:resetInput target=":form_main:table_noti"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this :form_main:pnl_detail"
+                                         id="btn_ok" value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         rendered="#{dspPcrfSrvConfigController.render == 1 and !dspPcrfSrvConfigController.isDISABLE}"
+                                         actionListener="#{dspPcrfSrvConfigController.handleOK()}"
+                                         update=":form_main:pnl_center :form_main:table_noti" styleClass="btn-success">
+                            <p:resetInput target="table_noti"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_cancel" value="#{PP_COMMONS.back}"
+                                         rendered="#{dspPcrfSrvConfigController.render == 1}" icon="fa fa-undo"
+                                         actionListener="#{dspPcrfSrvConfigController.handleCancel()}"
+                                         oncomplete="PF('table_noti').clearFilters();" update="pnl_center">
+                            <p:resetInput target="table_noti"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <p:panel header="#{PP_DSP_PCRF_SRV_CONFIG.detail_dsp_pcrf_svr_config}" styleClass="box-info"
+                         id="pnl_detail"
+                         rendered="#{dspPcrfSrvConfigController.render == 1}">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="sysType" value="#{PP_DSP_PCRF_SRV_CONFIG.sys_type}"/>
+                                <p:inputText maxlength="100" id="sysType" required="true"
+                                             value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.sysType}"
+                                             disabled="#{dspPcrfSrvConfigController.isDISABLE}"
+                                             onblur="value=value.toUpperCase().trim()"
+                                             style="text-transform: uppercase">
+                                </p:inputText>
+                                <p:message for="sysType"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="seviceType" value="#{PP_DSP_PCRF_SRV_CONFIG.service_type}"/>
+                                <p:inputText maxlength="100" id="seviceType" required="true"
+                                             value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.serviceType}"
+                                             disabled="#{dspPcrfSrvConfigController.isDISABLE}"
+                                             onblur="value=value.toUpperCase().trim()"
+                                             style="text-transform: uppercase">
+                                </p:inputText>
+                                <p:message for="seviceType"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="serviceName" value="#{PP_DSP_PCRF_SRV_CONFIG.service_name}"/>
+                                <p:inputText maxlength="100" id="serviceName" required="true"
+                                             value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.serviceName}"
+                                             disabled="#{dspPcrfSrvConfigController.isDISABLE}"
+                                             onblur="value=value.toUpperCase().trim()"
+                                             style="text-transform: uppercase">
+                                </p:inputText>
+                                <p:message for="serviceName"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="pinPrefix" value="#{PP_DSP_PCRF_SRV_CONFIG.pin_prefix}"/>
+                                <p:inputText maxlength="5" id="pinPrefix" required="true"
+                                             value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.pinPrefix}"
+                                             disabled="#{dspPcrfSrvConfigController.isDISABLE}"
+                                             onblur="value=value.toUpperCase().trim()"
+                                             style="text-transform: uppercase">
+                                </p:inputText>
+                                <p:message for="pinPrefix"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="addon" value="#{PP_DSP_PCRF_SRV_CONFIG.add_on}"/>
+                                <p:selectOneMenu id="addon" value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.addOn}"
+                                                 disabled="#{dspPcrfSrvConfigController.isDISABLE}" required="true">
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.select}" itemValue=""/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.yes}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.no}" itemValue="0"/>
+                                </p:selectOneMenu>
+                                <p:message for="addon"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="status" value="#{PP_DSP_PCRF_SRV_CONFIG.status}"/>
+                                <p:selectOneMenu id="status"
+                                                 value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.status}"
+                                                 disabled="#{dspPcrfSrvConfigController.isDISABLE}" required="true">
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.select}" itemValue=""/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DSP_PCRF_SRV_CONFIG.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                                <p:message for="status"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="serviceNameUnique"
+                                               value="#{PP_DSP_PCRF_SRV_CONFIG.service_name_unique}"/>
+                                <p:inputTextarea rows="6" cols="33" maxlength="4000" id="serviceNameUnique"
+                                                 value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.serviceNameUnique}"
+                                                 validatorMessage="#{PP_DSP_PCRF_SRV_CONFIG.err_space}"
+                                                 disabled="#{dspPcrfSrvConfigController.isDISABLE}"
+                                                 onblur="value=value.toUpperCase().trim()"
+                                                 style="text-transform: uppercase">
+                                    <f:validateRegex pattern="^\S*$"/>
+                                </p:inputTextarea>
+                                <p:message for="serviceNameUnique"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="description"
+                                               value="#{PP_DSP_PCRF_SRV_CONFIG.description}"/>
+                                <p:inputTextarea rows="6" cols="33" maxlength="500" id="description" required="true"
+                                                 value="#{dspPcrfSrvConfigController.dspPcrfSrvConfig.description}"
+                                                 disabled="#{dspPcrfSrvConfigController.isDISABLE}">
+                                </p:inputTextarea>
+                                <p:message for="description"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

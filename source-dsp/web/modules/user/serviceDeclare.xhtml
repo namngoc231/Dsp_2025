@@ -1,0 +1,982 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <style type="text/css">
+            .columnFilter {
+                width: 100% !important;
+                height: 32px !important;
+            }
+        </style>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <h:panelGroup id="panel_action_service" rendered="#{serviceDeclareController.isAddService eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.listService}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel"
+                                                 actionListener="#{serviceDeclareController.handleCancelService()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update="panel_center :form_main:table_service :form_main:panel_action_service"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok"
+                                                 actionListener="#{serviceDeclareController.handleOKService(serviceDeclareController.dspService)}"
+                                                 process="@this :form_main:table_service :form_main:panel_action_service"
+                                                 styleClass="btn-success"
+                                                 value="#{PP_COMMONS.ok}"
+                                                 update=":form_main:panel_center :form_main:table_service"
+                                                 icon="fa fa-check-circle"/>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="serviceName" value="#{PP_SERVICEDECLARE.serviceName}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="serviceName" required="true" maxlength="50"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.serviceName}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{serviceDeclareController.dspService.serviceName}"/>
+                                    <p:message for="serviceName"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="serviceCode" value="#{PP_SERVICEDECLARE.serviceCode}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="serviceCode" required="true" maxlength="10"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.serviceCode}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{serviceDeclareController.dspService.serviceCode}"/>
+                                    <p:message for="serviceCode"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <p:outputPanel style="display:block"
+                                       rendered="#{serviceDeclareController.isEditService eq '1'}">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:outputLabel for="status" value="#{PP_COMMONS.status}"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                    <div class="material">
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="status"
+                                                         required="true"
+                                                         requiredMessage="#{PP_COMMONS.status}#{PP_COMMONS.can_not_be_empty}"
+                                                         value="#{serviceDeclareController.dspService.status}">
+                                            <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="status"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                            </div>
+                        </p:outputPanel>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="path" value="#{PP_SERVICEDECLARE.path}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="path" maxlength="100"
+                                                 value="#{serviceDeclareController.dspService.path}"/>
+                                    <p:message for="path"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="description" value="#{PP_SERVICEDECLARE.description}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputTextarea id="description" maxlength="100"
+                                                     value="#{serviceDeclareController.dspService.description}"/>
+                                    <p:message for="description"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup id="panel_action_service_price"
+                              rendered="#{serviceDeclareController.isAddServicePrice eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.servicePrice}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel_service_price"
+                                                 actionListener="#{serviceDeclareController.handleCancelServicePrice()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" update=":form_main:panel_center"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok_service_price"
+                                                 actionListener="#{serviceDeclareController.handleOKServicePrice}"
+                                                 process="@this :form_main:panel_action_service_price"
+                                                 styleClass="btn-success" icon="fa fa-check-circle"
+                                                 value="#{PP_COMMONS.ok}" update=":form_main:panel_center"
+                                />
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="name" value="#{PP_SERVICEDECLARE.name}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputText id="name" required="true" maxlength="50"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.name}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{serviceDeclareController.dspServicePrice.name}"/>
+                                    <p:message for="name"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="capMin" value="#{PP_SERVICEDECLARE.capMinForm}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputText maxlength="11" id="capMin"
+                                                 value="#{serviceDeclareController.dspServicePrice.strCapMin}"
+                                                 onblur="this.value=this.value.toUpperCase()"
+                                                 style="text-transform: uppercase"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.capMin}#{PP_COMMONS.can_not_be_empty}"
+                                                 validatorMessage="#{PP_SERVICEDECLARE.errorCapmin}" required="true">
+                                        <f:validateRegex pattern="^[1-9](([0-9]{0,10})[GMK])"/>
+                                        <p:keyFilter regEx="/[0-9GMK]/i"/>
+                                    </p:inputText>
+                                    <p:message for="capMin"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="capMax" value="#{PP_SERVICEDECLARE.capMaxForm}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputText maxlength="11" id="capMax"
+                                                 value="#{serviceDeclareController.dspServicePrice.strCapMax}"
+                                                 onblur="this.value=this.value.toUpperCase()"
+                                                 style="text-transform: uppercase"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.capMax}#{PP_COMMONS.can_not_be_empty}"
+                                                 validatorMessage="#{PP_SERVICEDECLARE.errorCapmax}" required="true">
+                                        <f:validateRegex pattern="^[1-9](([0-9]{0,10})[GMK])"/>
+                                        <p:keyFilter regEx="/[0-9GMK]/i"/>
+                                    </p:inputText>
+                                    <p:message for="capMax"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="block" value="#{PP_SERVICEDECLARE.blockForm}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputText maxlength="11" id="block"
+                                                 value="#{serviceDeclareController.dspServicePrice.strBlock}"
+                                                 onblur="this.value=this.value.toUpperCase()"
+                                                 style="text-transform: uppercase"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.block}#{PP_COMMONS.can_not_be_empty}"
+                                                 validatorMessage="#{PP_SERVICEDECLARE.errorBlock}" required="true">
+                                        <f:validateRegex pattern="^[1-9](([0-9]{0,10})[GMK])"/>
+                                        <p:keyFilter regEx="/[0-9GMK]/i"/>
+                                    </p:inputText>
+                                    <p:message for="block"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="price" value="#{PP_SERVICEDECLARE.price}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputNumber id="price" required="true" padControl="false" decimalPlaces="0"
+                                                   requiredMessage="#{PP_SERVICEDECLARE.price}#{PP_COMMONS.can_not_be_empty}"
+                                                   decimalSeparator="." minValue="0" maxValue="9999999999"
+                                                   thousandSeparator=","
+                                                   value="#{serviceDeclareController.dspServicePrice.price}"/>
+                                    <p:message for="price"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="activeDay" value="#{PP_SERVICEDECLARE.activeDays}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputNumber id="activeDay" required="true" padControl="false" decimalPlaces="0"
+                                                   requiredMessage="#{PP_SERVICEDECLARE.activeDays}#{PP_COMMONS.can_not_be_empty}"
+                                                   decimalSeparator="." minValue="0" maxValue="99999"
+                                                   thousandSeparator=","
+                                                   value="#{serviceDeclareController.dspServicePrice.activeDay}"/>
+                                    <p:message for="activeDay"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="currency" value="#{PP_SERVICEDECLARE.currency}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:inputText id="currency" required="true" maxlength="10" disabled="true"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.currency}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{serviceDeclareController.dspServicePrice.currency}"/>
+                                    <p:message for="currency"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="startTime" value="#{PP_SERVICEDECLARE.startTime}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:calendar id="startTime" pattern="dd/MM/yyyy" navigator="true"
+                                                mask="true"
+                                                value="#{serviceDeclareController.dspServicePrice.startTime}">
+                                    </p:calendar>
+                                    <p:message for="startTime"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="endTime" value="#{PP_SERVICEDECLARE.endTime}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="material">
+                                    <p:calendar id="endTime" pattern="dd/MM/yyyy" navigator="true"
+                                                mask="true"
+                                                value="#{serviceDeclareController.dspServicePrice.endTime}">
+                                    </p:calendar>
+                                    <p:message for="endTime"/>
+                                    <o:validateOrder type="lte" components="startTime endTime"
+                                                     message="#{PP_SERVICEDECLARE.startTimeValuemoreendTimeValue}"
+                                                     showMessageFor="startTime"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        </div>
+                        <p:outputPanel style="display:block"
+                                       rendered="#{serviceDeclareController.isEditServicePrice eq '1'}">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                    <p:outputLabel for="statusServicePrice" value="#{PP_COMMONS.status}"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <div class="material">
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains"
+                                                         id="statusServicePrice"
+                                                         required="true"
+                                                         requiredMessage="#{PP_COMMONS.status}#{PP_COMMONS.can_not_be_empty}"
+                                                         value="#{serviceDeclareController.dspServicePrice.status}">
+                                            <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="statusServicePrice"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-6"></div>
+                            </div>
+                        </p:outputPanel>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:outputLabel for="descriptionServicePrice" value="#{PP_SERVICEDECLARE.description}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-7">
+                                <div class="material">
+                                    <p:inputTextarea id="descriptionServicePrice" maxlength="100"
+                                                     value="#{serviceDeclareController.dspServicePrice.description}"/>
+                                    <p:message for="descriptionServicePrice"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup id="panel_service" rendered="#{serviceDeclareController.isListService eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.listService}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-10"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{serviceDeclareController.changeStateAddSevice}"
+                                                 process="@this"
+                                                 resetValues="true" styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 update=":form_main:panel_center  :form_main:panel_action_service"/>
+                            </div>
+                        </div>
+                        <p:dataTable id="table_service" var="service"
+                                     value="#{serviceDeclareController.listService}"
+                                     rowKey="#{service.serviceId}"
+                                     filteredValue="#{serviceDeclareController.listServiceFiltered}"
+                                     widgetVar="table_service" rowIndexVar="rowIndex"
+                                     filterDelay="100"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{serviceDeclareController.listService.size()}"
+                                     paginator="true" rows="15"
+                                     styleClass="no-border">
+                            <p:ajax global="false" event="filter"
+                                    listener="#{serviceDeclareController.onFilterChange}" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+                            <p:column headerText="#{PP_SERVICEDECLARE.serviceName}"
+                                      sortBy="#{service.serviceName}"
+                                      filterValue="#{serviceDeclareController.filterState.get('serviceName')}"
+                                      filterBy="#{service.serviceName}" filterMatchMode="contains">
+                                <h:outputText value="#{service.serviceName}" title="#{service.serviceName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.serviceCode}"
+                                      sortBy="#{service.serviceCode}"
+                                      filterValue="#{serviceDeclareController.filterState.get('serviceCode')}"
+                                      filterBy="#{service.serviceCode}" filterMatchMode="contains">
+                                <h:outputText value="#{service.serviceCode}" title="#{service.serviceCode}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.description}"
+                                      sortBy="#{service.description}"
+                                      filterValue="#{serviceDeclareController.filterState.get('description')}"
+                                      filterBy="#{service.description}" filterMatchMode="contains">
+                                <h:outputText value="#{service.description}" title="#{service.description}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.status}" filterStyleClass="columnFilter"
+                                      sortBy="#{service.status}"
+                                      filterValue="#{serviceDeclareController.filterState.get('status')}"
+                                      filterBy="#{service.status}"
+                                      filterOptions="#{serviceDeclareController.mFilterOptionStatus}"
+                                      filterMatchMode="exact">
+                                <h:outputText value="#{PP_COMMONS.enable}" title="#{PP_COMMONS.enable}"
+                                              rendered="#{service.status eq '1'}"/>
+                                <h:outputText value="#{PP_COMMONS.disable}" title="#{PP_COMMONS.disable}"
+                                              rendered="#{service.status eq '0'}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.pathTable}"
+                                      sortBy="#{service.path}"
+                                      filterValue="#{serviceDeclareController.filterState.get('path')}"
+                                      filterBy="#{service.path}" filterMatchMode="contains">
+                                <h:outputText value="#{service.path}" title="#{service.path}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.action}" style="text-align: center !important;">
+
+                                <p:commandLink id="btn_del"
+                                               actionListener="#{serviceDeclareController.handDeleteService(service)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               update=":form_main:panel_center">&nbsp;
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                    &nbsp;</p:commandLink>
+                                <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                                <p:commandLink id="btn_edit1" styleClass="fa fa-pencil"
+                                               actionListener="#{serviceDeclareController.changeStateEditService(service)}"
+                                               process="@this :form_main:table_service"
+                                               resetValues="true"
+                                               update=":form_main:panel_center  :form_main:table_service"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit1" value="#{PP_COMMONS.edit}"/>
+                                <p:commandLink id="btn_order_policy" styleClass="fa fa-clock-o"
+                                               actionListener="#{serviceDeclareController.changeStateOrderPolicy(service)}"
+                                               process="@this :form_main:table_service"
+                                               oncomplete="PF('table_order_policy').clearFilters();"
+                                               update=":form_main:panel_center  :form_main:table_order_policy :form_main:table_service"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_order_policy" value="#{PP_SERVICEDECLARE.dialogOrderPolicy}"/>
+                                <p:commandLink id="btn_service_policy" styleClass="fa fa-square"
+                                               actionListener="#{serviceDeclareController.changeStateServicePolicy(service)}"
+                                               process="@this :form_main:table_service"
+                                               oncomplete="PF('table_service_policy').clearFilters();"
+                                               update=":form_main:panel_center  :form_main:table_service_policy :form_main:table_service"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_service_policy" value="#{PP_SERVICEDECLARE.dialogServicePolicy}"/>
+                                <p:commandLink id="btn_price_policy" styleClass="fa fa-money"
+                                               actionListener="#{serviceDeclareController.changeStatePricePolicy(service)}"
+                                               process="@this :form_main:table_service"
+                                               oncomplete="PF('table_service_price').clearFilters();"
+                                               update=":form_main:panel_center  :form_main:table_service_price :form_main:table_service"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_price_policy" value="#{PP_SERVICEDECLARE.servicePrice}"/>
+
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup id="panel_service_price" rendered="#{serviceDeclareController.isServicePrice eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.servicePrice}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-10"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add_service_price" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{serviceDeclareController.changeStateAddSevicePrice}"
+                                                 process="@this"
+                                                 styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 resetValues="true"
+                                                 update=":form_main:panel_center  :form_main:panel_action_service_price"/>
+                            </div>
+                        </div>
+                        <p:dataTable id="table_service_price" var="servicePrice"
+                                     value="#{serviceDeclareController.listServicePrice}"
+                                     rowKey="#{servicePrice.priceId}"
+                                     filteredValue="#{serviceDeclareController.listServicePriceFiltered}"
+                                     widgetVar="table_service_price" rowIndexVar="rowIndex"
+                                     filterDelay="100" liveResize="true" scrollWidth="true"
+                                     emptyMessage="#{PP_COMMONS.empty_message}" resizableColumns="true"
+                                     draggableColumns="false"
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{serviceDeclareController.listService.size()}"
+                                     paginator="true" rows="15"
+                                     styleClass="no-border">
+                            <p:ajax global="false" event="filter"
+                                    listener="#{serviceDeclareController.onFilterChangeServicePrice}"
+                                    ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+                            <p:column headerText="#{PP_SERVICEDECLARE.action}"
+                                      style="width: 80px; text-align: center !important;">
+                                <p:commandLink id="btn_del_service_price"
+                                               actionListener="#{serviceDeclareController.handDeleteServicePrice(servicePrice)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               oncomplete="PF('table_service_price').clearFilters();"
+                                               update=":form_main:panel_center">&nbsp;
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                    &nbsp;</p:commandLink>
+                                <p:tooltip for="btn_del_service_price" value="#{PP_COMMONS.del}"/>
+                                <p:commandLink id="btn_edit_service_price" styleClass="fa fa-pencil"
+                                               actionListener="#{serviceDeclareController.changeStateEditServicePrice(servicePrice)}"
+                                               process="@this :form_main:table_service_price"
+                                               resetValues="true"
+                                               update=":form_main:panel_center  :form_main:table_service_price"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit_service_price" value="#{PP_COMMONS.edit}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.name}" style="width: 140px;"
+                                      sortBy="#{servicePrice.name}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('name')}"
+                                      filterBy="#{servicePrice.name}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.name}" title="#{servicePrice.name}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.status}" style="width: 140px;"
+                                      sortBy="#{servicePrice.status}"
+                                      filterOptions="#{serviceDeclareController.mFilterOptionStatus}"
+                                      filterStyleClass="columnFilter"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('status')}"
+                                      filterBy="#{servicePrice.status}"
+                                      filterMatchMode="exact">
+                                <h:outputText value="#{PP_COMMONS.enable}" title="#{PP_COMMONS.enable}"
+                                              rendered="#{servicePrice.status eq '1'}"/>
+                                <h:outputText value="#{PP_COMMONS.disable}" title="#{PP_COMMONS.disable}"
+                                              rendered="#{servicePrice.status eq '0'}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.capMin}" style="width: 145px;"
+                                      sortBy="#{servicePrice.strCapMin}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('strCapMin')}"
+                                      filterBy="#{servicePrice.strCapMin}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.strCapMin}" title="#{servicePrice.strCapMin}"/>
+
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.capMax}" style="width: 150px;"
+                                      sortBy="#{servicePrice.strCapMax}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('strCapMax')}"
+                                      filterBy="#{servicePrice.strCapMax}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.strCapMax}" title="#{servicePrice.strCapMax}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.block}" style="width: 140px;"
+                                      sortBy="#{servicePrice.strBlock}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('strBlock')}"
+                                      filterBy="#{servicePrice.strBlock}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.strBlock}" title="#{servicePrice.strBlock}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.price}" style="width: 140px;"
+                                      sortBy="#{servicePrice.price}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('price')}"
+                                      filterBy="#{servicePrice.price}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.price}" title="#{servicePrice.price}">
+                                    <f:convertNumber pattern="###,###.###"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.currency}" style="width: 140px;"
+                                      sortBy="#{servicePrice.currency}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('currency')}"
+                                      filterBy="#{servicePrice.currency}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.currency}" title="#{servicePrice.currency}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.startTime}" style="width: 140px;"
+                                      sortBy="#{servicePrice.startTime}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('startTime')}"
+                                      filterBy="#{servicePrice.startTime}" filterMatchMode="contains">
+                                <h:outputText value="#{serviceDeclareController.getDateToStr(servicePrice.startTime)}"
+                                              title="#{servicePrice.startTime}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.endTime}" style="width: 140px;"
+                                      sortBy="#{servicePrice.endTime}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('endTime')}"
+                                      filterBy="#{servicePrice.endTime}" filterMatchMode="contains">
+                                <h:outputText value="#{serviceDeclareController.getDateToStr(servicePrice.endTime)}"
+                                              title="#{servicePrice.endTime}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.activeDays}" style="width: 140px;"
+                                      sortBy="#{servicePrice.activeDay}"
+                                      filterValue="#{serviceDeclareController.filterStateServicePrice.get('activeDay')}"
+                                      filterBy="#{servicePrice.activeDay}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePrice.activeDay}" title="#{servicePrice.activeDay}">
+                                    <f:convertNumber pattern="###,###.###"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_cancel_service_from_service_price"
+                                                 actionListener="#{serviceDeclareController.handleBackService()}"
+                                                 process="@this :form_main:table_service_price"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update="panel_center :form_main:table_service_price" icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup id="panel_order_policy" rendered="#{serviceDeclareController.isOrderPolicy eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.dialogOrderPolicy}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add_order_policy" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{serviceDeclareController.changeStateAddOrderPolicy}"
+                                                 oncomplete="PF('dialogOrderPolicy').show();"
+                                                 process="@this"
+                                                 styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 resetValues="true"
+                                                 update=":form_main:panel_center :form_main:dialogOrderPolicy"/>
+                            </div>
+                        </div>
+                        <p:dataTable id="table_order_policy" var="orderPolicy" editable="true"
+                                     value="#{serviceDeclareController.listOrderPolicy}"
+                                     rowKey="#{orderPolicy.id}_#{orderPolicy.serviceId}"
+                                     filteredValue="#{serviceDeclareController.listOrderPolicyFiltered}"
+                                     widgetVar="table_order_policy" rowIndexVar="rowIndex"
+                                     filterDelay="100"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{serviceDeclareController.listOrderPolicy.size()}"
+                                     paginator="true" rows="15"
+                                     styleClass="no-border">
+                            <p:ajax global="false" event="filter"
+                                    listener="#{serviceDeclareController.onFilterChangeOrderPolicy}"
+                                    ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+                            <p:column headerText="#{PP_SERVICEDECLARE.minValue}"
+                                      sortBy="#{orderPolicy.minValue}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('minValue')}"
+                                      filterBy="#{orderPolicy.minValue}" filterMatchMode="contains">
+                                <h:outputText value="#{orderPolicy.minValue}" title="#{orderPolicy.minValue}">
+                                    <f:convertNumber pattern="###,###.###"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.maxValue}"
+                                      sortBy="#{orderPolicy.maxValue}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('maxValue')}"
+                                      filterBy="#{orderPolicy.maxValue}" filterMatchMode="contains">
+                                <h:outputText value="#{orderPolicy.maxValue}" title="#{orderPolicy.maxValue}">
+                                    <f:convertNumber pattern="###,###.###"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.activeDays}"
+                                      sortBy="#{orderPolicy.activeDays}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('activeDays')}"
+                                      filterBy="#{orderPolicy.activeDays}" filterMatchMode="contains">
+                                <h:outputText value="#{orderPolicy.activeDays}" title="#{orderPolicy.activeDays}">
+                                    <f:convertNumber pattern="###,###.###"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.action}" style="text-align: center !important;">
+                                <p:commandLink id="btn_del_order_policy"
+                                               actionListener="#{serviceDeclareController.handDeleteOrderPolicy(orderPolicy)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               oncomplete="PF('table_order_policy').clearFilters();"
+                                               update=":form_main:panel_center">&nbsp;
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                    &nbsp;</p:commandLink>
+                                <p:tooltip for="btn_del_order_policy" value="#{PP_COMMONS.del}"/>
+                                <p:commandLink id="btn_edit_order_policy" styleClass="fa fa-pencil"
+                                               actionListener="#{serviceDeclareController.changeStateEditOrderPolicy(orderPolicy)}"
+                                               process="@this"
+                                               resetValues="true"
+                                               oncomplete=" PF('dialogOrderPolicy').show();"
+                                               update=":form_main:panel_center  :form_main:dialogOrderPolicy"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit_order_policy" value="#{PP_COMMONS.edit}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_cancel_order_policy"
+                                                 actionListener="#{serviceDeclareController.handleBackService()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" update="panel_center" icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_save_order_policy"
+                                                 disabled="#{empty serviceDeclareController.listOrderPolicyChange}"
+                                                 actionListener="#{serviceDeclareController.handleSaveOrderPolicy()}"
+                                                 process="@this" styleClass="btn-success" icon="fa fa-check-circle"
+                                                 value="#{PP_COMMONS.save}"
+                                                 update="panel_center :form_main:table_order_policy">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup id="panel_service_policy" rendered="#{serviceDeclareController.isServicePolicy eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARE.dialogServicePolicy}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add_service_policy" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{serviceDeclareController.changeStateAddServicePolicy}"
+                                                 oncomplete="PF('dialogServicePolicy').show();"
+                                                 process="@this :form_main:table_service_policy"
+                                                 resetValues="true"
+                                                 styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 update=":form_main:panel_center :form_main:dialogServicePolicy"/>
+                            </div>
+                        </div>
+                        <p:dataTable id="table_service_policy" var="servicePolicy" editable="true"
+                                     value="#{serviceDeclareController.listServicePolicy}"
+                                     rowKey="#{servicePolicy.policyName}_#{servicePolicy.serviceId}"
+                                     filteredValue="#{serviceDeclareController.listServicePolicyFiltered}"
+                                     widgetVar="table_service_policy" rowIndexVar="rowIndex"
+                                     filterDelay="100"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{serviceDeclareController.listServicePolicy.size()}"
+                                     paginator="true" rows="15"
+                                     styleClass="no-border">
+                            <p:ajax global="false" event="filter"
+                                    listener="#{serviceDeclareController.onFilterChangeServicePolicy}"
+                                    ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+                            <p:column headerText="#{PP_SERVICEDECLARE.policyName}"
+                                      sortBy="#{servicePolicy.policyName}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('policyName')}"
+                                      filterBy="#{servicePolicy.policyName}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePolicy.policyName}" title="#{servicePolicy.policyName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.policyValue}"
+                                      sortBy="#{servicePolicy.policyValue}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('policyValue')}"
+                                      filterBy="#{servicePolicy.policyValue}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePolicy.policyValue}"
+                                              title="#{servicePolicy.policyValue}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.description}"
+                                      sortBy="#{servicePolicy.description}"
+                                      filterValue="#{serviceDeclareController.filterStateOrderPolicy.get('description')}"
+                                      filterBy="#{servicePolicy.description}" filterMatchMode="contains">
+                                <h:outputText value="#{servicePolicy.description}"
+                                              title="#{servicePolicy.description}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.status}"
+                                      sortBy="#{servicePolicy.status}"
+                                      filterOptions="#{serviceDeclareController.mFilterOptionStatus}"
+                                      filterStyleClass="columnFilter"
+                                      filterValue="#{serviceDeclareController.filterStateServicePolicy.get('status')}"
+                                      filterBy="#{servicePolicy.status}"
+                                      filterMatchMode="exact">
+                                <h:outputText value="#{PP_COMMONS.enable}" title="#{PP_COMMONS.enable}"
+                                              rendered="#{servicePolicy.status eq '1'}"/>
+                                <h:outputText value="#{PP_COMMONS.disable}" title="#{PP_COMMONS.disable}"
+                                              rendered="#{servicePolicy.status eq '0'}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SERVICEDECLARE.action}" style="text-align: center !important;">
+                                <p:commandLink id="btn_del_service_policy"
+                                               actionListener="#{serviceDeclareController.handDeleteServicePolicy(servicePolicy)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               oncomplete="PF('table_service_policy').clearFilters();"
+                                               update=":form_main:panel_center">&nbsp;
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                    &nbsp;</p:commandLink>
+                                <p:tooltip for="btn_del_service_policy" value="#{PP_COMMONS.del}"/>
+                                <p:commandLink id="btn_edit_service_policy" styleClass="fa fa-pencil"
+                                               actionListener="#{serviceDeclareController.changeStateEditServicePolicy(servicePolicy)}"
+                                               process="@this"
+                                               resetValues="true"
+                                               oncomplete=" PF('dialogServicePolicy').show();"
+                                               update=":form_main:panel_center :form_main:pnlServicePolicy :form_main:dialogServicePolicy"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit_service_policy" value="#{PP_COMMONS.edit}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_cancel_service_policy"
+                                                 actionListener="#{serviceDeclareController.handleBackServiceFromServicePolicy()}"
+                                                 process="@this :form_main:table_service_policy"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update="panel_center :form_main:table_service_policy"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_save_service_policy"
+                                                 disabled="#{empty serviceDeclareController.listServicePolicyChange}"
+                                                 actionListener="#{serviceDeclareController.handleSaveServicePolicy()}"
+                                                 process="@this" styleClass="btn-success" icon="fa fa-check-circle"
+                                                 value="#{PP_COMMONS.save}"
+                                                 update="panel_center :form_main:table_service_policy">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+            </h:panelGroup>
+        </div>
+        <p:dialog header="#{PP_SERVICEDECLARE.dialogServicePolicy}" id="dialogServicePolicy"
+                  widgetVar="dialogServicePolicy" modal="true" appendTo=":form_main"
+                  maximizable="true" closable="true"
+                  draggable="true" resizable="true" width="60%"
+                  closeOnEscape="true" styleClass="box-info">
+            <p:messages id="ServicePolicyMsg" showDetail="true" showSummary="false" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+            <div class="ui-fluid">
+                <p:panel id="pnlServicePolicy">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="policyName" value="#{PP_SERVICEDECLARE.policyName}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:selectOneMenu disabled="#{serviceDeclareController.isEditServicePolicy eq '1'}"
+                                                 id="policyName" required="true" maxlength="20"
+                                                 requiredMessage="#{PP_SERVICEDECLARE.policyName}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{serviceDeclareController.dspServicePolicy.policyName}"
+                                                 filter="true" filterMatchMode="contains">
+                                    <p:ajax update="descriptionServicePolicy ServicePolicyMsg" process="policyName"
+                                            global="false"
+                                            listener="#{serviceDeclareController.onDescriptionServicePolicyChanged}"/>
+                                    <f:selectItem itemLabel="#{PP_SERVICEDECLARE.allPolicyName}" itemValue="-1"/>
+                                    <f:selectItems value="#{serviceDeclareController.listDspPolicyChange}" var="item"
+                                                   itemValue="#{item.policyName}" itemLabel="#{item.policyName}"/>
+                                </p:selectOneMenu>
+                                <div>
+                                    <p:outputLabel id="descriptionServicePolicy"
+                                                   style="font-family: Times New Roman, serif;cursor: pointer; font-style: italic;"
+                                                   value="#{serviceDeclareController.dspServicePolicy.description}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="policyValue" value="#{PP_SERVICEDECLARE.policyValue}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputText id="policyValue" required="true" maxlength="100"
+                                             requiredMessage="#{PP_SERVICEDECLARE.policyValue}#{PP_COMMONS.can_not_be_empty}"
+                                             value="#{serviceDeclareController.dspServicePolicy.policyValue}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <p:outputPanel style="display:block">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="statusEditServicePolicy" value="#{PP_COMMONS.status}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-7">
+                                <div class="material">
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"
+                                                     id="statusEditServicePolicy"
+                                                     required="true"
+                                                     requiredMessage="#{PP_COMMONS.status}#{PP_COMMONS.can_not_be_empty}"
+                                                     value="#{serviceDeclareController.dspServicePolicy.status}">
+                                        <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="statusEditServicePolicy"
+                                               rendered="#{serviceDeclareController.isEditServicePolicy eq '1'}"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        </div>
+                    </p:outputPanel>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_cancel_table_service_policy"
+                                             actionListener="#{serviceDeclareController.handleCancelTableServicePolicy()}"
+                                             process="@this"
+                                             value="#{PP_COMMONS.back}" update=":form_main:panel_center"
+                                             oncomplete="PF('dialogServicePolicy').hide();"
+                                             icon="fa fa-undo">
+                            </p:commandButton>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_ok_table_service_policy"
+                                             actionListener="#{serviceDeclareController.handleOKServicePolicy(serviceDeclareController.dspServicePolicy)}"
+                                             process="@this pnlServicePolicy"
+                                             styleClass="btn-success"
+                                             value="#{PP_COMMONS.ok}"
+                                             update="ServicePolicyMsg pnlServicePolicy :form_main:panel_center :form_main:table_service_policy"
+                                             icon="fa fa-check-circle"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                    </div>
+                </p:panel>
+            </div>
+        </p:dialog>
+
+        <p:dialog header="#{PP_SERVICEDECLARE.dialogOrderPolicy}" id="dialogOrderPolicy"
+                  widgetVar="dialogOrderPolicy" modal="true" appendTo=":form_main"
+                  maximizable="true" closable="true"
+                  draggable="true" resizable="true" width="60%"
+                  closeOnEscape="true" styleClass="box-info">
+            <p:messages id="OrderPolicyMsg" showDetail="true" showSummary="false" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+            <div class="ui-fluid">
+                <p:panel id="pnlOrderPolicy">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="minValue" value="#{PP_SERVICEDECLARE.minValue}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="minValue" required="true" padControl="false" decimalPlaces="0"
+                                               decimalSeparator="." minValue="0" maxValue="999999999999999"
+                                               thousandSeparator=","
+                                               requiredMessage="#{PP_SERVICEDECLARE.minValue}#{PP_COMMONS.can_not_be_empty}"
+                                               value="#{serviceDeclareController.dspOrderPolicy.minValue}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="maxValue" value="#{PP_SERVICEDECLARE.maxValue}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="maxValue" required="true" padControl="false" decimalPlaces="0"
+                                               decimalSeparator="." minValue="0" maxValue="999999999999999"
+                                               thousandSeparator=","
+                                               requiredMessage="#{PP_SERVICEDECLARE.maxValue}#{PP_COMMONS.can_not_be_empty}"
+                                               value="#{serviceDeclareController.dspOrderPolicy.maxValue}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="activeDays" value="#{PP_SERVICEDECLARE.activeDays}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="activeDays" required="true"
+                                               padControl="false" decimalPlaces="0"
+                                               requiredMessage="#{PP_SERVICEDECLARE.activeDays}#{PP_COMMONS.can_not_be_empty}"
+                                               decimalSeparator="." minValue="0" maxValue="9999999999"
+                                               thousandSeparator=","
+                                               value="#{serviceDeclareController.dspOrderPolicy.activeDays}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_cancel_table_order_policy"
+                                             actionListener="#{serviceDeclareController.handleCancelTableOrderPolicy()}"
+                                             process="@this"
+                                             value="#{PP_COMMONS.back}" update=":form_main:panel_center"
+                                             oncomplete="PF('dialogOrderPolicy').hide();"
+                                             icon="fa fa-undo">
+                            </p:commandButton>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_ok_table_order_policy"
+                                             actionListener="#{serviceDeclareController.handleOKOrderPolicy(serviceDeclareController.dspOrderPolicy)}"
+                                             process="@this pnlOrderPolicy"
+                                             styleClass="btn-success"
+                                             value="#{PP_COMMONS.ok}"
+                                             update="OrderPolicyMsg pnlOrderPolicy :form_main:panel_center :form_main:table_order_policy"
+                                             icon="fa fa-check-circle"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                    </div>
+                </p:panel>
+            </div>
+        </p:dialog>
+    </ui:composition>
+</h:body>
+
+</html>

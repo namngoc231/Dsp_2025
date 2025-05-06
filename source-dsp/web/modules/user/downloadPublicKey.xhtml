@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <p:commandButton id="btn_ok" immediate="true" ajax="false"
+                                         process="@this" styleClass="fa fa-download btn-success"
+                                         value="#{PP_DOWNLOAD_PUBLIC_KEY.button}"
+                                         update="panel_center :form_main:mes"
+                                         onclick="PrimeFaces.monitorDownload(downloadStart(), downloadStop());">
+                            <p:fileDownload
+                                    value="#{downloadPuclicKeyController.downloadFilePublickey()}"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+            </h:panelGroup>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

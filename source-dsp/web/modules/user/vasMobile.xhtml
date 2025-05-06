@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton rendered="true" process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                         actionListener="#{dspVasMobileController.changeStateAdd()}"
+                                         disabled="#{dspVasMobileController.comIdLogin != dspVasMobileController.dspCompany.parentId
+                                          or dspVasMobileController.dspCompany.custType eq '0'}"
+                                         update=":form_main:dialog_add_mobile" icon="fa fa-plus" resetValues="true"
+                                         styleClass="btn-primary" oncomplete="PF('dialog_add_mobile').show();"
+                                         style="margin-bottom: 5px; float:left;">
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton rendered="true" process="@this" id="btn_back_company" value="#{PP_COMMONS.back}"
+                                         actionListener="#{dspVasMobileController.backToCompany()}" update="pnl_center"
+                                         icon="fa fa-undo" style="margin-bottom: 5px; float:left;">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--data table-->
+                <p:panel header="#{PP_DSPCOMPANY.list_vasMobile}"
+                         rendered="true"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_vasmobile"
+                                 widgetVar="table_vasmobile" value="#{dspVasMobileController.lstVasMobile}"
+                                 filteredValue="#{dspVasMobileController.lstVasMobileFilterred}" var="data"
+                                 rowKey="#{data.vasMobile}" rowIndexVar="rowIndex"
+                                 emptyMessage="#{PP_COMMONS.empty_message}"
+                                 selection="#{dspVasMobileController.mselectedVasMobile}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{dspVasMobileController.lstVasMobile.size()}"
+                                 rowSelectMode="checkbox" paginator="true" rows="10">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DSPCOMPANY.index}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DSPCOMPANY.mobile}" sortBy="#{data.vasMobile}"
+                                  filterBy="#{data.vasMobile}" filterMatchMode="contains" style="text-align: center !important; width:400px;">
+                            <h:outputText value="#{data.vasMobile}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DSPCOMPANY.action_detail}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink id="btn_del" styleClass="fa fa-trash" process="@this"
+                                           style="margin-right:15px;"
+                                           actionListener="#{dspVasMobileController.handleDelete(data)}"
+                                           oncomplete="clearFilters('table_vasmobile');">
+                                <p:confirm header="#{PP_DSPCOMPANY.title_delete}"
+                                           message="#{PP_DSPCOMPANY.message_delete}"/>
+                                <p:resetInput target=":form_main:table_vasmobile"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+
+        <!-- dialog-->
+        <p:dialog id="dialog_add_mobile" appendTo=":form_main"
+                  header="#{PP_DSPCOMPANY.add_mobile}" widgetVar="dialog_add_mobile"
+                  modal="true" draggable="false" width="50%" closable="false" styleClass="box-info">
+            <div class="ui-fluid">
+                <p:outputPanel id="pnl_dialog">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="vas_mobile" value="#{PP_DSPCOMPANY.mobile}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputText id="vas_mobile" required="true"
+                                             value="#{dspVasMobileController.vasMobile.vasMobile}"
+                                             validatorMessage="#{PP_DSPCOMPANY.validatorIsdn}"
+                                             autoClear="true" maxlength="10"
+                                             requiredMessage="#{PP_DSPCOMPANY.mobile}#{PP_COMMONS.can_not_be_empty}">
+                                    <f:validateRegex pattern="^[0-9]+$"/>
+                                </p:inputText>
+                                <p:message for="vas_mobile"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <center>
+                        <p:commandButton process="@this form_main:dialog_add_mobile" id="btn_ok_dialog"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         update=":form_main:pnl_dialog :form_main:table_vasmobile :form_main:pnl_center"
+                                         actionListener="#{dspVasMobileController.handleOK()}"
+                                         styleClass="btn-success" style="width: 20%"/>
+
+                        <p:commandButton process="@this" id="btn_cancel_dialog"
+                                         value="#{PP_COMMONS.back}" icon="fa fa-undo" style="width: 20%;"
+                                         onclick="PF('dialog_add_mobile').hide(); PF('table_vasmobile').clearFilters();"/>
+                    </center>
+                </p:outputPanel>
+            </div>
+        </p:dialog>
+    </ui:composition>
+</h:body>
+</html>

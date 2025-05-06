@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-6 ui-lg-1">
+                        <p:outputLabel for="event" value="#{PP_DECENTRALIZEUSER.user}"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                        <div class="material">
+                            <p:autoComplete id="event" value="#{decentralizeUserController.user}" maxResults="10"
+                                            completeMethod="#{decentralizeUserController.getListUser}"
+                                            minQueryLength="3">
+                                <p:ajax process="@this" event="itemSelect"
+                                        listener="#{decentralizeUserController.search}"
+                                        update=":form_main:panel_center"/>
+                            </p:autoComplete>
+                        </div>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-8">
+                        <p:outputLabel style="font-size: 150%" rendered="#{decentralizeUserController.isApi eq '1'}"
+                                       value="#{PP_DECENTRALIZEUSER.apiLink}"/>
+                    </div>
+                </div>
+
+                <div class="ui-g">
+                    <p:panel rendered="#{decentralizeUserController.isApi eq '1'}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-7"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-4">
+                                <div class="material">
+                                    <p:selectCheckboxMenu label="#{PP_DECENTRALIZEUSER.labelAPI}"
+                                                          id="listComboApi" required="true"
+                                                          value="#{decentralizeUserController.listApiId}"
+                                                          filter="true" filterMatchMode="contains">
+                                        <f:selectItems value="#{decentralizeUserController.listComboApi}"
+                                                       var="item"
+                                                       itemValue="#{item.apiId}" itemLabel="#{item.apiName}"/>
+                                    </p:selectCheckboxMenu>
+                                    <p:message for="listComboApi"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1">
+                                <p:commandButton id="btn_add_api"
+                                                 disabled="#{empty decentralizeUserController.listComboApi}"
+                                                 actionListener="#{decentralizeUserController.addListApiTable}"
+                                                 process="@this listComboApi" icon="fa fa-plus"
+                                                 styleClass="btn btn-primary btn-xs"
+                                                 update=":form_main:panel_center"/>
+                                <p:tooltip for="btn_add_api" value="#{PP_COMMONS.add}"/>
+                            </div>
+                        </div>
+                        <p:dataTable id="tbl_api" var="api"
+                                     value="#{decentralizeUserController.listTableApi}"
+                                     rowKey="#{api.apiId}"
+                                     widgetVar="tbl_api" rowIndexVar="rowIndex"
+                                     emptyMessage="#{PP_COMMONS.empty_message}">
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column headerText="#{PP_DECENTRALIZEUSER.api}"
+                                      sortBy="#{api.apiName}">
+                                <h:outputText value="#{api.apiName}" title="#{api.apiName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DECENTRALIZEUSER.path}"
+                                      sortBy="#{api.apiPath}">
+                                <h:outputText value="#{api.apiPath}" title="#{api.apiPath}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DECENTRALIZEUSER.Description}"
+                                      sortBy="#{api.description}">
+                                <h:outputText value="#{api.description}" title="#{api.description}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DECENTRALIZEUSER.Status}" style="width: 120px;"
+                                      sortBy="#{api.status}">
+                                <h:outputText value="#{PP_COMMONS.enable}" title="#{PP_COMMONS.enable}"
+                                              rendered="#{api.status eq '1'}"/>
+                                <h:outputText value="#{PP_COMMONS.disable}" title="#{PP_COMMONS.disable}"
+                                              rendered="#{api.status eq '0'}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DECENTRALIZEUSER.action}"
+                                      style="text-align: center !important; width: 100px;">
+
+                                <p:commandLink id="btn_del_api"
+                                               actionListener="#{decentralizeUserController.handDeleteApi(api)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               oncomplete="PF('tbl_api').clearFilters();"
+                                               update=":form_main:panel_center">&nbsp;
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                    &nbsp;</p:commandLink>
+                                <p:tooltip for="btn_del_api" value="#{PP_COMMONS.del}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+
+            </h:panelGroup>
+        </div>
+
+    </ui:composition>
+</h:body>
+
+</html>

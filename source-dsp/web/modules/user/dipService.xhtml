@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton
+                                rendered="#{dipServiceController.getPermission('I') and not dipServiceController.isDisplayBtnConfirm and dipServiceController.render == 0}"
+                                process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                actionListener="#{dipServiceController.changeStateAdd()}" update="pnl_center"
+                                icon="fa fa-plus" styleClass="btn-primary"
+                                style="margin-bottom: 5px; float:left;">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--data table-->
+                <p:panel header="#{PP_DIP_SERVICE.list_dipService}"
+                         rendered="#{not dipServiceController.isDisplayBtnConfirm and dipServiceController.render == 0}"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_dip_service"
+                                 widgetVar="table_dip_service" value="#{dipServiceController.mlistDipServices}"
+                                 filteredValue="#{dipServiceController.mlistDipServicesFilterred}" var="dipService"
+                                 rowKey="#{dipService.serviceId}" rowIndexVar="rowIndex"
+                                 emptyMessage="#{PP_COMMONS.empty_message}"
+                                 selection="#{dipServiceController.mselectedDipService}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{dipServiceController.mlistDipServices.size()}"
+                                 rowSelectMode="checkbox" paginator="true" rows="10">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DIP_SERVICE.index}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_SERVICE.code}" sortBy="#{dipService.code}"
+                                  filterBy="#{dipService.code}" filterMatchMode="contains" style="width:200px;">
+                            <h:outputText value="#{dipService.code}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_SERVICE.status}" sortBy="#{dipService.status}"
+                                  filterBy="#{dipService.status}" filterMatchMode="contains" style="width:200px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_dip_service').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DIP_SERVICE.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_SERVICE.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_SERVICE.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DIP_SERVICE.enable}" rendered="#{dipService.status == 1}"/>
+                            <h:outputText value="#{PP_DIP_SERVICE.disable}" rendered="#{dipService.status == 0}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_SERVICE.description}" sortBy="#{dipService.description}"
+                                  filterBy="#{dipService.description}" filterMatchMode="contains" style="width:300px;">
+                            <h:outputText
+                                    value="#{dipService.description.length() > 20 ? fn:substring(dipService.description, 0, 20).concat('...') : dipService.description}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DIP_SERVICE.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink id="btn_edit_dip_service" styleClass="fa fa-pencil"
+                                           process="@this" style="margin-right:15px;"
+                                           actionListener="#{dipServiceController.changeStateEdit(dipService)}"
+                                           update=":form_main:pnl_center">
+                                <p:resetInput target=":form_main:table_dip_service"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_edit_dip_service" value="#{PP_COMMONS.edit}"/>
+
+                            <p:commandLink id="btn_del_dip_service" styleClass="fa fa-trash" process="@this"
+                                           style="margin-right:15px;"
+                                           actionListener="#{dipServiceController.handleDelete(dipService)}"
+                                           oncomplete="clearFilters('table_dip_service');">
+                                <p:confirm header="#{PP_DIP_SERVICE.title_delete}"
+                                           message="#{PP_DIP_SERVICE.message_delete}"/>
+                                <p:resetInput target=":form_main:table_dip_service"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del_dip_service" value="#{PP_COMMONS.del}"/>
+
+                            <p:commandLink id="btn_declare_dip_service" styleClass="fa fa-arrow-circle-right" process="@this"
+                                           actionListener="#{dipServiceController.goToDipPackage(dipService)}"
+                                           style="margin-right:15px;"
+                                           oncomplete="clearFilters('table_dip_service');">
+                                <p:resetInput target=":form_main:table_dip_service"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_declare_dip_service" value="#{PP_DIP_SERVICE.declare_package}"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:panel>
+
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this :form_main:pnl_dip_service_add"
+                                         id="btn_create"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         rendered="#{dipServiceController.isDisplayBtnConfirm and (dipServiceController.isADD or dipServiceController.isEDIT)}"
+                                         actionListener="#{dipServiceController.handleOK()}"
+                                         update=":form_main:pnl_center :form_main:pnl_dip_service_add"
+                                         style="margin-bottom: 5px;" styleClass="btn-success">
+                            <p:resetInput target="table_dip_service"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_cancel"
+                                         value="#{PP_COMMONS.back}"
+                                         rendered="#{dipServiceController.isDisplayBtnConfirm or dipServiceController.render eq 1}"
+                                         actionListener="#{dipServiceController.handleCancel()}"
+                                         oncomplete="PF('table_dip_service').clearFilters();"
+                                         update="pnl_center" icon="fa fa-undo"
+                                         style="margin-bottom: 5px;">
+                            <p:resetInput target="table_dip_service"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--form add-->
+                <p:panel
+                        header="#{dipServiceController.isADD ? PP_DIP_SERVICE.creat_dip_service : PP_DIP_SERVICE.edit_dip_service}"
+                        styleClass="box-primary"
+                        rendered="#{dipServiceController.render == 1}">
+                    <h:panelGroup id="pnl_dip_service_add">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="code" value="#{PP_DIP_SERVICE.code}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="code" required="true" maxlength="50"
+                                                 requiredMessage="#{PP_DIP_SERVICE.code}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{dipServiceController.mtmpDipService.code}"/>
+                                    <p:message for="code"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="status" value="#{PP_DIP_SERVICE.status}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="ui-material">
+                                    <p:selectOneMenu id="status" required="true"
+                                                     value="#{dipServiceController.mtmpDipService.status}">
+                                        <f:selectItem itemLabel="#{PP_DIP_SERVICE.enable}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_DIP_SERVICE.disable}" itemValue="0"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="status"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="description" value="#{PP_DIP_SERVICE.description}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputTextarea id="description" maxlength="200"
+                                                     value="#{dipServiceController.mtmpDipService.description}"/>
+                                    <p:message for="description"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

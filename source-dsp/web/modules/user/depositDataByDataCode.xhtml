@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        </script>
+        <p:tabView id="tabMain" styleClass="no-padding">
+
+            <p:tab id="tab1" title="#{PP_DEPOSITDATABYDATACODE.depositData}">
+                <div class="ui-fluid">
+                    <div class="grid-padding">
+                        <p:panel styleClass="box-primary">
+                            <h:panelGroup id="panel_center" layout="grid" columns="6"
+                                          styleClass="ui-panelgrid-blank">
+                                <p:focus context="panel_center"/>
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="type"
+                                                           value="#{PP_DEPOSITDATABYDATACODE.type}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:selectOneMenu id="type" required="true"
+                                                             value="#{depositDataByDataCodeController.type}"
+                                                             requiredMessage="#{PP_DEPOSITDATABYDATACODE.type}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:selectItems value="#{depositDataByDataCodeController.listType}" var="item"
+                                                               itemLabel="#{item.parName}"
+                                                               itemValue="#{item.parName}"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="type"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="isdn"
+                                                           value="#{PP_DEPOSITDATABYDATACODE.isdn}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:inputText id="isdn" maxlength="15"
+                                                         value="#{depositDataByDataCodeController.isdn}"
+                                                         validatorMessage="#{PP_DEPOSITDATABYDATACODE.validatorIsdn}"
+                                                         required="true" autoClear="false"
+                                                         requiredMessage="#{PP_DEPOSITDATABYDATACODE.isdn}#{PP_COMMONS.can_not_be_empty}">
+                                                <!--                                    <p:keyFilter regEx="/[a-z0-9_]/i"/>-->
+                                                <!--                                    <p:keyFilter mask="pint" preventPaste="false"/>-->
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+                                            <p:message for="isdn"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-12"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="serial"
+                                                           value="#{PP_DEPOSITDATABYDATACODE.serial}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:inputMask id="serial" mask="9999-9999-9999-999"
+                                                         value="#{depositDataByDataCodeController.serial}"
+                                                         validatorMessage="#{PP_DEPOSITDATABYDATACODE.serial}#{PP_COMMONS.is_not_valid}"
+                                                         required="true" autoClear="false"
+                                                         requiredMessage="#{PP_DEPOSITDATABYDATACODE.serial}#{PP_COMMONS.can_not_be_empty}">
+                                                <!--                                            <p:keyFilter regEx="/[a-z0-9_]/i"/>-->
+                                                <!--                                    <p:keyFilter mask="pint" preventPaste="false"/>-->
+                                                <!--                                    <f:validateRegex pattern="^[0-9]+$"/>-->
+                                            </p:inputMask>
+                                            <p:tooltip for="serial"
+                                                       value="#{PP_DEPOSITDATABYDATACODE.serial_placeholder}"/>
+                                            <p:message for="serial"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="datacode"
+                                                           value="#{PP_DEPOSITDATABYDATACODE.datacode}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:inputText id="datacode" maxlength="15"
+                                                         value="#{depositDataByDataCodeController.datacode}"
+                                                         required="true" autoClear="false"
+                                                         requiredMessage="#{PP_DEPOSITDATABYDATACODE.datacode}#{PP_COMMONS.can_not_be_empty}">
+                                            </p:inputText>
+                                            <p:tooltip for="datacode"
+                                                       value="#{PP_DEPOSITDATABYDATACODE.datacode_placeholder}"/>
+                                            <p:message for="datacode"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="content"
+                                                           value="#{PP_DEPOSITDATABYDATACODE.content}"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:inputTextarea rows="3" maxlength="1000" id="content"
+                                                             value="#{depositDataByDataCodeController.content}"
+                                                             required="false"
+                                                             requiredMessage="#{PP_DEPOSITDATABYDATACODE.content}#{PP_COMMONS.can_not_be_empty}">
+                                            </p:inputTextarea>
+                                            <p:message for="content"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                </div>
+                                <p:watermark for="isdn" value="#{PP_DEPOSITDATABYDATACODE.isdn_placeholder}"/>
+                                <p:watermark for="serial" value="#{PP_DEPOSITDATABYDATACODE.serial_placeholder}"/>
+                                <p:watermark for="datacode" value="#{PP_DEPOSITDATABYDATACODE.datacode_placeholder}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="panelButton">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btn_ok" value="#{PP_COMMONS.ok}"
+                                                         actionListener="#{depositDataByDataCodeController.handleDeposit}"
+                                                         process="@this :form_main:tabMain:panel_center"
+                                                         update=":form_main:tabMain:panel_center :form_main:tabMain:panelButton"
+                                                         icon="fa fa-check-circle" styleClass="btn-success">
+                                            <p:confirm
+                                                    header="#{PP_DEPOSITDATABYDATACODE.confirm_deposit_dialog_header}"
+                                                    message="#{PP_DEPOSITDATABYDATACODE.confirm_deposit}"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-5" style="margin-top: 5px;">
+                                        <p:outputLabel rendered="#{depositDataByDataCodeController.checkSeriUsed}"
+                                                       value="#{PP_DEPOSITDATABYDATACODE.detailSeri}"/>
+                                        <p:commandButton
+                                                oncomplete="if (!args.validationFailed) {document.getElementById('form_main:lnkReal').click()};"
+                                                process="@this :form_main:tabMain:panel_center" style="display: none;"
+                                                update="panel_center" id="cbSerial">
+                                        </p:commandButton>
+                                        <h:commandLink id="lnkReal"
+                                                       rendered="#{depositDataByDataCodeController.checkSeriUsed}"
+                                                       value="#{PP_DEPOSITDATABYDATACODE.here}" target="_blank"
+                                                       style="text-decoration: underline; color: blue;margin-left: 3px;"
+                                                       action="#{depositDataByDataCodeController.redirectPage}"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </p:panel>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab id="tab2" title="#{PP_DEPOSITDATABYDATACODE.depositDataByFile}">
+                <div class="ui-fluid">
+                    <div class="grid-padding">
+                        <p:panel styleClass="box-primary">
+                            <h:panelGroup id="panel_center_file" layout="grid" columns="6"
+                                          styleClass="ui-panelgrid-blank">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                        <div class="material">
+                                            <p:outputLabel
+                                                    value="#{PP_ADDDATAISDN.file} #{PP_DEPOSITDATABYDATACODE.format}"/>
+                                            <p:fileUpload
+                                                    listener="#{depositDataByDataCodeController.handleFileUpload}"
+                                                    mode="advanced" allowTypes="/(\.|\/)(txt|csv)$/"
+                                                    label="#{PP_ADDDATAISDN.choose}"
+                                                    invalidFileMessage="#{PP_DEPOSITDATABYDATACODE.invalid_file}"
+                                                    auto="true" sizeLimit="5242880"
+                                                    dragDropSupport="true" multiple="false"
+                                                    update=":form_main:tabMain:panel_center_file">
+                                                <h:outputText
+                                                        value="#{depositDataByDataCodeController.strFileName}"/>
+                                            </p:fileUpload>
+                                        </div>
+                                    </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                    <div class="material">
+                                        <p:commandButton id="btn_download" styleClass="btn-success" icon="fa fa-download"
+                                                       immediate="true" ajax="false" value="#{PP_DEPOSITDATABYDATACODE.fileDataCodeTemple}"
+                                                       onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                            <p:fileDownload
+                                                    value="#{depositDataByDataCodeController.downloadFileDataCode()}"/>
+                                        </p:commandButton>
+                                        <p:tooltip for="btn_download"
+                                                   value="#{PP_SERVICEDECLARESPONSOR.download}"/>
+                                    </div>
+                                </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-1"></div>
+                                </div>
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btn_download_service_price_tab"
+                                                         styleClass="btn-success" process="@this"
+                                                         value="#{PP_DEPOSITDATABYDATACODE.result}"
+                                                         disabled="#{empty depositDataByDataCodeController.listDspDepositData}"
+                                                         immediate="true" ajax="false" icon="fa fa-download"
+                                                         update=":form_main:tabMain:panel_center_file"
+                                                         onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                            <p:fileDownload
+                                                    value="#{depositDataByDataCodeController.handleDownload()}"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                                </div>
+                                <p:focus context="panel_center_file"/>
+                            </h:panelGroup>
+                        </p:panel>
+                    </div>
+                </div>
+            </p:tab>
+        </p:tabView>
+
+    </ui:composition>
+</h:body>
+</html>

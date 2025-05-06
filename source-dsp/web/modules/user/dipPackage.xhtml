@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton
+                                rendered="#{dipPackageController.getPermission('I') and not dipPackageController.isDisplayBtnConfirm and dipPackageController.render == 0}"
+                                process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                actionListener="#{dipPackageController.changeStateAdd()}" update="pnl_center"
+                                icon="fa fa-plus" styleClass="btn-primary"
+                                style="margin-bottom: 5px; float:left;">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton
+                                rendered="#{dipPackageController.getPermission('I') and not dipPackageController.isDisplayBtnConfirm and dipPackageController.render == 0}"
+                                process="@this" id="btn_back_dip_service" value="#{PP_COMMONS.back}"
+                                actionListener="#{dipPackageController.backToDipService()}" update="pnl_center"
+                                icon="fa fa-undo"
+                                style="margin-bottom: 5px; float:left;">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--data table-->
+                <p:panel header="#{PP_DIP_PACKAGE.list_dipPackage} #{dipPackageController.serviceName}"
+                         rendered="#{not dipPackageController.isDisplayBtnConfirm and dipPackageController.render == 0}"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_dip_package"
+                                 widgetVar="table_dip_package" value="#{dipPackageController.mlistDipPackages}"
+                                 filteredValue="#{dipPackageController.mlistDipPackagesFilterred}" var="dipPackage"
+                                 rowKey="#{dipPackage.packageId}" rowIndexVar="rowIndex"
+                                 emptyMessage="#{PP_COMMONS.empty_message}"
+                                 selection="#{dipPackageController.mselectedDipPackage}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{dipPackageController.mlistDipPackages.size()}"
+                                 rowSelectMode="checkbox" paginator="true" rows="10">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.index}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.package_code}" sortBy="#{dipPackage.packageCode}"
+                                  filterBy="#{dipPackage.packageCode}" filterMatchMode="contains" style="width:120px;">
+                            <h:outputText value="#{dipPackage.packageCode}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.prov_code}" sortBy="#{dipPackage.provCode}"
+                                  filterBy="#{dipPackage.provCode}" filterMatchMode="contains" style="width:150px;">
+                            <h:outputText value="#{dipPackage.provCode}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.initial_amount_kb}"
+                                  sortBy="#{dipPackage.initialAmount}"
+                                  filterBy="#{dipPackage.initialAmount}" filterMatchMode="contains"
+                                  style="width:200px;">
+                            <h:outputText value="#{dipPackage.initialAmount}" styleClass="right">
+                                <f:convertNumber type="number" currencySymbol=""/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.active_day}" sortBy="#{dipPackage.activeDay}"
+                                  filterBy="#{dipPackage.activeDay}" filterMatchMode="contains" style="width:150px;">
+                            <h:outputText value="#{dipPackage.activeDay}" styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.description}" sortBy="#{dipPackage.description}"
+                                  filterBy="#{dipPackage.description}" filterMatchMode="contains" style="width:200px;">
+                            <h:outputText
+                                    value="#{dipPackage.description.length() > 20 ? fn:substring(dipPackage.description, 0, 20).concat('...') : dipPackage.description}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_PACKAGE.status}" sortBy="#{dipPackage.status}"
+                                  filterBy="#{dipPackage.status}" filterMatchMode="contains" style="width:150px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_dip_package').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DIP_PACKAGE.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_PACKAGE.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_PACKAGE.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DIP_PACKAGE.enable}" rendered="#{dipPackage.status == 1}"/>
+                            <h:outputText value="#{PP_DIP_PACKAGE.disable}" rendered="#{dipPackage.status == 0}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DIP_PACKAGE.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink id="btn_edit_dip_package" styleClass="fa fa-pencil"
+                                           process="@this" style="margin-right:15px;"
+                                           actionListener="#{dipPackageController.changeStateEdit(dipPackage)}"
+                                           update=":form_main:pnl_center">
+                                <p:resetInput target=":form_main:table_dip_package"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_edit_dip_package" value="#{PP_COMMONS.edit}"/>
+
+                            <p:commandLink id="btn_del_dip_package" styleClass="fa fa-trash" process="@this"
+                                           style="margin-right:15px;"
+                                           actionListener="#{dipPackageController.handleDelete(dipPackage)}"
+                                           oncomplete="clearFilters('table_dip_package');">
+                                <p:confirm header="#{PP_DIP_PACKAGE.title_delete}"
+                                           message="#{PP_DIP_PACKAGE.message_delete}"/>
+                                <p:resetInput target=":form_main:table_dip_package"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del_dip_package" value="#{PP_COMMONS.del}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this :form_main:pnl_dip_package_add"
+                                         id="btn_create"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         rendered="#{dipPackageController.isDisplayBtnConfirm and (dipPackageController.isADD or dipPackageController.isEDIT)}"
+                                         actionListener="#{dipPackageController.handleOK()}"
+                                         update=":form_main:pnl_center :form_main:pnl_dip_package_add"
+                                         style="margin-bottom: 5px;" styleClass="btn-success">
+                            <p:resetInput target="table_dip_package"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_cancel"
+                                         value="#{PP_COMMONS.back}"
+                                         rendered="#{dipPackageController.isDisplayBtnConfirm or dipPackageController.render eq 1}"
+                                         actionListener="#{dipPackageController.handleCancel()}"
+                                         oncomplete="PF('table_dip_package').clearFilters();"
+                                         update="pnl_center" icon="fa fa-undo"
+                                         style="margin-bottom: 5px;">
+                            <p:resetInput target="table_dip_package"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--form add-->
+                <p:panel
+                        header="#{dipPackageController.isADD ? PP_DIP_PACKAGE.creat_dip_package : PP_DIP_PACKAGE.edit_dip_package}"
+                        styleClass="box-primary"
+                        rendered="#{dipPackageController.render == 1}">
+                    <h:panelGroup id="pnl_dip_package_add">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="package_code" value="#{PP_DIP_PACKAGE.package_code}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="package_code" required="true" maxlength="50"
+                                                 requiredMessage="#{PP_DIP_PACKAGE.package_code}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{dipPackageController.mtmpDipPackage.packageCode}"/>
+                                    <p:message for="package_code"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="prov_code" value="#{PP_DIP_PACKAGE.prov_code}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="prov_code" required="true" maxlength="50"
+                                                 requiredMessage="#{PP_DIP_PACKAGE.prov_code}#{PP_COMMONS.can_not_be_empty}"
+                                                 value="#{dipPackageController.mtmpDipPackage.provCode}"/>
+                                    <p:message for="prov_code"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="initial_amount" value="#{PP_DIP_PACKAGE.initial_amount}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputText id="initial_amount" required="true" maxlength="15"
+                                                 value="#{dipPackageController.mtmpDipPackage.amountInput}"
+                                                 style="text-transform: uppercase"
+                                                 onblur="value=value.toUpperCase().trim()"
+                                                 requiredMessage="#{PP_DIP_PACKAGE.initial_amount}#{PP_COMMONS.can_not_be_empty}"
+                                                 validatorMessage="#{PP_DIP_PACKAGE.initialAmountValid}">
+                                        <f:validateRegex pattern="(^[1-9]+.?[0-9]{0,10}[GM][B])|([1-9]+KB)"/>
+                                        <p:keyFilter regEx="/[0-9GMBK.]/i"/>
+                                    </p:inputText>
+                                    <p:message for="initial_amount"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="active_day" value="#{PP_DIP_PACKAGE.active_day}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputNumber id="active_day" maxlength="10" maxValue="9999999999"
+                                                   minValue="0"
+                                                   decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                   value="#{dipPackageController.mtmpDipPackage.activeDay}"
+                                                   required="true"
+                                                   requiredMessage="#{PP_DIP_PACKAGE.active_day}#{PP_COMMONS.can_not_be_empty}"/>
+                                    <p:message for="active_day"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="status" value="#{PP_DIP_PACKAGE.status}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="ui-material">
+                                    <p:selectOneMenu id="status" required="true"
+                                                     value="#{dipPackageController.mtmpDipPackage.status}">
+                                        <f:selectItem itemLabel="#{PP_DIP_PACKAGE.enable}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_DIP_PACKAGE.disable}" itemValue="0"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="status"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="description" value="#{PP_DIP_PACKAGE.description}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputTextarea id="description" maxlength="200"
+                                                     value="#{dipPackageController.mtmpDipPackage.description}"/>
+                                    <p:message for="description"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

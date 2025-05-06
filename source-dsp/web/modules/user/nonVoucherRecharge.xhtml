@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:o="http://omnifaces.org/ui"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        </script>
+
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <div class="grid-padding">
+                    <p:panel header="#{PP_NON_VOUCHER_RECHARGE.filter_option}" styleClass="box-primary"
+                             rendered="#{not dspRechargeController.isDisplayBtnConfirm}">
+                        <h:panelGroup id="panel_filter_options" layout="grid" columns="6"
+                                      styleClass="ui-panelgrid-blank">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="search_isdn" value="#{PP_NON_VOUCHER_RECHARGE.isdn}"/>
+                                        <p:inputText id="search_isdn" maxlength="15"
+                                                     value="#{dspRechargeController.isdn}"
+                                                     validatorMessage="#{PP_DEPOSITDATABYDATACODE.validatorIsdn}"
+                                                     autoClear="false">
+                                            <f:validateRegex pattern="^[0-9]+$"/>
+                                        </p:inputText>
+                                        <p:message for="search_isdn"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="search_status" value="#{PP_NON_VOUCHER_RECHARGE.status}"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="search_status"
+                                                         value="#{dspRechargeController.status}">
+                                            <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.selectAll}" itemValue=""
+                                                          noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.status_0}"
+                                                          itemValue="0"/>
+                                            <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.status_1}"
+                                                          itemValue="1"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="search_status"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="from_date" value="#{PP_NON_VOUCHER_RECHARGE.from_date}"/>
+                                        <p:calendar value="#{dspRechargeController.fromDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="from_date" mode="popup" navigator="true"
+                                                    required="false"/>
+                                        <p:message for="from_date"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="to_date" value="#{PP_NON_VOUCHER_RECHARGE.to_date}"/>
+                                        <p:calendar value="#{dspRechargeController.toDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="to_date" mode="popup" navigator="true"
+                                                    required="false"/>
+                                        <p:message for="to_date"/>
+                                        <o:validateOrder type="lte" components="from_date to_date"
+                                                         message="#{PP_COMMONS.sta_end_date_error}"
+                                                         showMessageFor="from_date"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                    <p:commandButton id="btn_search" value="#{PP_COMMONS.search}" style="width: 250px;"
+                                                     actionListener="#{dspRechargeController.handSearch}"
+                                                     process="@this :form_main:panel_filter_options"
+                                                     update="panel_filter_options, table_infomation, panel_center"
+                                                     icon="fa fa-search" styleClass="btn-info"
+                                                     oncomplete="clearFilters('tableInformation');">
+                                        <p:resetInput target="table_infomation"/>
+                                    </p:commandButton>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                            </div>
+                        </h:panelGroup>
+                    </p:panel>
+
+                    <!--table-->
+                    <p:panel header="#{PP_NON_VOUCHER_RECHARGE.list_info}" styleClass="box-info"
+                             style="overflow-x: auto; width: 100%;"
+                             rendered="#{dspRechargeController.render eq 1}">
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_infomation"
+                                     widgetVar="tableInformation"
+                                     value="#{dspRechargeController.mlistDSPRecharge}"
+                                     filteredValue="#{dspRechargeController.mlistDSPRechargeFilterred}" var="info"
+                                     emptyMessage="#{PP_COMMONS.empty_message}" rowKey="#{info.isdn}"
+                                     rowIndexVar="rowIndex"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{dspRechargeController.mlistDSPRecharge.size()}"
+                                     paginator="true" rows="10" styleClass="no-border">
+
+                            <p:ajax global="false" event="rowSelect"/>
+                            <p:ajax global="false" event="rowUnselect"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.index}"
+                                      style="text-align: center !important; width:100px;">
+                                <h:outputText value="#{rowIndex+1}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.isdn}" sortBy="#{info.isdn}"
+                                      filterBy="#{info.isdn}" filterMatchMode="contains"
+                                      style="width:200px; word-break: break-word;">
+                                <h:outputText value="0#{info.isdn}" title="#{info.isdn}" styleClass="right"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.issue_date}" sortBy="#{info.issueDate}"
+                                      filterBy="#{dspRechargeController.dateToString(info.issueDate)}"
+                                      filterMatchMode="contains" style="width:180px;">
+                                <h:outputText value="#{info.issueDate}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.profile_code}" sortBy="#{info.profileCode}"
+                                      filterBy="#{info.profileCode}" filterMatchMode="contains"
+                                      style="width:150px; word-break: break-word;">
+                                <h:outputText value="#{info.profileCode}" title="#{info.profileCode}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.amount} (MB)" sortBy="#{info.amount}"
+                                      filterBy="#{info.amount}" filterMatchMode="contains"
+                                      style="width:150px; word-break: break-word;">
+                                <h:outputText value="#{info.amount/1024}" title="#{info.amount/1024}"
+                                              styleClass="right">
+                                    <f:convertNumber type="number" currencySymbol=""/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.days}" sortBy="#{info.days}"
+                                      filterBy="#{info.days}" filterMatchMode="contains"
+                                      style="width:150px; word-break: break-word;">
+                                <h:outputText value="#{info.days}" title="#{info.days}" styleClass="right"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.serial}" sortBy="#{info.serial}"
+                                      filterBy="#{info.serial}" filterMatchMode="contains"
+                                      style="width:200px; word-break: break-word;">
+                                <h:outputText value="#{info.serial}" title="#{info.serial}" styleClass="right"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.description}" sortBy="#{info.description}"
+                                      filterBy="#{info.description}" filterMatchMode="contains"
+                                      style="width:250px; word-break: break-word; overflow-scrolling: auto">
+                                <h:outputText
+                                        value="#{info.description}" title="#{info.description}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.status}" sortBy="#{info.status}"
+                                      filterBy="#{info.status}" filterMatchMode="exact" style="width:200px;">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tableInformation').filter()"
+                                                     styleClass="custom-filter"
+                                                     style="width: 100%;">
+                                        <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.selectAll}"
+                                                      itemValue="#{null}"
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.status_0}" itemValue="0"/>
+                                        <f:selectItem itemLabel="#{PP_NON_VOUCHER_RECHARGE.status_1}" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{PP_NON_VOUCHER_RECHARGE.status_0}"
+                                              rendered="#{info.status eq '0'}"/>
+                                <h:outputText value="#{PP_NON_VOUCHER_RECHARGE.status_1}"
+                                              rendered="#{info.status eq '1'}"/>
+                            </p:column>
+
+                            <!--action-->
+                            <p:column headerText="#{PP_NON_VOUCHER_RECHARGE.action}"
+                                      style="text-align: center !important; width:160px;">
+                                <p:commandLink id="btn_view" rendered="#{info.status ne '1'}"
+                                               actionListener="#{dspRechargeController.changeStateRecharge(info)}"
+                                               process="@this" styleClass="fa fa-plus-circle" style="margin-right:15px;"
+                                               update=":form_main:panel_center :form_main:dialog_recharge"
+                                               oncomplete="PF('dialogRecharge').show();"
+                                               resetValues="true"/>
+                                <p:tooltip for="btn_view" value="#{PP_NON_VOUCHER_RECHARGE.recharge}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:panel>
+                    <!---->
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <!-- dialog-->
+        <p:dialog id="dialog_recharge" appendTo=":form_main" resizable="false"
+                  header="#{PP_NON_VOUCHER_RECHARGE.dialog_recharge_title}" widgetVar="dialogRecharge"
+                  modal="true" draggable="false" width="1000px" closable="false" styleClass="box-info">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="isdn" value="#{PP_NON_VOUCHER_RECHARGE.isdn}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="isdn"
+                                                 value="0#{dspRechargeController.mtmpDSPRecharge.isdn}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="issue_date" value="#{PP_NON_VOUCHER_RECHARGE.issue_date}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="issue_date"
+                                                 value="#{dspRechargeController.dateToString(dspRechargeController.mtmpDSPRecharge.issueDate)}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="profile_code" value="#{PP_NON_VOUCHER_RECHARGE.profile_code}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="profile_code"
+                                                 value="#{dspRechargeController.mtmpDSPRecharge.profileCode}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="amount" value="#{PP_NON_VOUCHER_RECHARGE.amount}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="amount"
+                                                 value="#{dspRechargeController.mtmpDSPRecharge.amount/1024} MB"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="days" value="#{PP_NON_VOUCHER_RECHARGE.days}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="days"
+                                                 value="#{dspRechargeController.mtmpDSPRecharge.days}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="serial" value="#{PP_NON_VOUCHER_RECHARGE.serial}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="serial"
+                                                 value="#{dspRechargeController.mtmpDSPRecharge.serial}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                    <p:outputLabel for="description" value="#{PP_NON_VOUCHER_RECHARGE.description}"
+                                                   style="float: left"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                    <p:inputText maxlength="100" id="description"
+                                                 value="#{dspRechargeController.mtmpDSPRecharge.description}"
+                                                 disabled="true">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <center>
+                    <p:commandButton process="@this form_main:dialog_recharge" id="btn_ok"
+                                     value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                     update=":form_main:table_infomation :form_main:dialog_result"
+                                     actionListener="#{dspRechargeController.onConfirmRecharge(dspRechargeController.mtmpDSPRecharge)}"
+                                     styleClass="btn-success" style="width: 200px"/>
+
+                    <p:commandButton process="@this form_main:dialog_recharge" id="btn_cancel"
+                                     value="#{PP_COMMONS.back}" icon="fa fa-undo" style="width: 200px;"
+                                     onclick="PF('dialogRecharge').hide(); PF('tableInformation').clearFilters();"/>
+                </center>
+            </div>
+        </p:dialog>
+
+        <!--dialog_result-->
+        <p:dialog id="dialog_result" appendTo=":form_main" resizable="false"
+                  header="#{PP_NON_VOUCHER_RECHARGE.dialog_result_title}" widgetVar="dialogResult"
+                  modal="true" draggable="false" width="500px" closable="false" styleClass="box-info">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-12" style="text-align: center !important; font-size: medium;">
+                        <div class="ui-material">
+                            <div class="ui-g-12 ui-md-12 ui-lg-12" style="margin-top: 0">
+                                <h:outputText maxlength="100" id="res_code"
+                                              value="#{dspRechargeController.resultMes}"
+                                              disabled="true">
+                                </h:outputText>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <center>
+                    <p:commandButton process="@this form_main:dialog_result" id="btn_ok_res"
+                                     value="#{PP_NON_VOUCHER_RECHARGE.close}" icon="fa fa-times-circle"
+                                     update=":form_main:table_infomation :form_main:panel_center"
+                                     styleClass="btn-success" style="width: 150px"
+                                     onclick="PF('dialogResult').hide(); PF('tableInformation').clearFilters();"/>
+                </center>
+            </div>
+        </p:dialog>
+
+    </ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,334 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="panel_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton id="btnImport" value="#{PP_DIP_BATCH_FILE.importList}" process="@this"
+                                         actionListener="#{dipBatchFileController.prepareUpload()}"
+                                         rendered="#{dipBatchFileController.render == 0}"
+                                         icon="fa fa-plus" styleClass="btn-primary"
+                                         update="pnlPackageList :form_main:pnlPackageImpList :form_main:panel_center :form_main:dtPackageImp"/>
+                    </div>
+                </div>
+
+                <p:panel id="pnlPackageList" styleClass="pnl-main" rendered="#{dipBatchFileController.render == 0}"
+                         header="#{PP_DIP_BATCH_FILE.title}">
+                    <p:dataTable id="dtPackageList" value="#{dipBatchFileController.mlistDipBatchFile}" var="file"
+                                 rowIndexVar="index" widgetVar="dtPackageList"
+                                 emptyMessage="#{PP_DIP_BATCH_FILE.no_record_found}" rowKey="#{file.id}"
+                                 styleClass="datatable-mutil-select"
+                                 filteredValue="#{dipBatchFileController.mlistDipBatchFileFilter}"
+                                 paginator="true" rows="20" paginatorAlwaysVisible="true"
+                                 rowsPerPageTemplate="5,10,20,40,#{dipBatchFileController.mlistDipBatchFile.size()}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginatorPosition="bottom">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.STT}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{index + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.com_name}" sortBy="#{file.comName}"
+                                  filterBy="#{file.comName}">
+                            <h:outputText value="#{file.comName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.fileName}" sortBy="#{file.fileName}"
+                                  filterBy="#{file.fileName}">
+                            <h:outputText value="#{file.fileName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.uploadTime}"
+                                  sortBy="#{file.uploadTime}"
+                                  filterBy="#{dipBatchFileController.dateToString(file.uploadTime)}">
+                            <h:outputText value="#{file.uploadTime}"
+                                          styleClass="right">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.recordCount}" sortBy="#{file.recordCount}"
+                                  filterBy="#{file.recordCount}">
+                            <h:outputText value="#{file.recordCount}" styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.totalMoney} (VND)" sortBy="#{file.totalMoney}"
+                                  filterBy="#{file.totalMoney}">
+                            <h:outputText value="#{file.totalMoney}" styleClass="right">
+                                <f:convertNumber type="number" currencySymbol=""/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.status}" sortBy="#{file.status}"
+                                  filterBy="#{file.status}" filterMatchMode="contains" style="width:200px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('dtPackageList').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DIP_BATCH_FILE.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_BATCH_FILE.status0}" itemValue="0"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_BATCH_FILE.status2}" itemValue="2"/>
+                                    <f:selectItem itemLabel="#{PP_DIP_BATCH_FILE.status6}" itemValue="6"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DIP_BATCH_FILE.status0}" rendered="#{file.status == 0}"/>
+                            <h:outputText value="#{PP_DIP_BATCH_FILE.status2}" rendered="#{file.status == 2}"/>
+                            <h:outputText value="#{PP_DIP_BATCH_FILE.status6}" rendered="#{file.status == 6}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DATACODE.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink styleClass="fa fa-eye" process="@this" id="btn_view"
+                                           rendered="#{dipBatchFileController.getPermission('S')}"
+                                           update=":form_main:panel_center" style="margin-right:15px;"
+                                           actionListener="#{dipBatchFileController.changeStateView(file)}">
+                                <p:resetInput target=":form_main:pnlPackageList"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_view" value="#{PP_COMMONS.view}"/>
+
+                            <p:commandLink id="btn_confirm"
+                                           actionListener="#{dipBatchFileController.onConfirm(file)}"
+                                           process="@this" styleClass="fa fa-check"
+                                           rendered="#{file.userId == dipBatchFileController.userId and file.status == 0}"
+                                           oncomplete="PF('dtPackageList').clearFilters();"
+                                           update=":form_main:panel_center :form_main:dtPackageList :form_main:pnlPackageList"
+                                           style="margin-right:15px;">
+                                <p:confirm header="#{PP_DATACODE.enable_dialog_header}"
+                                           message="#{PP_DATACODE.enable_dialog}"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_confirm" value="#{PP_DATACODE.btn_enable}"/>
+
+                            <p:commandLink id="btn_delete"
+                                           actionListener="#{dipBatchFileController.handleDelete(file)}"
+                                           process="@this" styleClass="fa fa-trash"
+                                           rendered="#{file.userId == dipBatchFileController.userId and file.status == 0}"
+                                           oncomplete="PF('dtPackageList').clearFilters();"
+                                           update=":form_main:panel_center :form_main:dtPackageList :form_main:pnlPackageList"
+                                           style="margin-right:15px;">
+                                <p:confirm header="#{PP_DATACODE.title_delete}"
+                                           message="#{PP_DATACODE.message_delete}"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_delete" value="#{PP_COMMONS.del}"/>
+
+                            <p:commandLink id="btn_download_ls_success" styleClass="fa fa-download"
+                                           rendered="#{file.userId == dipBatchFileController.userId and file.status == 6}"
+                                           immediate="true" ajax="false" style="margin-right:10px;"
+                                           onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                <p:fileDownload value="#{dipBatchFileController.downloadFile(file, 1)}"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_download_ls_success" value="#{PP_ADDDATAISDN.file_name_success}"/>
+
+                            <p:commandLink id="btn_download_ls_fail" styleClass="fa fa-download"
+                                           rendered="#{file.userId == dipBatchFileController.userId and file.status == 6}"
+                                           style="text-decoration:none; color:red;"
+                                           immediate="true" ajax="false"
+                                           onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                <p:fileDownload value="#{dipBatchFileController.downloadFile(file, 3)}"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_download_ls_fail" value="#{PP_ADDDATAISDN.file_name_fail}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <!--dipRequest btn-->
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton id="btn_cancel_dip_request" rendered="#{dipBatchFileController.render == 3}"
+                                         actionListener="#{dipBatchFileController.handleCancelDetail()}"
+                                         process="@this" value="#{PP_COMMONS.back}"
+                                         update="panel_center" icon="fa fa-undo"/>
+                    </div>
+                </div>
+
+                <p:panel id="pnlDipRequest" styleClass="pnl-main" header="#{PP_DIP_BATCH_FILE.listDipRequest}"
+                         rendered="#{dipBatchFileController.render == 3}">
+                    <!--datatable dipRequest-->
+                    <p:dataTable id="dtDipRequest" value="#{dipBatchFileController.mlistDipRequest}"
+                                 var="dipRequestItem"
+                                 rowIndexVar="index" rowKey="#{dipRequestItem.id}"
+                                 emptyMessage="#{PP_DIP_BATCH_FILE.no_record_found}"
+                                 styleClass="datatable-mutil-select" widgetVar="dtDipRequest"
+                                 paginator="true" rows="20" paginatorAlwaysVisible="true"
+                                 rowsPerPageTemplate="5,10,20,40,#{dipBatchFileController.mlistDipRequest.size()}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginatorPosition="bottom">
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.STT}"
+                                  style="text-align: center !important; width: 200px">
+                            <h:outputText value="#{index + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.isdn}" sortBy="#{dipRequestItem.isdn}"
+                                  filterBy="#{dipRequestItem.isdn}">
+                            <h:outputText value="#{dipRequestItem.isdn}" styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.packageCode}" sortBy="#{dipRequestItem.packageCode}"
+                                  filterBy="#{dipRequestItem.packageCode}">
+                            <h:outputText value="#{dipRequestItem.packageCode}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.requestTime}"
+                                  sortBy="#{dipBatchFileController.dateToString(dipRequestItem.requestTime)}"
+                                  filterBy="#{dipBatchFileController.dateToString(dipRequestItem.requestTime)}">
+                            <h:outputText value="#{dipBatchFileController.dateToString(dipRequestItem.requestTime)}"
+                                          styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.initialAmount} (KB)"
+                                  sortBy="#{dipRequestItem.initialAmount}"
+                                  filterBy="#{dipRequestItem.initialAmount}">
+                            <h:outputText value="#{dipRequestItem.initialAmount}" styleClass="right">
+                                <f:convertNumber type="number" currencySymbol=""/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.activeDay}" sortBy="#{dipRequestItem.activeDay}"
+                                  filterBy="#{dipRequestItem.activeDay}">
+                            <h:outputText value="#{dipRequestItem.activeDay}" styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.moneyAmount} (VND)"
+                                  sortBy="#{dipRequestItem.moneyAmount}"
+                                  filterBy="#{dipRequestItem.moneyAmount}">
+                            <h:outputText value="#{dipRequestItem.moneyAmount}" styleClass="right">
+                                <f:convertNumber type="number" currencySymbol=""/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <!--button upload file-->
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton immediate="true" value="#{PP_DIP_BATCH_FILE.fileTemplate}" global="false"
+                                         icon="fa fa-download" ajax="false"
+                                         styleClass="btn-info" id="btn_downloadValue" process="@this"
+                                         rendered="#{dipBatchFileController.render == 1}"
+                                         onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);"
+                                         actionListener="#{dipBatchFileController.downloadTemplate}">
+                            <p:fileDownload value="#{dipBatchFileController.fileDownloadTemplate}"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-4"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton id="btn_ok_upload" actionListener="#{dipBatchFileController.handleOK()}"
+                                         process="@this :form_main:pnlPackageImpList" style="margin-bottom: 5px"
+                                         value="#{PP_COMMONS.ok}" styleClass="btn-success"
+                                         rendered="#{(dipBatchFileController.mfile ne null) and (dipBatchFileController.fileIndexErr == false) and dipBatchFileController.render == 1 and dipBatchFileController.mlistSuccesImport.size() > 0
+                                         and dipBatchFileController.mlistErrImport.size() == 0}"
+                                         update="@this :form_main:panel_center :form_main:pnlPackageList"
+                                         icon="fa fa-check-circle"/>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton id="btnChoose" value="#{PP_DIP_BATCH_FILE.uploadFile}" type="button"
+                                         rendered="#{dipBatchFileController.render == 1}"
+                                         icon="fa fa-upload" styleClass="btn-primary"/>
+                        <p:overlayPanel for="btnChoose" id="panelUploadFile" widgetVar="panelUploadFile"
+                                        style="width: 600px">
+                            <h:outputText value="#{PP_DIP_BATCH_FILE.messageUpload}"/>
+                            <p:fileUpload id="file_upload_input" label="#{PP_DIP_BATCH_FILE.choose}"
+                                          invalidFileMessage="#{PP_DIP_BATCH_FILE.invalidFileMessage}"
+                                          invalidSizeMessage="#{PP_DIP_BATCH_FILE.invalidSizeMessage}" process="@this"
+                                          listener="#{dipBatchFileController.handleFileUpload}"
+                                          mode="advanced" fileLimit="1" dragDropSupport="true"
+                                          onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"
+                                          update="@this :form_main:panel_center :form_main:dtPackageImp :form_main:pnlPackageImpList :form_main:btn_ok_upload"
+                                          auto="true" required="true"
+                                          sizeLimit="104857600" allowTypes="/(\.|\/)(xlsx|xls)$/">
+                            </p:fileUpload>
+                        </p:overlayPanel>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton id="btn_cancel_impEmp" rendered="#{dipBatchFileController.render == 1}"
+                                         process="@this" value="#{PP_COMMONS.back}"
+                                         actionListener="#{dipBatchFileController.handleCancel()}"
+                                         update="panel_center" icon="fa fa-undo" style="margin-bottom: 5px;"/>
+                    </div>
+                </div>
+
+                <!--import-->
+                <!--listExcel-->
+                <p:panel id="pnlPackageImpList" styleClass="pnl-main" header="#{PP_DIP_BATCH_FILE.title_list_import}"
+                         rendered="#{dipBatchFileController.render == 1 and dipBatchFileController.mlistErrImport.size() == 0}">
+                    <p:dataTable id="dtPackageImp" value="#{dipBatchFileController.mlistSuccesImport}" var="item"
+                                 rowIndexVar="index" rowKey="#{item.id}"
+                                 emptyMessage="#{PP_DIP_BATCH_FILE.no_record_found}"
+                                 styleClass="datatable-mutil-select"
+                                 paginator="true" rows="20" paginatorAlwaysVisible="true"
+                                 rowsPerPageTemplate="5,10,20,40,#{dipBatchFileController.mlistSuccesImport.size()}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginatorPosition="bottom">
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.STT}"
+                                  style="text-align: center !important; width: 200px">
+                            <h:outputText value="#{item.index}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.isdn}" sortBy="#{item.isdn}" filterBy="#{item.isdn}">
+                            <h:outputText value="#{item.isdn}" style="float: right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.packageCode}" sortBy="#{item.packageCode}"
+                                  filterBy="#{item.packageCode}">
+                            <h:outputText value="#{item.packageCode}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:panel id="pnlPackageError" styleClass="pnl-main" header="#{PP_DIP_BATCH_FILE.errList}"
+                         rendered="#{dipBatchFileController.render == 1 and dipBatchFileController.mlistErrImport.size() > 0 and dipBatchFileController.mfile ne null}">
+                    <!--datatable error-->
+                    <p:dataTable id="dtError" value="#{dipBatchFileController.mlistErrImport}" var="errItem"
+                                 rowIndexVar="index" rowKey="#{errItem.id}"
+                                 emptyMessage="#{PP_DIP_BATCH_FILE.no_record_found}"
+                                 styleClass="datatable-mutil-select"
+                                 paginator="true" rows="20" paginatorAlwaysVisible="true"
+                                 rowsPerPageTemplate="5,10,20,40,#{dipBatchFileController.mlistErrImport.size()}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginatorPosition="bottom">
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.STT}" sortBy="#{errItem.index}"
+                                  filterBy="#{errItem.index}"
+                                  style="text-align: center !important; width: 200px">
+                            <h:outputText value="#{errItem.index}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.isdn}" sortBy="#{errItem.displayIsdn}"
+                                  filterBy="#{errItem.displayIsdn}">
+                            <h:outputText value="#{errItem.displayIsdn}" style="float: right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.packageCode}" sortBy="#{errItem.packageCode}"
+                                  filterBy="#{errItem.packageCode}">
+                            <h:outputText value="#{errItem.packageCode}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DIP_BATCH_FILE.showErr}" sortBy="#{errItem.logErr}"
+                                  filterBy="#{errItem.logErr}">
+                            <h:outputText value="#{errItem.logErr}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+    </ui:composition>
+</h:body>
+</html>
+

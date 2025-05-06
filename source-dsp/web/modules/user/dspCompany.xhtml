@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <style type="text/css">
+            .ui-tree-container {
+                max-height: 400px !important;
+            }
+        </style>
+        <div class="ui-fluid">
+            <h:panelGroup id="pnl_control">
+                <h:panelGroup rendered="#{not dspCompanyController.isDisplayBtnConfirm}">
+                    <p:panel styleClass="box-info">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-5">
+                                <div class="material">
+                                    <p:outputLabel for="comIdSearch" style="cursor: pointer;"
+                                                   value="#{PP_DSPCOMPANY.comId}"/>
+                                    <p:inputNumber id="comIdSearch" maxValue="999999999999999" minValue="0"
+                                                   decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                   value="#{dspCompanyController.mcompanySearch.comId}">
+                                    </p:inputNumber>
+                                    <p:message for="comIdSearch"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-2"></div>
+                            <div class="ui-g-12 ui-md-5">
+                                <div class="material">
+                                    <p:outputLabel for="comNameSearch" value="#{PP_DSPCOMPANY.DNName}"/>
+                                    <p:inputText id="comNameSearch" maxlength="100"
+                                                 value="#{dspCompanyController.mcompanySearch.comName}">
+                                    </p:inputText>
+                                    <p:message for="comNameSearch"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-5">
+                                <div class="material">
+                                    <p:outputLabel for="busCodeSearch" style="cursor: pointer;"
+                                                   value="#{PP_DSPCOMPANY.DNCode}"/>
+                                    <p:inputText id="busCodeSearch" maxlength="15"
+                                                 validatorMessage="#{PP_DSPCOMPANY.valiNumber}"
+                                                 value="#{dspCompanyController.mcompanySearch.busCode}">
+                                        <f:validateRegex pattern="^[0-9\-]+$"/>
+                                    </p:inputText>
+                                    <p:message for="busCodeSearch"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-2"></div>
+                            <div class="ui-g-12 ui-md-5">
+                                <div class="material">
+                                    <p:outputLabel for="addressSearch" value="#{PP_DSPCOMPANY.titleAdd1}"/>
+
+                                    <p:inputText id="addressSearch" maxlength="200"
+                                                 value="#{dspCompanyController.mcompanySearch.showAddress}">
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_search" actionListener="#{dspCompanyController.searchDN()}"
+                                                 icon="fa fa-search"
+                                                 process="@this :form_main:pnl_control" value="#{PP_COMMONS.search}"
+                                                 update=":form_main:pnlDetail :form_main:pnl_control"
+                                                 oncomplete="clearFilters('tableDN');"
+                                                 styleClass="btn-info"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_add" actionListener="#{dspCompanyController.changeStateAdd()}"
+                                                 rendered="#{dspCompanyController.isAllowInsert}"
+                                                 disabled="#{dspCompanyController.disableAdd}"
+                                                 process="@this"
+                                                 styleClass="btn-primary" value="#{PP_COMMONS.add}"
+                                                 update=":form_main:panel_center :form_main:pnl_control :form_main:panelAdd"
+                                                 icon="fa fa-plus" resetValues="true"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{dspCompanyController.isDisplayBtnConfirm}">
+                    <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <p:commandButton id="btn_save" actionListener="#{dspCompanyController.handleOK()}"
+                                         rendered="#{!dspCompanyController.isDISABLE}"
+                                         process="@this panelAdd" styleClass="btn-success"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         update=":form_main:panel_center :form_main:pnl_control"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <p:commandButton id="btn_cancel" actionListener="#{dspCompanyController.handleCancel}"
+                                         process="@this" value="#{PP_COMMONS.back}"
+                                         icon="fa fa-undo"
+                                         update=":form_main:panel_center :form_main:pnl_control"
+                                         resetValues="true"/>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <h:panelGroup id="panel_center">
+                <div class="ui-g-12 ui-md-12 ui-lg-3 no-pad-y">
+                    <p:panel styleClass="box-info">
+                        <h:panelGroup styleClass="box-info">
+                            <p:tree id="treeCompany" disabled="#{dspCompanyController.isDisplayBtnConfirm}"
+                                    value="#{dspCompanyController.mtreeCompany}" var="nodeCompany" dynamic="true"
+                                    selection="#{dspCompanyController.mselectedCompanyNode}"
+                                    selectionMode="single" animate="true" widgetVar="treeCompany" style="border: 0;">
+                                <p:ajax process="@this " global="true" event="select"
+                                        listener="#{dspCompanyController.onNodeSelect}"
+                                        update=":form_main:tableDN :form_main:pnl_control"
+                                        oncomplete="clearFilters('tableDN');"/>
+                                <p:ajax process="@this " global="true" event="expand"
+                                        listener="#{dspCompanyController.onExpandTree}" update=""/>
+                                <p:treeNode expandedIcon="fa fa-folder-open" collapsedIcon="fa fa-folder">
+                                    <span id="#{nodeCompany.comId}">#{nodeCompany.comName}</span>
+                                </p:treeNode>
+                            </p:tree>
+                        </h:panelGroup>
+                    </p:panel>
+                </div>
+                <!--Panel Detail-->
+                <div class="ui-g-12 ui-md-12 ui-lg-9  no-pad-y">
+                    <p:panel id="pnlDetail" styleClass="box-info"
+                             style="overflow-x: auto; width: 100%;"
+                             rendered="#{not dspCompanyController.isDisplayBtnConfirm}">
+                        <!--List User-->
+                        <p:dataTable paginatorPosition="bottom" id="tableDN"
+                                     widgetVar="tableDN" var="dn"
+                                     value="#{dspCompanyController.mListCompany}"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     selectionMode="single"
+                                     filteredValue="#{dspCompanyController.mFilterCompany}"
+                                     selection="#{dspCompanyController.selectedDN}" rowKey="#{dn.comId}"
+                                     paginator="true" rows="10" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10,20,50,#{dspCompanyController.mListCompany.size()}"
+                                     styleClass="no-border">
+
+                            <p:ajax global="false" event="page"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+
+                            <p:column headerText="#{PP_DSPCOMPANY.comId}" filterBy="#{dn.comId}"
+                                      sortBy="#{dn.comId}" filterMatchMode="contains"
+                                      style="width:120px;">
+                                #{dn.comId}
+                            </p:column>
+                            <p:column headerText="#{PP_DSPCOMPANY.DNName}" filterBy="#{dn.comName}"
+                                      sortBy="#{dn.comName}" filterMatchMode="contains"
+                                      style="width:120px;">
+                                #{dn.comName}
+                            </p:column>
+                            <p:column headerText="#{PP_DSPCOMPANY.DNCode}" filterBy="#{dn.busCode}"
+                                      sortBy="#{dn.busCode}" filterMatchMode="contains"
+                                      style="width:120px;">
+                                #{dn.busCode}
+                            </p:column>
+                            <p:column headerText="#{PP_DSPCOMPANY.titleAdd1}"
+                                      filterBy="#{dn.showAddress}"
+                                      style="width:120px;"
+                                      sortBy="#{dn.showAddress}" filterMatchMode="contains">
+                                #{dn.showAddress}
+                            </p:column>
+                            <p:column headerText="#{PP_DSPCOMPANY.action}"
+                                      style="text-align: center !important; width:100px;">
+                                <p:commandLink id="btn_edit_dn"
+                                               process="@this" styleClass="fa fa-pencil" style="margin-right:15px;"
+                                               actionListener="#{dspCompanyController.changeStateEdit(dn)}"
+                                               rendered="#{dspCompanyController.isAllowUpdate and not dspCompanyController.isVIEW}"
+                                               update=":form_main:panel_center :form_main:pnl_control :form_main:panelAdd"
+                                               resetValues="true"/>
+                                <p:tooltip for="btn_edit_dn" value="#{PP_COMMONS.edit}"/>
+                                <p:commandLink id="btn_view_dn"
+                                               process="@this" styleClass="fa fa-eye" style="margin-right:15px;"
+                                               actionListener="#{dspCompanyController.changeStateView(dn)}"
+                                               rendered="#{dspCompanyController.isVIEW}"
+                                               update=":form_main:panel_center :form_main:pnl_control :form_main:panelAdd :form_main:pnlAddDetail"
+                                               resetValues="true"/>
+                                <p:tooltip for="btn_view_dn" value="#{PP_COMMONS.view}"/>
+
+                                <p:commandLink id="btn_add_vas_mobile" style="margin-right:15px;"
+                                               process="@this" styleClass="fa fa-arrow-circle-right"
+                                               actionListener="#{dspCompanyController.goToDspVasMobile(dn)}"
+                                               rendered="#{dspCompanyController.isAllowUpdate and not dspCompanyController.isVIEW and dn.custType eq '1'}"
+                                               update=":form_main:panel_center :form_main:pnl_control :form_main:panelAdd"
+                                               oncomplete="clearFilters('tableDN');"
+                                               resetValues="true"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_add_vas_mobile" value="#{PP_DSPCOMPANY.title_vasMobile}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <!--End List User-->
+                    </p:panel>
+                    <!-- Add/Edit-->
+                    <p:panel id="pnlAddDetail" styleClass="box-info"
+                             rendered="#{dspCompanyController.isDisplayBtnConfirm}">
+                        <h:panelGroup id="panelAdd">
+                            <f:facet name="header">
+                                <div class="ui-g no-padding">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-11">
+                                        #{PP_DSPCOMPANY.header}
+                                    </div>
+                                </div>
+                            </f:facet>
+
+                            <div class="ui-g ui-fluid">
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="type" value="#{PP_DSPCOMPANY.type}"/>
+                                        <h:panelGroup>
+                                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="type"
+                                                             requiredMessage="#{PP_DSPCOMPANY.type}#{PP_COMMONS.can_not_be_empty}"
+                                                             disabled="#{dspCompanyController.disableUserName}"
+                                                             value="#{dspCompanyController.mcompany.type}">
+                                                <c:if test="#{dspCompanyController.userCompany.getType() eq 0 or dspCompanyController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_DSPCOMPANY.type1}" itemValue="1"/>
+                                                    <f:selectItem itemLabel="#{PP_DSPCOMPANY.type2}" itemValue="2"/>
+                                                </c:if>
+                                                <c:if test="#{dspCompanyController.userCompany.getType() eq 1 or dspCompanyController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_DSPCOMPANY.type2}" itemValue="2"/>
+                                                </c:if>
+                                                <c:if test="#{dspCompanyController.userCompany.getType() eq 2 or dspCompanyController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_DSPCOMPANY.type3}" itemValue="3"/>
+                                                </c:if>
+                                                <c:if test="#{dspCompanyController.userCompany.getType() eq 3 or dspCompanyController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_DSPCOMPANY.type3}" itemValue="3"/>
+                                                </c:if>
+                                                <p:ajax listener="#{dspCompanyController.onChangeType}"
+                                                        resetValues="true"
+                                                        update="pnlAddDetail form_main:panel_serialPrefix"/>
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+                                        <p:message for="type"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g ui-fluid">
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="custType" value="#{PP_DSPCOMPANY.custType}"/>
+                                        <h:panelGroup>
+                                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="custType"
+                                                             requiredMessage="#{PP_DSPCOMPANY.custType}#{PP_COMMONS.can_not_be_empty}"
+                                                             disabled="#{dspCompanyController.disableUserName}"
+                                                             value="#{dspCompanyController.mcompany.custType}">
+                                                <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType1}" itemValue="0"/>
+                                                <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType2}" itemValue="1"/>
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+                                        <p:message for="custType"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="comName" style="cursor: pointer;"
+                                                       value="#{PP_DSPCOMPANY.comName}"/>
+                                        <p:inputText id="comName" maxlength="100"
+                                                     value="#{dspCompanyController.mcompany.comName}"
+                                                     disabled="#{dspCompanyController.isDISABLE}"
+                                                     requiredMessage="#{PP_DSPCOMPANY.comName}#{PP_COMMONS.can_not_be_empty}"
+                                                     required="true"/>
+                                        <p:message for="comName"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="busCode" value="#{PP_DSPCOMPANY.busCode}"/>
+
+                                        <p:inputText id="busCode" maxlength="15"
+                                                     required="#{dspCompanyController.isRETAILERorCOMPANY}"
+                                                     value="#{dspCompanyController.mcompany.busCode}"
+                                                     disabled="#{dspCompanyController.isDISABLE}"
+                                                     validatorMessage="#{PP_DSPCOMPANY.valiNumber}"
+                                                     requiredMessage="#{PP_DSPCOMPANY.busCode}#{PP_COMMONS.can_not_be_empty}">
+                                            <f:validateRegex pattern="^[0-9\-]+$"/>
+                                        </p:inputText>
+                                        <p:message for="busCode"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="status" value="#{PP_COMMONS.status}"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="status"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         value="#{dspCompanyController.mcompany.status}">
+                                            <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="status"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g ui-fluid">
+                                <h:panelGroup id="panel_userName" class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <div class="ui-g-12 ui-md-10">
+                                            <p:outputLabel for="userName" value="#{PP_DSPCOMPANY.userName}"/>
+                                            <p:inputText id="userName" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.userName}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.userName}#{PP_COMMONS.can_not_be_empty}"
+                                                         readonly="#{dspCompanyController.disableUserName}"
+                                                         required="true"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-2">
+                                            <p:commandButton id="btn_checker"
+                                                             actionListener="#{dspCompanyController.checkUser()}"
+                                                             styleClass="btn btn-danger"
+                                                             process="@this panel_userName"
+                                                             icon="fa fa-check"
+                                                             update=":form_main:panel_userName"
+                                                             rendered="#{!dspCompanyController.disableUserName}"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="userName"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-10">
+                                            <p:outputLabel for="password" value="#{PP_COMMONS.password}"/>
+                                            <p:password id="password" maxlength="50"
+                                                        value="#{dspCompanyController.password}"
+                                                        disabled="#{dspCompanyController.isDISABLE}"
+                                                        requiredMessage="#{PP_COMMONS.password}#{PP_COMMONS.can_not_be_empty}"
+                                                        required="#{dspCompanyController.isADD}"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="password"/>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:outputLabel for="taxCode" value="#{PP_DSPCOMPANY.taxCode}"/>
+                                            <p:inputText id="taxCode" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.taxCode}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.taxCode}#{PP_DSPCOMPANY.valiNumber}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.taxCode}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+
+                                            <div class="ui-g-12 ui-md-12">
+                                                <p:message for="taxCode"/>
+                                            </div>
+                                        </div>
+                                        <h:panelGroup id="panel_serialPrefix"
+                                                      rendered="#{dspCompanyController.userCompany.getType() eq 0 and dspCompanyController.mcompany.getType() eq 1}"
+                                                      class="ui-g-12 ui-md-12">
+                                            <p:outputLabel for="serialPrefix" value="#{PP_DSPCOMPANY.serialPrefix}"/>
+                                            <p:inputText id="serialPrefix" maxlength="3" required="true"
+                                                         value="#{dspCompanyController.mcompany.serialPrefix}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.serialPrefix}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <div class="ui-g-12 ui-md-12">
+                                                <p:message for="serialPrefix"/>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+
+                                </div>
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:outputLabel for="vasMobile" value="#{PP_DSPCOMPANY.vasMobile}"/>
+                                            <p:inputText id="vasMobile"
+                                                         value="#{dspCompanyController.mcompany.vasMobile}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.validatorIsdn}"
+                                                         required="#{dspCompanyController.isRETAILERorCOMPANY}"
+                                                         autoClear="false" maxlength="15"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.vasMobile}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+                                            <div class="ui-g-12 ui-md-12">
+                                                <p:message for="vasMobile"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:outputLabel for="cpsMobile" value="#{PP_DSPCOMPANY.cpsMobile}"/>
+                                            <p:inputText id="cpsMobile"
+                                                         value="#{dspCompanyController.mcompany.cpsMobile}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.validatorIsdn}"
+                                                         autoClear="false" maxlength="15"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.cpsMobile}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+                                            <div class="ui-g-12 ui-md-12">
+                                                <p:message for="cpsMobile"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g ui-fluid">
+                                <h:panelGroup id="panel_userName_api" class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <div class="ui-g-12 ui-md-10">
+                                            <p:outputLabel for="userName_api" value="#{PP_DSPCOMPANY.apiUserName}"/>
+                                            <p:inputText id="userName_api" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.apiUserName}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.apiUserName}#{PP_COMMONS.can_not_be_empty}"
+                                                         readonly="#{dspCompanyController.disableUserNameApi}"
+                                                         required="#{dspCompanyController.isRETAILERorCOMPANY}"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-2">
+                                            <p:commandButton id="btn_checker_api"
+                                                             actionListener="#{dspCompanyController.checkUserAPI()}"
+                                                             styleClass="btn btn-danger"
+                                                             process="@this panel_userName_api"
+                                                             icon="fa fa-check"
+                                                             update=":form_main:panel_userName_api"
+                                                             rendered="#{!dspCompanyController.disableUserNameApi}"/>
+
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="userName_api"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-10">
+                                            <p:outputLabel for="password_api" value="#{PP_COMMONS.password}"/>
+                                            <p:password id="password_api" maxlength="50"
+                                                        value="#{dspCompanyController.passwordAPI}"
+                                                        disabled="#{dspCompanyController.isDISABLE}"
+                                                        requiredMessage="#{PP_COMMONS.password}#{PP_COMMONS.can_not_be_empty}"
+                                                        required="#{dspCompanyController.isRETAILERorCOMPANY and dspCompanyController.isADD}"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="password_api"/>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+
+                                <div class="ui-g-12 ui-md-4">
+                                    <div class="material">
+                                        <p:outputLabel for="bhtt_code" style="cursor: pointer;"
+                                                       value="#{PP_DSPCOMPANY.bhttCode}"/>
+                                        <p:inputText id="bhtt_code" maxlength="50"
+                                                     value="#{dspCompanyController.mcompany.bhttCode}"
+                                                     disabled="#{dspCompanyController.isDISABLE}"
+                                                     requiredMessage="#{PP_DSPCOMPANY.bhttCode}#{PP_COMMONS.can_not_be_empty}"
+                                                     required="true"/>
+                                        <p:message for="bhtt_code"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g ui-fluid">
+                                <div class="ui-g-12 ui-md-12">
+                                    <div class="material">
+                                        <p:outputLabel for="description" value="#{PP_DSPCOMPANY.description}"/>
+                                        <p:inputTextarea id="description" maxlength="100"
+                                                         value="#{dspCompanyController.mcompany.description}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.description}#{PP_COMMONS.can_not_be_empty}"/>
+                                        <p:message for="description"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:fieldset style="margin-bottom:20px">
+                                <legend>#{PP_DSPCOMPANY.titleAdd1}</legend>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="province" value="#{PP_DSPCOMPANY.province}"/>
+
+                                            <p:inputText id="province" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.province}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.province}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="province"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-2"></div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="city" value="#{PP_DSPCOMPANY.city}"/>
+
+                                            <p:inputText id="city" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.city}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.city}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="city"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="district" value="#{PP_DSPCOMPANY.district}"/>
+                                            <p:inputText id="district" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.district}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.district}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="district"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-2"></div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="ward" value="#{PP_DSPCOMPANY.ward}"/>
+                                            <p:inputText id="ward" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.ward}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.ward}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="ward"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-12">
+                                        <div class="material">
+                                            <p:outputLabel for="address" value="#{PP_DSPCOMPANY.address}"/>
+                                            <p:inputTextarea id="address" maxlength="200"
+                                                             value="#{dspCompanyController.mcompany.address}"
+                                                             disabled="#{dspCompanyController.isDISABLE}"
+                                                             requiredMessage="#{PP_DSPCOMPANY.address}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="address"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:fieldset>
+                            <p:fieldset style="margin-bottom:20px">
+                                <legend>#{PP_DSPCOMPANY.titleAdd2}</legend>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="representative"
+                                                           value="#{PP_DSPCOMPANY.representative}"/>
+                                            <p:inputText id="representative" maxlength="50"
+                                                         value="#{dspCompanyController.mcompany.representative}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.representative}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="representative"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-2"></div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="repPosition" value="#{PP_DSPCOMPANY.repPosition}"/>
+                                            <p:inputText id="repPosition" maxlength="30"
+                                                         value="#{dspCompanyController.mcompany.repPosition}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.repPosition}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="repPosition"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="repMobile" value="#{PP_DSPCOMPANY.repMobile}"/>
+                                            <p:inputText id="repMobile"
+                                                         value="#{dspCompanyController.mcompany.repMobile}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.validatorIsdn}"
+                                                         autoClear="false" maxlength="15"
+                                                         requiredMessage="#{PP_DSPCOMPANY.repMobile}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+                                            <p:message for="repMobile"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-2"></div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="repPhone" value="#{PP_DSPCOMPANY.repPhone}"/>
+                                            <p:inputText id="repPhone" maxlength="15"
+                                                         value="#{dspCompanyController.mcompany.repPhone}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.validatorIsdn}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.repPhone}#{PP_COMMONS.can_not_be_empty}">
+                                                <f:validateRegex pattern="^[0-9]+$"/>
+                                            </p:inputText>
+                                            <p:message for="repPhone"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </p:fieldset>
+                            <p:fieldset style="margin-bottom:20px">
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="email" value="#{PP_DSPCOMPANY.email}"/>
+                                            <p:inputText id="email" maxlength="100"
+                                                         required="#{dspCompanyController.isRETAILERorCOMPANY}"
+                                                         value="#{dspCompanyController.mcompany.email}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.email}#{PP_COMMONS.can_not_be_empty}"
+                                                         disabled="#{dspCompanyController.isDISABLE}"
+                                                         validatorMessage="#{PP_DSPCOMPANY.valiEmail}">
+                                                <f:validateRegex
+                                                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+                                            </p:inputText>
+                                            <p:message for="email"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-2"></div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="updatedKey" value="#{PP_DSPCOMPANY.updatedKey}"/>
+                                            <p:calendar pattern="dd/MM/yyyy"
+                                                        value="#{dspCompanyController.mcompany.updatedKey}"
+                                                        id="updatedKey" monthNavigator="true" disabled="true"
+                                                        requiredMessage="#{PP_DSPCOMPANY.updatedKey}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="updatedKey"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-12">
+                                        <div class="material">
+                                            <p:outputLabel for="publicKey" value="#{PP_DSPCOMPANY.publicKey}"/>
+                                            <p:inputTextarea id="publicKey"
+                                                             value="#{dspCompanyController.mcompany.publicKey}"
+                                                             required="#{dspCompanyController.isRETAILERorCOMPANY}"
+                                                             disabled="#{dspCompanyController.isDISABLE}"
+                                                             cols="30" rows="5"
+                                                             autoResize="autoResize"
+                                                             style="font-family: courier; min-height: 40px; overflow:auto;"
+                                                             requiredMessage="#{PP_DSPCOMPANY.publicKey}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="publicKey"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12">
+                                        <div class="material">
+                                            <p:outputLabel for="apiPublicKey" value="#{PP_DSPCOMPANY.apiPublicKey}"/>
+                                            <p:inputTextarea id="apiPublicKey"
+                                                             required="#{dspCompanyController.isRETAILERorCOMPANY}"
+                                                             value="#{dspCompanyController.mcompany.apiPublicKey}"
+                                                             disabled="#{dspCompanyController.isDISABLE}"
+                                                             cols="30" rows="5"
+                                                             autoResize="autoResize"
+                                                             style="font-family: courier; min-height: 40px; overflow:auto;"
+                                                             requiredMessage="#{PP_DSPCOMPANY.apiPublicKey}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="apiPublicKey"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-5">
+                                        <div class="material">
+                                            <p:outputLabel for="apiUpdatedKey"
+                                                           value="#{PP_DSPCOMPANY.ApiUpdatedKeyLast}"/>
+                                            <p:calendar pattern="dd/MM/yyyy"
+                                                        value="#{dspCompanyController.mcompany.apiUpdatedKey}"
+                                                        id="apiUpdatedKey" monthNavigator="true" disabled="true"
+                                                        requiredMessage="#{PP_DSPCOMPANY.apiUpdatedKey}#{PP_COMMONS.can_not_be_empty}"/>
+                                            <p:message for="apiUpdatedKey"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g ui-fluid">
+                                    <div class="ui-g-12 ui-md-12">
+                                        <div class="material">
+                                            <p:fileUpload
+                                                    listener="#{dspCompanyController.handleFileUploadCompany}"
+                                                    invalidSizeMessage="#{PP_SERVICEDECLARESPONSOR.oversize}"
+                                                    fileLimit="1"
+                                                    disabled="#{dspCompanyController.isDISABLE or dspCompanyController.isVIEW}"
+                                                    mode="advanced" sizeLimit="10485760" id="filePath"
+                                                    label="#{PP_DSPCOMPANY.filePath}" update="@this"
+                                                    auto="true"
+                                                    dragDropSupport="true" multiple="false">
+
+                                                <p:panel>
+                                                    <h:outputLabel value="#{dspCompanyController.mcompany.filePath}"/>
+                                                    <p:commandButton
+                                                            id="download1" icon="fa fa-download"
+                                                            immediate="true" ajax="false"
+                                                            rendered="#{dspCompanyController.dowloadFile}"
+                                                            styleClass="btn btn-primary"
+                                                            onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                                        <p:fileDownload
+                                                                value="#{dspCompanyController.downloadFile(dspCompanyController.mcompany)}"/>
+                                                    </p:commandButton>
+                                                </p:panel>
+
+                                            </p:fileUpload>
+                                            <p:message for="filePath"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </p:fieldset>
+
+                        </h:panelGroup>
+                    </p:panel>
+                    <!--END Add/EDIT-->
+                </div>
+
+            </h:panelGroup>
+        </div>
+    </ui:composition>
+
+</h:body>
+</html>

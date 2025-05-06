@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                         rendered="#{dspNotifConfigController.render == 0}"
+                                         actionListener="#{dspNotifConfigController.preAdd()}" update="pnl_center"
+                                         icon="fa fa-plus" styleClass="btn-primary">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <p:panel header="#{PP_NOTI_CONFIG.lstDspNotifConfig}" rendered="#{dspNotifConfigController.render == 0}"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable id="table_noti" widgetVar="table_noti" paginatorAlwaysVisible="true"
+                                 value="#{dspNotifConfigController.lstDspNotifConfig}" rows="10"
+                                 var="noti" rowKey="#{noti.transactionId}" rowIndexVar="rowIndex"
+                                 filteredValue="#{dspNotifConfigController.lstDspNotifConfigFilter}"
+                                 emptyMessage="#{PP_COMMONS.empty_message}" paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{dspNotifConfigController.lstDspNotifConfig.size()}">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.index}"
+                                  style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex + 1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.srvName}" sortBy="#{noti.srvName}"
+                                  filterBy="#{noti.srvName}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{noti.srvName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.packageCode}" sortBy="#{noti.packageCode}"
+                                  filterBy="#{noti.packageCode}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.packageCode}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.qtaStatus}" sortBy="#{noti.qtaStatus}"
+                                  filterBy="#{noti.qtaStatus}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.qtaStatus}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.qtaValue}" sortBy="#{noti.qtaValue}"
+                                  filterBy="#{noti.qtaValue}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.qtaValue}" styleClass="right"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.destApi}" sortBy="#{noti.destApi}"
+                                  filterBy="#{noti.destApi}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.destApi}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.proxyApi}" sortBy="#{noti.proxyApi}"
+                                  filterBy="#{noti.proxyApi}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{noti.proxyApi}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_NOTI_CONFIG.status}" sortBy="#{noti.status}"
+                                  filterBy="#{noti.status}" filterMatchMode="contains" style="width:200px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_noti').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_NOTI_CONFIG.enable}" rendered="#{noti.status eq '1'}"/>
+                            <h:outputText value="#{PP_NOTI_CONFIG.disable}" rendered="#{noti.status eq '0'}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_NOTI_CONFIG.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink process="@this" id="btn_edit" style="margin-right:15px;"
+                                           actionListener="#{dspNotifConfigController.preUpdate(noti)}"
+                                           update=":form_main:pnl_center" styleClass="fa fa-pencil">
+                                <p:resetInput target=":form_main:table_noti"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                            <p:commandLink id="btn_del" process="@this" styleClass="fa fa-trash"
+                                           style="margin-right:15px;" update=":form_main:pnl_center"
+                                           actionListener="#{dspNotifConfigController.delete(noti)}"
+                                           oncomplete="clearFilters('table_noti');">
+                                <p:confirm header="#{PP_NOTI_CONFIG.titleDelete}"
+                                           message="#{PP_NOTI_CONFIG.messageDelete}"/>
+                                <p:resetInput target=":form_main:table_noti"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this :form_main:pnl_detail"
+                                         id="btn_ok" value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         rendered="#{dspNotifConfigController.render == 1 and !dspNotifConfigController.isDISABLE}"
+                                         actionListener="#{dspNotifConfigController.handleOK()}"
+                                         update=":form_main:pnl_center :form_main:table_noti" styleClass="btn-success">
+                            <p:resetInput target="table_noti"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_cancel" value="#{PP_COMMONS.back}"
+                                         rendered="#{dspNotifConfigController.render == 1}" icon="fa fa-undo"
+                                         actionListener="#{dspNotifConfigController.handleCancel()}"
+                                         oncomplete="PF('table_noti').clearFilters();" update="pnl_center">
+                            <p:resetInput target="table_noti"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <p:panel header="#{PP_NOTI_CONFIG.titleDetail}" styleClass="box-info" id="pnl_detail"
+                         rendered="#{dspNotifConfigController.render == 1}">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="srvName" value="#{PP_NOTI_CONFIG.srvName}"/>
+                                <p:inputText maxlength="200" id="srvName" required="true"
+                                             value="#{dspNotifConfigController.dspNotifConfig.srvName}"
+                                             disabled="#{dspNotifConfigController.isDISABLE}"
+                                             onblur="value=value.toUpperCase().trim()"
+                                             style="text-transform: uppercase">
+                                </p:inputText>
+                                <p:message for="srvName"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="packageCode" value="#{PP_NOTI_CONFIG.packageCode}"/>
+                                <p:inputText maxlength="500" id="packageCode" required="true"
+                                             value="#{dspNotifConfigController.dspNotifConfig.packageCode}"
+                                             disabled="#{dspNotifConfigController.isDISABLE}">
+                                </p:inputText>
+                                <p:message for="packageCode"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="qtaStatus" value="#{PP_NOTI_CONFIG.qtaStatus}"/>
+                                <p:inputText maxlength="500" id="qtaStatus" required="true"
+                                             value="#{dspNotifConfigController.dspNotifConfig.qtaStatus}"
+                                             disabled="#{dspNotifConfigController.isDISABLE}">
+                                </p:inputText>
+                                <p:message for="qtaStatus"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="qtaValue" value="#{PP_NOTI_CONFIG.qtaValue}"/>
+                                <p:inputText maxlength="15" id="qtaValue"
+                                             value="#{dspNotifConfigController.dspNotifConfig.qtaValue}"
+                                             disabled="#{dspNotifConfigController.isDISABLE}">
+                                    <p:keyFilter regEx="/[0-9]/i"/>
+                                </p:inputText>
+                                <p:message for="qtaValue"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="destApi" value="#{PP_NOTI_CONFIG.destApi}"/>
+                                <p:inputText maxlength="2000" id="destApi" required="true"
+                                             value="#{dspNotifConfigController.dspNotifConfig.destApi}"
+                                             disabled="#{dspNotifConfigController.isDISABLE}">
+                                </p:inputText>
+                                <p:message for="destApi"/>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                            <div class="ui-material">
+                                <p:outputLabel for="status" value="#{PP_NOTI_CONFIG.status}"/>
+                                <p:selectOneMenu id="status" value="#{dspNotifConfigController.dspNotifConfig.status}"
+                                                 disabled="#{dspNotifConfigController.isDISABLE}" required="true">
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.choose}" itemValue=""/>
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.enable}" itemValue="1"/>
+                                    <f:selectItem itemLabel="#{PP_NOTI_CONFIG.disable}" itemValue="0"/>
+                                </p:selectOneMenu>
+                                <p:message for="status"/>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

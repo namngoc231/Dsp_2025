@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+
+        </script>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:sticky target="pnl_control"/>
+                <h:panelGroup id="pnl_control">
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <p:panel styleClass="box-primary">
+                        <h:panelGroup id="panel_filter_options" layout="grid" columns="6"
+                                      styleClass="ui-panelgrid-blank">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="isdn" value="#{PP_SUBSERVICE.isdn}"/>
+                                        <p:inputText id="isdn" maxlength="15"
+                                                     required="true"
+                                                     value="#{cancelServiceController.isdn}"
+                                                     validatorMessage="#{PP_SUBSERVICE.validatorIsdn}"
+                                                     autoClear="false"
+                                                     requiredMessage="#{PP_SUBSERVICE.isdn}#{PP_COMMONS.can_not_be_empty}">
+                                            <f:validateRegex pattern="^[0-9]+$"/>
+                                        </p:inputText>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="isdn"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="serviceType" value="#{PP_SUBSERVICE.serviceType}"/>
+                                        <p:selectOneMenu
+                                                id="serviceType" required="true"
+                                                requiredMessage="#{PP_SUBSERVICE.serviceType}#{PP_COMMONS.can_not_be_empty}"
+                                                value="#{cancelServiceController.serviceType}"
+                                                filter="true" filterMatchMode="contains">
+                                            <f:selectItems value="#{cancelServiceController.lstDspSubService}"
+                                                           var="item"
+                                                           itemValue="#{item.parValue}" itemLabel="#{item.parValue}"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="serviceType"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="reason" value="#{PP_SUBSERVICE.reason}"/>
+                                        <p:inputTextarea id="reason" maxlength="13"
+                                                         value="#{cancelServiceController.reason}"
+                                                         validatorMessage="#{PP_SUBSERVICE.isdn}#{PP_COMMONS.is_not_valid}"
+                                                         requiredMessage="#{PP_SUBSERVICE.reason}#{PP_COMMONS.can_not_be_empty}"/>
+                                        <p:message for="reason"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_search" value="#{PP_SUBSERVICE.btnCancel}"
+                                                 actionListener="#{cancelServiceController.handCheck}"
+                                                 process="@this :form_main:panel_filter_options"
+                                                 update=":form_main:panel_filter_options"
+                                                 styleClass="btn-primary" style="height: 80%">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+
+                        </h:panelGroup>
+                    </p:panel>
+                </div>
+            </h:panelGroup>
+        </div>
+
+    </ui:composition>
+</h:body>
+</html>

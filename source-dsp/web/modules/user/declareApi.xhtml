@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="pnl_center">
+                <h:panelGroup>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-10"></div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-2">
+                            <p:commandButton
+                                    rendered="#{declareApiController.getPermission('I') and not declareApiController.isDisplayBtnConfirm}"
+                                    process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                    actionListener="#{declareApiController.changeStateAdd()}" update="pnl_center"
+                                    icon="fa fa-plus" styleClass="btn-primary btn-sm" style="margin-bottom: 5px; float:left;">
+                                <p:resetInput target=":form_main:pnl_center"/>
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <!--data table-->
+                    <p:panel header="#{PP_DECLAREAPI.list_api}"
+                             rendered="#{not declareApiController.isDisplayBtnConfirm}"
+                             styleClass="box-info">
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_declare_api"
+                                     widgetVar="tableDeclareAPI" value="#{declareApiController.mlistDeclareApi}"
+                                     filteredValue="#{declareApiController.mlistDeclareApiFilterred}"
+                                     var="tableDeclareAPI"
+                                     emptyMessage="#{PP_COMMONS.empty_message}" rowKey="#{tableDeclareAPI.apiId}" rowIndexVar="rowIndex"
+                                     selection="#{declareApiController.mselectedDeclareApi}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{declareApiController.mlistDeclareApi.size()}"
+                                     rowSelectMode="checkbox" paginator="true" rows="10" style="width: 100%;">
+
+                            <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column headerText="#{PP_DECLAREAPI.index}" style="width:5%; text-align: center !important">
+                                <h:outputText value="#{rowIndex+1}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DECLAREAPI.api_id}" sortBy="#{tableDeclareAPI.apiId}"
+                                      filterBy="#{tableDeclareAPI.apiId}" filterMatchMode="contains">
+                                <h:outputText value="#{tableDeclareAPI.apiId}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DECLAREAPI.api_name}" sortBy="#{tableDeclareAPI.apiName}"
+                                      filterBy="#{tableDeclareAPI.apiName}" filterMatchMode="contains">
+                                <h:outputText value="#{tableDeclareAPI.apiName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DECLAREAPI.api_path}" sortBy="#{tableDeclareAPI.apiPath}"
+                                      filterBy="#{tableDeclareAPI.apiPath}" filterMatchMode="contains">
+                                <h:outputText value="#{tableDeclareAPI.apiPath}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DECLAREAPI.description}" sortBy="#{tableDeclareAPI.description}"
+                                      filterBy="#{tableDeclareAPI.description}" filterMatchMode="contains">
+                                <h:outputText value="#{tableDeclareAPI.description}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DECLAREAPI.status}" sortBy="#{tableDeclareAPI.status}"
+                                      filterBy="#{tableDeclareAPI.status}" filterMatchMode="contains">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tableDeclareAPI').filter()"
+                                                     styleClass="custom-filter">
+                                        <f:selectItem itemLabel="#{PP_DECLAREAPI.all}" itemValue=""
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_DECLAREAPI.enable}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_DECLAREAPI.disable}" itemValue="0"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{PP_DECLAREAPI.enable}"
+                                              rendered="#{tableDeclareAPI.status eq '1'}"/>
+                                <h:outputText value="#{PP_DECLAREAPI.disable}"
+                                              rendered="#{tableDeclareAPI.status eq '0'}"/>
+                            </p:column>
+
+                            <!--action-->
+                            <p:column headerText="#{PP_DECLAREAPI.action}" width="120"
+                                      style="text-align: center !important;">
+                                <p:commandLink rendered="#{declareApiController.getPermission('U')}"
+                                               process="@this" id="btn_edit_declare"
+                                               actionListener="#{declareApiController.changeStateEdit(tableDeclareAPI)}"
+                                               update=":form_main:pnl_center" styleClass="fa fa-pencil"/>&nbsp;&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit_declare" value="#{PP_COMMONS.edit}"/>
+
+                                <p:commandLink styleClass="fa fa-trash" process="@this" id="btn_del_declare"
+                                               rendered="#{declareApiController.getPermission('D')}"
+                                               onclick="PF('confirmDialog').show();"
+                                               actionListener="#{declareApiController.changeStateDel(tableDeclareAPI)}"/>
+                                <p:tooltip for="btn_del_declare" value="#{PP_COMMONS.del}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <div class="ui-g">
+                        <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                        <div class="ui-g-6 ui-md-3 ui-lg-2">
+                            <p:commandButton process="@this :form_main:panel_add"
+                                             id="btn_ok" value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                             rendered="#{declareApiController.isDisplayBtnConfirm and (declareApiController.isADD or declareApiController.isEDIT)}"
+                                             actionListener="#{declareApiController.handleOK()}"
+                                             update=":form_main:pnl_center :form_main:panel_add"
+                                             style="margin-bottom: 5px;" styleClass="btn-success"/>
+                        </div>
+                        <div class="ui-g-6 ui-md-3 ui-lg-2">
+                            <p:commandButton process="@this" id="btn_cancel" value="#{PP_COMMONS.back}"
+                                             rendered="#{declareApiController.isDisplayBtnConfirm}"
+                                             actionListener="#{declareApiController.handleCancel()}"
+                                             update="pnl_center" icon="fa fa-undo" style="margin-bottom: 5px;"/>
+                        </div>
+                        <div class="clear"/>
+                    </div>
+
+                    <!--form add-->
+                    <p:panel header="#{PP_DECLAREAPI.add_api}" styleClass="box-primary"
+                             rendered="#{declareApiController.isDisplayBtnConfirm}">
+                        <div class="ui-fluid">
+                            <h:panelGroup id="panel_add">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="api" value="#{PP_DECLAREAPI.api_name}"/>
+                                            <p:inputText maxlength="100" id="api"
+                                                         value="#{declareApiController.mtmpDeclareApi.apiName}"
+                                                         disabled="#{declareApiController.isDISABLE}" required="true">
+                                            </p:inputText>
+                                            <p:message for="api"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="path" value="#{PP_DECLAREAPI.api_path}"/>
+                                            <p:inputText maxlength="200" id="path"
+                                                         value="#{declareApiController.mtmpDeclareApi.apiPath}"
+                                                         disabled="#{declareApiController.isDISABLE}" required="true">
+                                            </p:inputText>
+                                            <p:message for="path"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="status" value="#{PP_DECLAREAPI.status}"/>
+                                            <p:selectOneMenu id="status" required="true"
+                                                             value="#{declareApiController.mtmpDeclareApi.status}"
+                                                             disabled="#{declareApiController.isDISABLE}">
+                                                <f:selectItem itemLabel="#{PP_DECLAREAPI.enable}" itemValue="1"/>
+                                                <f:selectItem itemLabel="#{PP_DECLAREAPI.disable}" itemValue="0"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="status"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="description" value="#{PP_DECLAREAPI.description}"/>
+                                            <p:inputTextarea rows="3" maxlength="100" id="description"
+                                                             value="#{declareApiController.mtmpDeclareApi.description}"
+                                                             disabled="#{declareApiController.isDISABLE}"
+                                                             required="false">
+                                            </p:inputTextarea>
+                                            <p:message for="description"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </p:panel>
+                </div>
+            </h:panelGroup>
+        </div>
+        <p:confirmDialog appendTo=":form_main" styleClass="shadowfix" id="confirmDialog"
+                         message="#{PP_DECLAREAPI.message_delete}" header="#{PP_DECLAREAPI.title_delete}"
+                         severity="alert" widgetVar="confirmDialog">
+            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                <p:commandButton styleClass="btn-success" process="@this" id="confirm" value="#{PP_COMMONS.yes}"
+                                 update="messages, :form_main:pnl_center"
+                                 actionListener="#{declareApiController.handleDelete}"
+                                 oncomplete="PF('confirmDialog').hide()"/>
+            </div>
+            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                <p:commandButton type="button" styleClass="btn-warning" id="decline" value="#{PP_COMMONS.no}"
+                                 onclick="PF('confirmDialog').hide(); PF('tableDeclareAPI').clearFilters();"/>
+            </div>
+        </p:confirmDialog>
+    </ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+
+        </script>
+        <style type="text/css">
+            #form_main\:table_order th {
+                background-color: white !important;
+            }
+        </style>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:sticky target="pnl_control"/>
+                <h:panelGroup id="pnl_control">
+                    <h:panelGroup
+                            rendered="#{dipSubServiceController.isDisplayBtnConfirm}">
+                        <div class="ui-g pnl-control">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel"
+                                                 actionListener="#{dipSubServiceController.handleCancel()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" icon="fa fa-undo"
+                                                 update="panel_center">
+                                    <p:resetInput target="panel_add"/>
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok" rendered="#{not dipSubServiceController.isVIEW}"
+                                                 actionListener="#{dipSubServiceController.handleOK()}"
+                                                 process="@this :form_main:panel_add" styleClass=" btn-success"
+                                                 value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                                 update="panel_center">
+                                    <p:resetInput target="panel_add, table_order"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <p:panel styleClass="box-primary">
+                        <h:panelGroup id="panel_filter_options" layout="grid" columns="6"
+                                      styleClass="ui-panelgrid-blank">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="isdn" value="#{PP_DIP_SUB_SERVICE.isdn}"/>
+                                        <p:inputText id="isdn" maxlength="15"
+                                                     required="true"
+                                                     value="#{dipSubServiceController.isdn}"
+                                                     validatorMessage="#{PP_DIP_SUB_SERVICE.validatorIsdn}"
+                                                     autoClear="false"
+                                                     requiredMessage="#{PP_DIP_SUB_SERVICE.isdn}#{PP_COMMONS.can_not_be_empty}">
+                                            <f:validateRegex pattern="^[0-9]+$"/>
+                                        </p:inputText>
+                                        <div class="ui-g-12 ui-md-12">
+                                            <p:message for="isdn"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_search" value="#{PP_DIP_SUB_SERVICE.search}"
+                                                 actionListener="#{dipSubServiceController.handSearch}"
+                                                 process="@this :form_main:panel_filter_options"
+                                                 update="table_order, pnl_control_btn :form_main:panel_filter_options"
+                                                 icon="fa fa-search" styleClass="btn-primary"
+                                                 style="height: 80%"
+                                                 oncomplete="clearFilters('tableDipSubService');">
+                                    <p:resetInput target="table_order"/>
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+
+                        </h:panelGroup>
+                    </p:panel>
+
+                    <p:panel header="#{PP_DIP_SUB_SERVICE.header}" styleClass="box-info"
+                             style="overflow-x: auto; width: 100%;">
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_order"
+                                     widgetVar="tableDipSubService"
+                                     value="#{dipSubServiceController.mListDipSubService}"
+                                     filteredValue="#{dipSubServiceController.mListDipSubServiceFiltered}" var="dipSub"
+                                     emptyMessage="#{PP_COMMONS.empty_message}" rowKey="#{order.orderId}"
+                                     rowIndexVar="rowIndex"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rows="10" styleClass="no-border">
+
+                            <p:ajax global="false" event="rowSelect"/>
+                            <p:ajax global="false" event="rowUnselect"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.index}"
+                                      style="text-align: center !important; width:50px;">
+                                <h:outputText value="#{rowIndex+1}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.isdn}" sortBy="#{dipSub.isdn}"
+                                      filterBy="#{dipSub.isdn}" filterMatchMode="contains"
+                                      style="width:200px; word-break: break-word;">
+                                <h:outputText value="#{dipSub.isdn}" title="#{dipSub.isdn}" styleClass="right"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.packageCode}"
+                                      sortBy="#{dipSub.packageName}"
+                                      filterBy="#{dipSub.packageName}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{dipSub.packageName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.service}"
+                                      sortBy="#{dipSub.serviceName}"
+                                      filterBy="#{dipSub.serviceName}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{dipSub.serviceName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.startTime}" sortBy="#{dipSub.startTime}"
+                                      filterBy="#{dipSubServiceController.getDateStr(dipSub.startTime)}"
+                                      filterMatchMode="contains" style="width:250px;">
+                                <h:outputText value="#{dipSub.startTime}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.endTime}" sortBy="#{dipSub.endTime}"
+                                      filterBy="#{dipSubServiceController.getDateStr(dipSub.endTime)}"
+                                      filterMatchMode="contains" style="width:250px;">
+                                <h:outputText value="#{dipSub.endTime}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.initialAmount}"
+                                      id="initialAmount"
+                                      sortBy="#{dipSub.initialAmount}"
+                                      filterBy="#{dipSub.initialAmount}"
+                                      style="#{empty dipSub.initialAmount and not dipSubServiceController.hiddenBtn ? 'background-color: red; width:300px' : 'width:300px'}"
+                                      filterMatchMode="contains">
+                                <h:outputText
+                                        value="#{empty dipSub.initialAmount and not dipSubServiceController.hiddenBtn ? PP_DIP_SUB_SERVICE.hintErrorAmount: dipSub.initialAmount}"
+                                        title="#{empty dipSub.initialAmount and not dipSubServiceController.hiddenBtn ? PP_DIP_SUB_SERVICE.hintErrorAmount: dipSub.initialAmount}"
+                                        style="#{empty dipSub.initialAmount and not dipSubServiceController.hiddenBtn ? 'color:white': ''}"
+                                        styleClass="right">
+                                    <f:convertNumber type="number" locale="VN" currencySymbol=""/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.activeDay}"
+                                      sortBy="#{dipSub.activeDay}"
+                                      filterBy="#{dipSub.activeDay}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{dipSub.activeDay}" title="#{dipSub.activeDay}"
+                                              styleClass="right"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.channel}"
+                                      sortBy="#{dipSub.channel}"
+                                      filterBy="#{dipSub.channel}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{dipSub.channel}" title="#{dipSub.channel}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_DIP_SUB_SERVICE.registerAccount}" sortBy="#{dipSub.userName}"
+                                      filterBy="#{dipSub.userName}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{dipSub.userName}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGroup id="pnl_control_btn">
+                            <div class="ui-g-12 ui-md-6 ui-lg-10"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_search_amount" value="#{PP_DIP_SUB_SERVICE.checkAmount}"
+                                                 actionListener="#{dipSubServiceController.getApiServiceInfo()}"
+                                                 process="@this :form_main:panel_filter_options"
+                                                 rendered="#{dipSubServiceController.hiddenBtn and !dipSubServiceController.mListDipSubService.isEmpty()}"
+                                                 update="panel_center"
+                                                 style="height: 80%"
+                                                 oncomplete="clearFilters('tableDipSubService');"
+                                                 styleClass="btn-success">
+                                    <p:resetInput target="table_order"/>
+                                </p:commandButton>
+                            </div>
+                        </h:panelGroup>
+                    </p:panel>
+
+                </div>
+            </h:panelGroup>
+        </div>
+
+    </ui:composition>
+</h:body>
+</html>

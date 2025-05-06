@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <h:panelGroup>
+                <p:panel styleClass="box-primary">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                        <p:outputLabel for="listServiceCode" value="#{PP_SERVICEDECLARE.chooseService}"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <div class="material">
+                            <p:selectOneMenu
+                                    id="listServiceCode" required="true"
+                                    requiredMessage="#{PP_SERVICEDECLARE.chooseService}#{PP_COMMONS.can_not_be_empty}"
+                                    value="#{createRequestServiceController.path}"
+                                    filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="#{PP_ADJUSTCONTENT.choose}" itemValue=""/>
+                                <f:selectItems value="#{createRequestServiceController.listService}" var="item"
+                                               itemValue="#{item.path}" itemLabel="#{item.serviceCode}_#{item.description}"/>
+                            </p:selectOneMenu>
+                            <p:message for="listServiceCode"/>
+                        </div>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-2">
+                            <p:commandButton oncomplete="if (!args.validationFailed) {document.getElementById('form_main:lnkReal').click()};"
+                                             process="@this listServiceCode"
+                                             update="panel_center"
+                                             value="#{PP_SERVICEDECLARE.nextPage}" styleClass="btn-primary"
+                                             icon="glyphicon glyphicon-arrow-right">
+                            </p:commandButton>
+                            <h:commandLink id="lnkReal" style="display: none;" immediate="true"
+                                           action="#{createRequestServiceController.redirectPage}" target="_blank"/>
+
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                    </div>
+                </p:panel>
+                </h:panelGroup>
+            </h:panelGroup>
+        </div>
+        <!-- Sets the second flash param -->
+
+    </ui:composition>
+</h:body>
+
+</html>

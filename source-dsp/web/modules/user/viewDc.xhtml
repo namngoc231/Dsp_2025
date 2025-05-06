@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<h:head>
+</h:head>
+<body>
+<ui:composition>
+    <script type="text/javascript">
+        function scrollToTop() {
+            window.scrollTo(0, 0);
+        }
+    </script>
+    <div class="ui-fluid">
+        <h:panelGroup id="panel_center">
+            <div class="grid-padding">
+                <p:panel header="#{PP_CREATEORDER.filter_option}" styleClass="box-primary">
+                    <h:panelGroup id="panel_filter_options" layout="grid" columns="6"
+                                  styleClass="ui-panelgrid-blank">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-12"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <div class="ui-material">
+                                    <p:outputLabel for="serial"
+                                                   value="#{PP_DEPOSITDATABYDATACODE.serial}"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                <div class="ui-material">
+                                    <p:inputText id="serial" maxlength="16"
+                                                 value="#{viewDcController.serial}"
+                                                 decimalSeparator="" decimalPlaces="" thousandSeparator=""
+                                                 validatorMessage="#{PP_DEPOSITDATABYDATACODE.serial} #{PP_COMMONS.is_not_valid}"
+                                                 required="true" autoClear="false"
+                                                 requiredMessage="#{PP_DEPOSITDATABYDATACODE.serial}#{PP_COMMONS.can_not_be_empty}">
+                                        <!--                                        <p:keyFilter regEx="/[0-9]/i" preventPaste="true"/>-->
+                                        <!--                                        <p:keyFilter mask="pint" preventPaste="true"/>-->
+                                        <f:validateRegex pattern="^[0-9]+$"/>
+                                    </p:inputText>
+                                    <p:tooltip for="serial"
+                                               value="#{PP_DEPOSITDATABYDATACODE.serial_placeholder}"/>
+                                    <p:message for="serial"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_search" value="#{PP_DATACODE.find}"
+                                                 actionListener="#{viewDcController.viewDc}"
+                                                 process="@this :form_main:panel_filter_options"
+                                                 update="pnl_result panel_center"
+                                                 icon="fa fa-search" styleClass="btn-primary">
+                                    <p:resetInput target="panel_center"/>
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+
+                <p:panel header="#{PP_DATACODE.search_results}" styleClass="box-primary"
+                         rendered="#{viewDcController.render eq 1}" id="pnl_result">
+                    <h:panelGroup>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="transaction_id" value="#{PP_DATACODE.order}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="transaction_id"
+                                                     value="#{viewDcController.dspTransaction.transactionId} - #{viewDcController.dspTransaction.description}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel value="#{PP_DATACODE.status}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.viewdc_status0}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.status eq '0'}"/>
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.viewdc_status2}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.status eq '2'}"/>
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.viewdc_status4}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.status eq '4'}"/>
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.viewdc_status8}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.status eq '8'}"/>
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.viewdc_status9}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.status eq '9'}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="data_amount" value="#{PP_DATACODE.data_amount}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="data_amount"
+                                                     value="#{viewDcController.mtmpDcApiResponse.dataAmount} MB"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="active_days" value="#{PP_DATACODE.active_days}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="active_days"
+                                                     value="#{viewDcController.mtmpDcApiResponse.activeDays}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="exp_date" value="#{PP_DATACODE.exp_date}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="exp_date"
+                                                     value="#{viewDcController.dateToString(viewDcController.expDate)}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="cre_date" value="#{PP_DATACODE.cre_date}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="cre_date"
+                                                     value="#{viewDcController.dateToString(viewDcController.creDate)}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="act_date" value="#{PP_DATACODE.act_date}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="act_date"
+                                                     value="#{viewDcController.dateToString(viewDcController.actDate)}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="susp_date" value="#{PP_DATACODE.susp_date}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="susp_date"
+                                                     value="#{viewDcController.dateToString(viewDcController.suspDate)}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="use_date" value="#{PP_DATACODE.use_date}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="use_date"
+                                                     value="#{viewDcController.dateToString(viewDcController.useDate)}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel value="#{PP_DATACODE.isdn}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="ref"
+                                                     value="(+84) #{viewDcController.isdn}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel value="#{PP_DATACODE.addon}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.addon0}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.addon eq '0'}"/>
+                                        <p:inputText disabled="true" value="#{PP_DATACODE.addon1}"
+                                                     rendered="#{viewDcController.mtmpDcApiResponse.addon eq '1'}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="reseller" value="#{PP_DATACODE.reseller}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="reseller"
+                                                     value="#{viewDcController.dspCompany.comName}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                        <p:outputLabel for="reseller" value="#{PP_DATACODE.reseller_manage}"
+                                                       style="float: left"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-9">
+                                        <p:inputText maxlength="100" id="reseller1"
+                                                     value="#{viewDcController.dspCompanyParent.comName}"
+                                                     disabled="true">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </div>
+        </h:panelGroup>
+    </div>
+</ui:composition>
+</body>
+</html>

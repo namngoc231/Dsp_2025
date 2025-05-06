@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        </script>
+        <div class="ui-fluid">
+            <div class="grid-padding">
+                <p:panel styleClass="box-primary">
+                    <h:panelGroup id="panel_center_file" layout="grid" columns="6"
+                                  styleClass="ui-panelgrid-blank">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                <div class="material">
+                                    <p:outputLabel for="event" value="#{PP_PACKAGE_IMPORT.company}"/>
+                                    <p:autoComplete id="event" required="true" var="theme"
+                                                    value="#{packageImportFileController.selectedCompany}"
+                                                    completeMethod="#{packageImportFileController.queryCompany}"
+                                                    minQueryLength="3" maxResults="10" queryDelay="1000"
+                                                    itemLabel="#{theme.comName}" itemValue="#{theme}"
+                                                    converter="PackageImportFileConverter" forceSelection="true"
+                                                    requiredMessage="#{PP_PACKAGE_IMPORT.err_com_requried}">
+                                        <p:ajax process="@this" event="itemSelect" resetValues="true"
+                                                listener="#{packageImportFileController.search}"
+                                                update=":form_main:panel_center_file fileUpload"/>
+                                    </p:autoComplete>
+                                    <p:message for="event"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                <div class="material">
+                                    <p:outputLabel
+                                            value="#{PP_PACKAGE_IMPORT.format}"/>
+                                    <p:fileUpload id="fileUpload" mode="advanced"
+                                                  listener="#{packageImportFileController.handleFileUpload}"
+                                                  disabled="#{packageImportFileController.selectedCompany.comId == null}"
+                                                  allowTypes="/(\.|\/)(txt)$/"
+                                                  label="#{PP_PACKAGE_IMPORT.choose}"
+                                                  invalidFileMessage="#{PP_DEPOSITDATABYDATACODE.invalid_file}"
+                                                  auto="true" sizeLimit="5242880"
+                                                  dragDropSupport="true" multiple="false"
+                                                  update=":form_main:panel_center_file">
+                                        <h:outputText
+                                                value="#{packageImportFileController.fileName}"/>
+                                    </p:fileUpload>
+                                    <p:message for="fileUpload" display="text" style="color: red;"/>
+
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <div class="material">
+                                    <p:commandButton id="btn_download_service_price_tab"
+                                                     styleClass="btn-success" process="@this"
+                                                     value="#{PP_PACKAGE_IMPORT.result}"
+                                                     disabled="#{empty packageImportFileController.mlistResultImport or packageImportFileController.selectedCompany.comId == null}"
+                                                     immediate="true" ajax="false" icon="fa fa-download"
+                                                     update=":form_main:panel_center_file"
+                                                     onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                        <p:fileDownload
+                                                value="#{packageImportFileController.handleDownload()}"/>
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-1"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_download"
+                                                 styleClass="btn-primary"
+                                                 process="@this @form"
+                                                 value="#{PP_PACKAGE_IMPORT.execute}"
+                                                 actionListener="#{packageImportFileController.insertWhiteList}"
+                                                 update=":form_main:panel_center_file fileUpload"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                        </div>
+                        <p:focus context="panel_center_file"/>
+                    </h:panelGroup>
+                </p:panel>
+            </div>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

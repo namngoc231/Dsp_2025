@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <style type="text/css">
+            .highlight {
+                background-color: #F6F99F;
+            }
+        </style>
+
+        <div class="ui-fluid">
+            <p:outputPanel id="pnl_center">
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-10"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton
+                                rendered="#{eduCodeController.getPermission('I') and not eduCodeController.isDisplayBtnConfirm and eduCodeController.render != 6}"
+                                process="@this" id="btn_add" value="#{PP_COMMONS.add}"
+                                actionListener="#{eduCodeController.changeStateAdd()}" update="pnl_center"
+                                icon="fa fa-plus" styleClass="btn-primary"
+                                style="margin-bottom: 5px; float:left;">
+                            <p:resetInput target=":form_main:pnl_center"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--data table-->
+                <p:panel header="#{PP_DATACODE.list_educode}"
+                         rendered="#{not eduCodeController.isDisplayBtnConfirm and eduCodeController.render != 6}"
+                         styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                    <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_data_code"
+                                 widgetVar="table_data_code" value="#{eduCodeController.mlistDSPTransaction}"
+                                 filteredValue="#{eduCodeController.mlistDSPTransactionFilterred}" var="datacode"
+                                 rowKey="#{datacode.transactionId}" rowIndexVar="rowIndex"
+                                 emptyMessage="#{PP_COMMONS.empty_message}"
+                                 rowStyleClass="#{(datacode.status eq '0' or datacode.status eq '2' or datacode.status eq '3') ? 'highlight' : null}"
+                                 selection="#{eduCodeController.mselectedDSPTransaction}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{eduCodeController.mlistDSPTransaction.size()}"
+                                 rowSelectMode="checkbox" paginator="true" rows="10">
+
+                        <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                        <p:ajax global="false" event="sort"/>
+                        <p:ajax global="false" event="page"/>
+
+                        <p:column headerText="#{PP_DATACODE.index}" style="width:100px; text-align: center !important;">
+                            <h:outputText value="#{rowIndex+1}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.transaction_id}" sortBy="#{datacode.transactionId}"
+                                  filterBy="#{datacode.transactionId}" filterMatchMode="contains" style="width:130px;">
+                            <h:outputText value="#{datacode.transactionId}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.com_name}" sortBy="#{datacode.comName}"
+                                  filterBy="#{datacode.comName}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{datacode.comName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.user_name}" sortBy="#{datacode.userName}"
+                                  filterBy="#{datacode.userName}" filterMatchMode="contains" style="width:250px;">
+                            <h:outputText value="#{datacode.userName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.request_time}"
+                                  sortBy="#{datacode.requestTime}"
+                                  filterBy="#{eduCodeController.dateToString(datacode.requestTime)}"
+                                  filterMatchMode="contains" style="width:200px;">
+                            <h:outputText value="#{eduCodeController.dateToString(datacode.requestTime)}"
+                                          styleClass="right">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.plan_time}"
+                                  sortBy="#{datacode.planTime}"
+                                  filterBy="#{eduCodeController.dateToString(datacode.planTime)}"
+                                  filterMatchMode="contains" style="width:200px;">
+                            <h:outputText value="#{eduCodeController.dateToString(datacode.planTime)}"
+                                          styleClass="right">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.total_cost} (VND)" sortBy="#{datacode.amount}"
+                                  filterBy="#{datacode.amount}" filterMatchMode="contains" style="width:200px;">
+                            <h:outputText value="#{datacode.amount}" styleClass="right">
+                                <f:convertNumber type="number" currencySymbol=""/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.description}" sortBy="#{datacode.description}"
+                                  filterBy="#{datacode.description}" filterMatchMode="contains" style="width:200px;">
+                            <h:outputText
+                                    value="#{datacode.description.length() > 15 ? fn:substring(datacode.description, 0, 15).concat('...') : datacode.description}"/>
+                        </p:column>
+
+                        <p:column headerText="#{PP_DATACODE.status}" sortBy="#{datacode.status}"
+                                  filterBy="#{datacode.status}" filterMatchMode="contains" style="width:200px;">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('table_data_code').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="#{PP_DATACODE.all}" itemValue=""
+                                                  noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="#{PP_DATACODE.status0}" itemValue="0"/>
+                                    <f:selectItem itemLabel="#{PP_DATACODE.status2}" itemValue="2"/>
+                                    <f:selectItem itemLabel="#{PP_DATACODE.status3}" itemValue="3"/>
+                                    <f:selectItem itemLabel="#{PP_DATACODE.status4}" itemValue="4"/>
+                                    <f:selectItem itemLabel="#{PP_DATACODE.status6}" itemValue="6"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{PP_DATACODE.status0}" rendered="#{datacode.status eq '0'}"/>
+                            <h:outputText value="#{PP_DATACODE.status2}" rendered="#{datacode.status eq '2'}"/>
+                            <h:outputText value="#{PP_DATACODE.status3}" rendered="#{datacode.status eq '3'}"/>
+                            <h:outputText value="#{PP_DATACODE.status4}" rendered="#{datacode.status eq '4'}"/>
+                            <h:outputText value="#{PP_DATACODE.status6}" rendered="#{datacode.status eq '6'}"/>
+                        </p:column>
+
+                        <!--action-->
+                        <p:column headerText="#{PP_DATACODE.action}"
+                                  style="text-align: center !important; width:200px">
+                            <p:commandLink styleClass="fa fa-eye" process="@this" id="btn_view_transaction"
+                                           rendered="#{eduCodeController.getPermission('S')}"
+                                           update=":form_main:pnl_center" style="margin-right:15px;"
+                                           actionListener="#{eduCodeController.changeStateView(datacode)}">
+                                <p:resetInput target=":form_main:table_data_code"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_view_transaction" value="#{PP_COMMONS.view}"/>
+
+                            <p:commandLink
+                                    rendered="#{(datacode.status eq '0') and (datacode.userId eq eduCodeController.userId)}"
+                                    process="@this" id="btn_edit_transaction" style="margin-right:15px;"
+                                    actionListener="#{eduCodeController.changeStateEdit(datacode)}"
+                                    update=":form_main:pnl_center" styleClass="fa fa-pencil">
+                                <p:resetInput target=":form_main:table_data_code"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_edit_transaction" value="#{PP_COMMONS.edit}"/>
+
+                            <p:commandLink styleClass="fa fa-trash" process="@this" id="btn_del_transaction"
+                                           rendered="#{(datacode.status eq '0' or datacode.status eq '5') and (datacode.userId eq eduCodeController.userId)}"
+                                           style="margin-right:15px;"
+                                           actionListener="#{eduCodeController.handleDelete(datacode)}"
+                                           oncomplete="clearFilters('table_data_code');">
+                                <p:confirm header="#{PP_DATACODE.title_delete}"
+                                           message="#{PP_DATACODE.message_delete}"/>
+                                <p:resetInput target=":form_main:table_data_code"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_del_transaction" value="#{PP_COMMONS.del}"/>
+
+                            <p:commandLink id="btn_transfer_approval"
+                                           rendered="#{datacode.status eq '0' and (datacode.userId eq eduCodeController.userId)}"
+                                           actionListener="#{eduCodeController.handTransferApproval(datacode)}"
+                                           process="@this" styleClass="fa fa-arrow-circle-right"
+                                           style="margin-right:15px;" update=":form_main:pnl_center"
+                                           oncomplete="clearFilters('table_data_code');">
+                                <p:confirm header="#{PP_DATACODE.confirm_dialog_header}"
+                                           message="#{PP_DATACODE.confirm}"/>
+                                <p:resetInput target=":form_main:table_data_code"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_transfer_approval" value="#{PP_ADDDATAISDN.btn_confirm}"/>
+
+                            <p:commandLink id="btn_confirm"
+                                           actionListener="#{eduCodeController.onConfirm(datacode)}"
+                                           rendered="#{datacode.status eq '3' and
+                                           (eduCodeController.userCompany.type eq 0 or eduCodeController.userCompany.type eq 1 or datacode.userId eq eduCodeController.userId)}"
+                                           process="@this" styleClass="fa fa-check"
+                                           oncomplete="PF('table_data_code').clearFilters();"
+                                           update=":form_main:pnl_center" style="margin-right:15px;">
+                                <p:confirm header="#{PP_DATACODE.enable_dialog_header}"
+                                           message="#{PP_DATACODE.enable_dialog}"/>
+                                <p:resetInput target=":form_main:table_data_code"/>
+                            </p:commandLink>
+                            <p:tooltip for="btn_confirm" value="#{PP_DATACODE.btn_enable}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <div class="ui-g">
+                    <div class="ui-g-6 ui-md-3 ui-lg-8"></div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this :form_main:pnl_data_code_add :form_main:table_data_code_add"
+                                         id="btn_create"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         rendered="#{eduCodeController.isDisplayBtnConfirm and (eduCodeController.isADD or eduCodeController.isEDIT)}"
+                                         actionListener="#{eduCodeController.handleOK()}"
+                                         disabled="#{empty eduCodeController.mlistDspDcDetail}"
+                                         update=":form_main:pnl_center :form_main:pnl_data_code_add :form_main:table_data_code_add"
+                                         style="margin-bottom: 5px;" styleClass="btn-success">
+                            <p:resetInput target="table_data_code"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-6 ui-md-3 ui-lg-2">
+                        <p:commandButton process="@this" id="btn_cancel"
+                                         value="#{PP_COMMONS.back}"
+                                         rendered="#{eduCodeController.isDisplayBtnConfirm or eduCodeController.render eq 6}"
+                                         actionListener="#{eduCodeController.handleCancel()}"
+                                         oncomplete="PF('table_data_code').clearFilters();"
+                                         update="pnl_center" icon="fa fa-undo"
+                                         style="margin-bottom: 5px;">
+                            <p:resetInput target="table_data_code"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <!--form add-->
+                <p:panel header="#{PP_DATACODE.creat_export_request_eduCode}" styleClass="box-primary"
+                         rendered="#{eduCodeController.isDisplayBtnConfirm}">
+                    <h:panelGroup id="pnl_data_code_add">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                <div class="ui-material">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:outputLabel for="description" value="#{PP_COMMONS.description}"
+                                                       style="float: right"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-10">
+                                        <p:inputTextarea rows="3" maxlength="100" id="description"
+                                                         value="#{eduCodeController.mtmpDSPTransaction.description}"
+                                                         disabled="#{eduCodeController.isDISABLE}">
+                                        </p:inputTextarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <h:panelGroup id="pnl_detail">
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <p:outputLabel for="time" value="#{PP_DATACODE.time}" style="float: right"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                            <p:inputNumber id="time" maxlength="15" maxValue="999999999999999"
+                                                           minValue="0"
+                                                           decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                           value="#{eduCodeController.time}" disabled="true"
+                                                           required="true" symbol="#{PP_DATACODE.timedata}"
+                                                           requiredMessage="#{PP_DATACODE.time}#{PP_COMMONS.can_not_be_empty}"/>
+                                        </div>
+                                        <p:message for="time"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <p:outputLabel for="total_cost" value="#{PP_DATACODE.total_cost}"
+                                                           style="float: right"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                            <p:inputNumber id="total_cost"
+                                                           maxlength="15" maxValue="999999999999999" minValue="0"
+                                                           decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                           value="#{eduCodeController.mtmpDSPTransaction.amount}"
+                                                           disabled="true" required="true"
+                                                           symbol="#{PP_DATACODE.currencySymbol}"
+                                                           requiredMessage="#{PP_DATACODE.amount}#{PP_COMMONS.can_not_be_empty}"/>
+                                        </div>
+                                        <p:message for="total_cost"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                    <div class="ui-material">
+                                        <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                            <p:outputLabel for="table_data_code_add" value="#{PP_DATACODE.detail}"
+                                                           style="float: right"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-10">
+                                            <p:dataTable id="table_data_code_add" var="datacodeadd"
+                                                         paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                         styleClass="showcase-text-align-center"
+                                                         widgetVar="table_add_data_code"
+                                                         value="#{eduCodeController.mlistDspDcDetail}"
+                                                         filteredValue="#{eduCodeController.mlistDspDcDetailFilterred}"
+                                                         emptyMessage="#{PP_COMMONS.empty_message}"
+                                                         rowSelectMode="checkbox" paginator="true" rows="5"
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,#{eduCodeController.mlistDspDcDetail.size()}"
+                                                         style="width: 100%;">
+
+                                                <p:ajax global="true" event="filter" ignoreAutoUpdate="true"/>
+                                                <p:ajax global="false" event="sort"/>
+                                                <p:ajax global="false" event="page"/>
+
+                                                <p:column headerText="#{PP_DATACODE.card_type}"
+                                                          sortBy="#{datacodeadd.cardName}">
+                                                    <h:outputText value="#{datacodeadd.cardName}"/>
+                                                </p:column>
+
+                                                <p:column headerText="#{PP_DATACODE.amount}"
+                                                          sortBy="#{datacodeadd.amount}">
+                                                    <h:outputText value="#{datacodeadd.amount}" style="float: right">
+                                                        <f:convertNumber type="number"/>
+                                                    </h:outputText>
+                                                </p:column>
+
+                                                <p:column headerText="#{PP_DATACODE.action}" width="120"
+                                                          style="font-weight: bold; text-align: center !important;">
+                                                    <p:commandLink
+                                                            rendered="#{eduCodeController.isDisplayBtnConfirm and (eduCodeController.isADD or eduCodeController.isEDIT)}"
+                                                            process="@this" id="btn_edit_dcrequest"
+                                                            styleClass="fa fa-pencil"
+                                                            actionListener="#{eduCodeController.changeStateEditDcRequest(datacodeadd)}"
+                                                            update=":form_main:dialog_add_data_code"
+                                                            oncomplete="PF('dialog_add_data_code').show();">
+                                                        <p:resetInput target=":form_main:dialog_add_data_code"/>
+                                                    </p:commandLink>&nbsp;&nbsp;&nbsp;
+                                                    <p:tooltip for="btn_edit_dcrequest" value="#{PP_COMMONS.edit}"/>
+
+                                                    <p:commandLink styleClass="fa fa-trash" id="btn_delete_dcrequest"
+                                                                   process="@this"
+                                                                   update=":form_main:pnl_detail :form_main:btn_create"
+                                                                   rendered="#{eduCodeController.isDisplayBtnConfirm and (eduCodeController.isADD or eduCodeController.isEDIT)}"
+                                                                   actionListener="#{eduCodeController.handleDeleteDcRequest(datacodeadd)}"
+                                                                   oncomplete="clearFilters('table_add_data_code');">
+                                                        <p:confirm header="#{PP_DATACODE.title_delete}"
+                                                                   message="#{PP_DATACODE.message_delete}"/>
+                                                        <p:tooltip for="btn_delete_dcrequest"
+                                                                   value="#{PP_COMMONS.del}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+                                        <center>
+                                            <p:commandButton process="@this" id="btn_add_datacode"
+                                                             value="#{PP_DATACODE.add_cary_type}" resetValues="true"
+                                                             rendered="#{eduCodeController.isADD or eduCodeController.isEDIT}"
+                                                             actionListener="#{eduCodeController.changeStateAddDcRequest()}"
+                                                             oncomplete="PF('dialog_add_data_code').show();"
+                                                             style="width: 15%; margin-bottom: 5px;"
+                                                             update=":form_main:dialog_add_data_code"
+                                                             styleClass="btn-primary"/>
+                                        </center>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+
+        <!-- dialog-->
+        <p:dialog id="dialog_add_data_code" appendTo=":form_main"
+                  header="#{PP_DATACODE.add_edu_code}" widgetVar="dialog_add_data_code"
+                  modal="true" draggable="false" width="50%" closable="false" styleClass="box-info">
+            <div class="ui-fluid">
+                <p:outputPanel id="pnl_dialog">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="add_card_type" value="#{PP_DATACODE.card_type}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:selectOneMenu id="add_card_type" required="true"
+                                                 value="#{eduCodeController.mtmpDcDetail.priceId}"
+                                                 requiredMessage="#{PP_DATACODE.card_type}#{PP_COMMONS.can_not_be_empty}">
+                                    <f:selectItem itemLabel="#{PP_DATACODE.choose_card_type}"
+                                                  itemValue="#{null}"/>
+                                    <f:selectItems value="#{eduCodeController.mlistCardType}" var="card_type"
+                                                   itemLabel="#{card_type.name} - #{card_type.price} VND"
+                                                   itemValue="#{card_type.priceId}"/>
+                                </p:selectOneMenu>
+                                <p:message for="add_card_type"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="add_amount" value="#{PP_DATACODE.amount}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="add_amount" required="true" padControl="false"
+                                               maxlength="10" maxValue="9999999999" minValue="0"
+                                               decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                               value="#{eduCodeController.mtmpDcDetail.amount}"
+                                               requiredMessage="#{PP_DATACODE.amount}#{PP_COMMONS.can_not_be_empty}"/>
+                                <p:message for="add_amount"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+
+                    <center>
+                        <p:commandButton process="@this form_main:dialog_add_data_code" id="btn_ok_add_data_code"
+                                         value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                         update=":form_main:table_data_code_add :form_main:pnl_detail :form_main:pnl_dialog :form_main:btn_create"
+                                         actionListener="#{eduCodeController.handOkDcRequest()}"
+                                         styleClass="btn-success" style="width: 20%"/>
+
+                        <p:commandButton process="@this form_main:dialog_add_data_code" id="btn_cancel_add_data_code"
+                                         value="#{PP_COMMONS.back}" icon="fa fa-undo" style="width: 20%;"
+                                         onclick="PF('dialog_add_data_code').hide(); PF('table_add_data_code').clearFilters();"/>
+                    </center>
+                </p:outputPanel>
+            </div>
+        </p:dialog>
+
+    </ui:composition>
+</h:body>
+</html>

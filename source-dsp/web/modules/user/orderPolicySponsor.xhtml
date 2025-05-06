@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+
+    <ui:composition>
+        <style type="text/css">
+            .columnFilter {
+                width: 100% !important;
+                height: 32px !important;
+            }
+        </style>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <h:panelGroup id="panel_add_com_order"
+                              rendered="#{orderPolicySponsorController.isAddComOrder eq '1'}">
+                    <p:panel
+                            header="#{orderPolicySponsorController.isAddComServicePrice eq '1'?PP_SERVICEDECLARESPONSOR.servicePriceCom: PP_SERVICEDECLARESPONSOR.orderPolicyCom}"
+                            styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                <p:autoComplete id="themes" multiple="true" queryDelay="100" rendered="#{orderPolicySponsorController.isDisplayAddComOrderPolicy eq '1'}"
+                                                requiredMessage="#{PP_SERVICEDECLARESPONSOR.listCom}#{PP_COMMONS.can_not_be_empty}"
+                                                value="#{orderPolicySponsorController.listCompanyAutoComSelected}"
+                                                completeMethod="#{orderPolicySponsorController.completeTheme}"
+                                                minQueryLength="0"
+                                                var="theme" itemLabel="#{theme.comName}" itemValue="#{theme}"
+                                                converter="#{companyTabOrderPolicyConverter}" forceSelection="true">
+                                    <!--                                    <p:ajax global="false" process="@this" immediate="true" event="itemSelect" update="form_main"-->
+                                    <!--                                            listener="#{orderPolicySponsorController.selectCompany}"/>-->
+                                    <!--                                    <p:ajax global="false" process="@this" immediate="true"  event="itemUnselect" update="form_main"-->
+                                    <!--                                            listener="#{orderPolicySponsorController.unselectCompany}"/>-->
+                                    <f:facet name="header">
+                                        <h:outputText value="#{theme.comName}"/>
+                                    </f:facet>
+                                </p:autoComplete>
+                                <p:message for="themes"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-1">
+                                <p:commandButton id="btn_add_profile"
+                                                 actionListener="#{orderPolicySponsorController.addListComOrder}"
+                                                 process="@this themes"
+                                                 rendered="#{orderPolicySponsorController.isDisplayAddComOrderPolicy eq '1'}"
+                                                 value="#{PP_COMMONS.add}"
+                                                 oncomplete="PF('tbl_com_order').clearFilters();"
+                                                 styleClass="btn btn-primary btn-sm"
+                                                 update=":form_main:panel_center :form_main:tbl_com_order :form_main:btn_save_com_order"/>
+                                <p:tooltip for="btn_add_profile" value="#{PP_COMMONS.add}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-8">
+                                <p:panel styleClass="box-info"
+                                         style="overflow-x: auto; width: 100%;">
+                                    <p:dataTable id="tbl_com_order" var="comOrder"
+                                                 value="#{orderPolicySponsorController.listCompanyTable}"
+                                                 rowKey="#{comOrder.comId}"
+                                                 widgetVar="tbl_com_order" rowIndexVar="rowIndex"
+                                                 filteredValue="#{orderPolicySponsorController.listCompanyTableFiltered}"
+                                                 filterDelay="100"
+                                                 paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="5,10,15,#{orderPolicySponsorController.listCompanyTable.size()}"
+                                                 paginator="true" rows="15"
+                                                 emptyMessage="#{PP_COMMONS.empty_message}">
+                                        <p:ajax global="false" event="filter"
+                                                listener="#{orderPolicySponsorController.onFilterComOrder}"
+                                                ignoreAutoUpdate="true"/>
+                                        <p:ajax global="false" event="sort"/>
+                                        <p:ajax global="false" event="page"/>
+
+                                        <p:column headerText="#{PP_SERVICEDECLARESPONSOR.listCom}"
+                                                  style="text-align: center !important; width:150px;"
+                                                  filterValue="#{orderPolicySponsorController.filterStateComOrder.get('nameCom')}"
+                                                  filterBy="#{comOrder.comName}" filterMatchMode="contains"
+                                                  sortBy="#{comOrder.comName}">
+                                            <h:outputText value="#{comOrder.comName}"
+                                                          style="text-align: center !important;"
+                                                          title="#{comOrder.comName}"/>
+                                        </p:column>
+
+                                        <p:column headerText="#{PP_SERVICEDECLARE.action}" rendered="#{orderPolicySponsorController.isDisplayAddComOrderPolicy eq '1'}"
+                                                  style="text-align: center !important;" width="120">
+
+                                            <p:commandLink id="btn_del_profile"
+                                                           actionListener="#{orderPolicySponsorController.handDeleteComOrder(comOrder)}"
+                                                           process="@this" styleClass="fa fa-trash"
+                                                           style="font-size: 20px;"
+                                                           oncomplete="PF('tbl_com_order').clearFilters();"
+                                                           update=":form_main:panel_center">&nbsp;
+                                                <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                                           message="#{PP_COMMONS.confirm_delete}"/>
+                                                &nbsp;</p:commandLink>
+                                            <p:tooltip for="btn_del_profile" value="#{PP_COMMONS.del}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+
+                    <p:panel  rendered="#{orderPolicySponsorController.isDisplayAddComOrderPolicy eq '0'}"  style="border: none !important;">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_cancel_com_order_1"
+                                                 actionListener="#{orderPolicySponsorController.handleBackComOrder()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update=":form_main:panel_center :form_main:panel_order_policy_tab"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5"></div>
+                        </div>
+                    </p:panel>
+                    <p:panel  rendered="#{orderPolicySponsorController.isDisplayAddComOrderPolicy eq '1'}"  style="border: none !important;">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-4"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_cancel_com_order"
+                                                 actionListener="#{orderPolicySponsorController.handleBackComOrder()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update=":form_main:panel_center :form_main:panel_order_policy_tab"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_save_com_order"
+                                                 disabled="#{empty orderPolicySponsorController.listCompanyTableChange}"
+                                                 actionListener="#{orderPolicySponsorController.handleSaveComOrder()}"
+                                                 process="@this" styleClass="btn-success" icon="fa fa-check-circle"
+                                                 value="#{PP_COMMONS.save}"
+                                                 update="panel_center :form_main:tbl_com_order">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-4"></div>
+                        </div>
+                    </p:panel>
+                       
+                    </p:panel>
+                </h:panelGroup>
+
+                <h:panelGroup id="panel_order_policy_tab"
+                              rendered="#{orderPolicySponsorController.isOrderPolicyTab eq '1'}">
+                    <p:panel styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-10"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add_order_policy_tab" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{orderPolicySponsorController.changeStateAddOrderPolicyTab}"
+                                                 process="@this"
+                                                 resetValues="true" styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 update=":form_main:panel_center  :form_main:panel_action_order_policy_tab"/>
+                            </div>
+                        </div>
+                        <p:panel styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                            <p:dataTable id="table_order_policy_tab" var="orderPolicyTab"
+                                         value="#{orderPolicySponsorController.listOrderPolicyTab}"
+                                         rowKey="#{orderPolicyTab.serviceId}_#{orderPolicyTab.tabId}"
+                                         filteredValue="#{orderPolicySponsorController.listOrderPolicyTabFiltered}"
+                                         widgetVar="table_order_policy_tab" rowIndexVar="rowIndex"
+                                         filterDelay="100"
+                                         emptyMessage="#{PP_COMMONS.empty_message}"
+                                         paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15,#{orderPolicySponsorController.listOrderPolicyTab.size()}"
+                                         paginator="true" rows="15"
+                            >
+                                <p:ajax global="false" event="filter"
+                                        listener="#{orderPolicySponsorController.onFilterOrderPolicyTabChange}"
+                                        ignoreAutoUpdate="true"/>
+                                <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                                <p:ajax global="false" event="sort"/>
+                                <p:ajax global="false" event="page"/>
+                                <p:column headerText="#{PP_SERVICEDECLARESPONSOR.description}"
+                                          sortBy="#{orderPolicyTab.description}" width="180px;"
+                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('description')}"
+                                          filterBy="#{orderPolicyTab.description}" filterMatchMode="contains">
+                                    <h:outputText value="#{orderPolicyTab.description}"
+                                                  title="#{orderPolicyTab.description}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARESPONSOR.startDate}"
+                                          sortBy="#{orderPolicyTab.startDate}" width="120px;"
+                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('startDate')}"
+                                          filterBy="#{orderPolicySponsorController.getDateToStr(orderPolicyTab.startDate)}" filterMatchMode="contains">
+                                    <h:outputText value="#{orderPolicyTab.startDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARESPONSOR.endDate}"
+                                          sortBy="#{orderPolicyTab.endDate}" style="width:120px;"
+                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('endDate')}"
+                                          filterBy="#{orderPolicySponsorController.getDateToStr(orderPolicyTab.endDate)}" filterMatchMode="contains">
+                                    <h:outputText value="#{orderPolicyTab.endDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARE.status}" filterStyleClass="columnFilter"
+                                          sortBy="#{orderPolicyTab.status}" style="width:150px;"
+                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('status')}"
+                                          filterBy="#{orderPolicyTab.status}"
+                                          filterOptions="#{orderPolicySponsorController.mFilterOptionStatus}"
+                                          filterMatchMode="exact">
+                                    <h:outputText value="#{PP_COMMONS.enable}" title="#{PP_COMMONS.enable}"
+                                                  rendered="#{orderPolicyTab.status eq '1'}"/>
+                                    <h:outputText value="#{PP_SERVICEDECLARESPONSOR.statusNotActive}"
+                                                  title="#{PP_SERVICEDECLARESPONSOR.statusNotActive}"
+                                                  rendered="#{orderPolicyTab.status eq '0'}"/>
+                                    <h:outputText value="#{PP_COMMONS.disable}" title="#{PP_COMMONS.disable}"
+                                                  rendered="#{orderPolicyTab.status eq '2'}"/>
+                                    <br></br>
+                                    <h:outputText rendered="#{orderPolicyTab.defaultValue eq 0}"
+                                                  value="#{PP_SERVICEDECLARESPONSOR.applyFor}#{orderPolicyTab.comApply} #{PP_SERVICEDECLARESPONSOR.comSpace}"
+                                                  title="#{PP_SERVICEDECLARESPONSOR.applyFor}#{orderPolicyTab.comApply} #{PP_SERVICEDECLARESPONSOR.comSpace}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARESPONSOR.defaultValue}" style="width:120px;"
+                                          sortBy="#{orderPolicyTab.defaultValue}" filterStyleClass="columnFilter"
+                                          filterValue="#{orderPolicySponsorController.filterState.get('defaultValue')}"
+                                          filterOptions="#{orderPolicySponsorController.mFilterOptionDefault}"
+                                          filterBy="#{orderPolicyTab.defaultValue}" filterMatchMode="exact">
+                                    <h:outputText value="#{PP_COMMONS.yes}" title="#{PP_COMMONS.yes}"
+                                                  rendered="#{orderPolicyTab.defaultValue eq '1'}"/>
+                                    <h:outputText value="#{PP_COMMONS.no}" title="#{PP_COMMONS.no}"
+                                                  rendered="#{orderPolicyTab.defaultValue eq '0'}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_DSPCOMPANY.custType}" style="width:120px;"
+                                          sortBy="#{orderPolicyTab.custType}"
+                                          filterBy="#{orderPolicyTab.custType}" filterMatchMode="contains">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('table_order_policy_tab').filter()" styleClass="custom-filter">
+                                            <f:selectItem itemLabel="#{PP_DATACODE.all}" itemValue=""
+                                                          noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType1}" itemValue="0"/>
+                                            <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType2}" itemValue="1"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <h:outputText value="#{PP_DSPCOMPANY.custType1}" rendered="#{orderPolicyTab.custType eq '0'}"/>
+                                    <h:outputText value="#{PP_DSPCOMPANY.custType2}" rendered="#{orderPolicyTab.custType eq '1'}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARE.action}" style="width:150px;">
+                                    <div>
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_view_order_policy_tab" styleClass="fa fa-eye"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           rendered="#{orderPolicyTab.status eq '1' or orderPolicyTab.status eq '2'}"
+                                                           actionListener="#{orderPolicySponsorController.changeStateViewOrderPolicyTab(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           resetValues="true"
+                                                           update=":form_main:panel_center "/>&nbsp;&nbsp;
+                                            <p:tooltip for="btn_view_order_policy_tab" value="#{PP_COMMONS.view}"/>
+                                        </div>
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_edit_order_policy_tab" styleClass="fa fa-pencil"
+                                                           rendered="#{orderPolicyTab.status eq '0'}"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           actionListener="#{orderPolicySponsorController.changeStateEditOrderPolicyTab(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           resetValues="true"
+                                                           update=":form_main:panel_center  :form_main:table_order_policy_tab"/>&nbsp;&nbsp;
+                                            <p:tooltip for="btn_edit_order_policy_tab" value="#{PP_COMMONS.edit}"/>
+                                        </div>
+
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_copy_order_policy_tab" styleClass="fa fa-copy"
+                                                           actionListener="#{orderPolicySponsorController.changeStateCopyOrderPolicy(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           rendered="#{orderPolicyTab.status ne '2'}"
+                                                           resetValues="true"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           update=":form_main:panel_center  :form_main:table_order_policy_tab">&nbsp;&nbsp;
+                                                <p:confirm header="#{PP_SERVICEDECLARESPONSOR.copy_dialog_header}"
+                                                           message="#{PP_SERVICEDECLARESPONSOR.confirm_copy}"/>
+                                            </p:commandLink>
+                                            <p:tooltip for="btn_copy_order_policy_tab"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.copy}"/>
+                                        </div>
+
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_del_order_policy_tab"
+                                                           actionListener="#{orderPolicySponsorController.handDeleteOrderPolicyTab(orderPolicyTab)}"
+                                                           process="@this" styleClass="fa fa-trash"
+                                                           rendered="#{orderPolicyTab.status ne '2'}"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           oncomplete="PF('table_order_policy_tab').clearFilters();"
+                                                           update=":form_main:panel_center :form_main:table_order_policy_tab">&nbsp;
+                                                <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                                           message="#{PP_COMMONS.confirm_delete}"/>
+                                                &nbsp;</p:commandLink>
+                                            <p:tooltip for="btn_del_order_policy_tab" value="#{PP_COMMONS.del}"/>
+                                        </div>
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_download_order_policy_tab"
+                                                           styleClass="fa fa-download"
+                                                           immediate="true" ajax="false"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           rendered="#{orderPolicyTab.filePath ne null}"
+                                                           onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                                <p:fileDownload
+                                                        value="#{orderPolicySponsorController.downloadFileOrderPolicyTab(orderPolicyTab)}"/>
+                                            </p:commandLink>
+                                            <p:tooltip for="btn_download_order_policy_tab"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.download}"/>
+                                        </div>
+                                        <div style="padding: 0px !important;float: left;">
+                                            <p:commandLink id="btn_active_order_policy_tab" styleClass="fa fa-check"
+                                                           rendered="#{orderPolicyTab.status eq '0'}"
+                                                           style="padding: 0 !important; font-size: 20px;color: #3c8dbc;"
+                                                           actionListener="#{orderPolicySponsorController.changeStateActiveOrderPolicy(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           update=":form_main:panel_center  :form_main:table_order_policy_tab">&nbsp;&nbsp;
+                                                <p:confirm header="#{PP_SERVICEDECLARESPONSOR.active_dialog_header}"
+                                                           message="#{PP_SERVICEDECLARESPONSOR.confirm_active}"/>
+                                            </p:commandLink>
+                                            <p:tooltip for="btn_active_order_policy_tab"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.active}"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-6 ui-lg-12" style="padding-left: 0px !important;">
+                                            <p:commandLink id="btn_add_in_order_policy_tab"
+                                                           styleClass="btn btn-info"
+                                                           value="#{PP_SERVICEDECLARESPONSOR.detailOrderPrice}"
+                                                           style="padding: 0 !important; font-size: 13px;"
+                                                           actionListener="#{orderPolicySponsorController.changeStateOrderPolicy(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           oncomplete="PF('table_order_policy').clearFilters();"
+                                                           update=":form_main:panel_center  :form_main:table_order_policy "/>&nbsp;&nbsp;
+                                            <p:tooltip for="btn_add_in_order_policy_tab"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.orderPolicyTabDetail}"/>
+                                        </div>
+
+                                        <div class="ui-g-12 ui-md-6 ui-lg-12" style="padding-left: 0px !important;">
+                                            <p:commandLink id="btn_order_policy_tab_com"
+                                                           styleClass="btn btn-info"
+                                                           value="#{PP_SERVICEDECLARESPONSOR.applyCom}"
+                                                           rendered="#{orderPolicyTab.defaultValue eq '0'}"
+                                                           style="padding: 0 !important; font-size: 13px;"
+                                                           actionListener="#{orderPolicySponsorController.changeStateAddComOrderPolicy(orderPolicyTab)}"
+                                                           process="@this :form_main:table_order_policy_tab"
+                                                           oncomplete="PF('tbl_com_order').clearFilters();"
+                                                           update=":form_main:panel_center :form_main:panel_add_com_order"/>&nbsp;&nbsp;
+                                            <p:tooltip for="btn_order_policy_tab_com"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.com}"/>
+                                        </div>
+
+                                    </div>
+
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panel>
+                </h:panelGroup>
+
+                <h:panelGroup id="panel_action_order_policy_tab"
+                              rendered="#{orderPolicySponsorController.isAddOrderPolicyTab eq '1' or orderPolicySponsorController.isCopyOrderPolicy eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARESPONSOR.orderPolicyTab}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel_order_policy_tab"
+                                                 actionListener="#{orderPolicySponsorController.handleCancelOrderPolicyTab()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}"
+                                                 update="panel_center :form_main:panel_action_order_policy_tab"
+                                                 icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok_order_policy_tab"
+                                                 rendered="#{orderPolicySponsorController.isViewOrderPolicyTab ne '1'}"
+                                                 actionListener="#{orderPolicySponsorController.handleOKOrderPolicyTab(orderPolicySponsorController.dspOrderPolicyTab)}"
+                                                 process="@this :form_main:panel_action_order_policy_tab"
+                                                 styleClass="btn-success"
+                                                 value="#{PP_COMMONS.ok}"
+                                                 update=":form_main:panel_center :form_main:table_order_policy_tab"
+                                                 icon="fa fa-check-circle"/>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="description_order_policy" value="#{PP_SERVICEDECLARE.description}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:inputTextarea id="description_order_policy" maxlength="100" required="true"
+                                                     disabled="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                     requiredMessage="#{PP_SERVICEDECLARE.description}#{PP_COMMONS.can_not_be_empty}"
+                                                     value="#{orderPolicySponsorController.dspOrderPolicyTab.description}"/>
+                                    <p:message for="description_order_policy"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="startDateOrderPoLi" value="#{PP_SERVICEDECLARESPONSOR.startDate}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:calendar id="startDateOrderPoLi" pattern="dd/MM/yyyy" navigator="true"
+                                                mask="true" required="true" requiredMessage="#{PP_SERVICEDECLARESPONSOR.startDate}#{PP_COMMONS.can_not_be_empty}"
+                                                disabled="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                value="#{orderPolicySponsorController.dspOrderPolicyTab.startDate}">
+                                    </p:calendar>
+                                    <p:message for="startDateOrderPoLi"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="endDateOrderPoLi" value="#{PP_SERVICEDECLARESPONSOR.endDate}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:calendar id="endDateOrderPoLi" pattern="dd/MM/yyyy" navigator="true"
+                                                mask="true"
+                                                disabled="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                value="#{orderPolicySponsorController.dspOrderPolicyTab.endDate}">
+                                    </p:calendar>
+                                    <p:message for="endDateOrderPoLi"/>
+                                    <o:validateOrder type="lte" components="startDateOrderPoLi endDateOrderPoLi"
+                                                     message="#{PP_SERVICEDECLARE.startTimeValuemoreendTimeValue}"
+                                                     showMessageFor="startDateOrderPoLi"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <p:outputPanel style="display:block"
+                                       rendered="#{orderPolicySponsorController.isEditOrderPolicyTab eq '1'}">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:outputLabel for="statusOrderPoLi" value="#{PP_COMMONS.status}"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                    <div class="material">
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="statusOrderPoLi"
+                                                         required="true" disabled="true"
+                                                         requiredMessage="#{PP_COMMONS.status}#{PP_COMMONS.can_not_be_empty}"
+                                                         value="#{orderPolicySponsorController.dspOrderPolicyTab.status}">
+                                            <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_SERVICEDECLARESPONSOR.statusNotActive}"
+                                                          itemValue="0"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="statusOrderPoLi"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            </div>
+                        </p:outputPanel>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="defaultOrderPoLi" value="#{PP_SERVICEDECLARESPONSOR.defaultValue}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="defaultOrderPoLi"
+                                                     required="true"
+                                                     disabled="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                     requiredMessage="#{PP_SERVICEDECLARESPONSOR.defaultValue}#{PP_COMMONS.can_not_be_empty}"
+                                                     value="#{orderPolicySponsorController.dspOrderPolicyTab.defaultValue}">
+                                        <f:selectItem itemLabel="#{PP_SERVICEDECLARE.allPolicyName}" itemValue=""/>
+                                        <f:selectItem itemLabel="#{PP_COMMONS.yes}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_COMMONS.no}" itemValue="0"/>
+                                        <p:ajax listener="#{orderPolicySponsorController.onChangeDef}"
+                                                resetValues="true"
+                                                update="pnl_cust_type form_main:custType"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="defaultOrderPoLi"/>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                        <p:outputPanel style="display:block" id="pnl_cust_type">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                    <p:outputLabel for="custType" value="#{PP_DSPCOMPANY.custType}" rendered="#{orderPolicySponsorController.showCustType}"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                    <div class="material">
+                                        <p:selectOneMenu id="custType" required="true"
+                                                         rendered="#{orderPolicySponsorController.showCustType}"
+                                                         disabled="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                         requiredMessage="#{PP_DSPCOMPANY.custType}#{PP_COMMONS.can_not_be_empty}"
+                                                         value="#{orderPolicySponsorController.dspOrderPolicyTab.custType}">
+                                            <f:selectItem itemLabel="#{PP_SERVICEDECLARE.allPolicyName}" itemValue=""/>
+                                            <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType1}" itemValue="0"/>
+                                            <f:selectItem itemLabel="#{PP_DSPCOMPANY.custType2}" itemValue="1"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="custType" rendered="#{orderPolicySponsorController.showCustType}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            </div>
+                        </p:outputPanel>
+
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:outputLabel for="fileOrderPolicy" value="#{PP_ADDDATAISDN.file}"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-5">
+                                <div class="material">
+                                    <p:fileUpload
+                                            rendered="#{orderPolicySponsorController.isViewOrderPolicyTab eq '0'}"
+                                            listener="#{orderPolicySponsorController.handleFileUploadOrderPolicy}"
+                                            mode="advanced" sizeLimit="10485760" id="fileOrderPolicy"
+                                            invalidSizeMessage="#{PP_SERVICEDECLARESPONSOR.oversize}"
+                                            label="#{PP_ADDDATAISDN.choose}" update="@this"
+                                            auto="true" fileLimit="1"
+                                            dragDropSupport="true">
+                                        <h:outputText
+                                                value="#{orderPolicySponsorController.dspOrderPolicyTab.filePath}"/>
+                                    </p:fileUpload>
+                                    <p:inputText disabled="true"
+                                                 rendered="#{orderPolicySponsorController.isViewOrderPolicyTab eq '1'}"
+                                                 value="#{orderPolicySponsorController.dspOrderPolicyTab.filePath}"/>
+                                </div>
+                                <p:message for="fileOrderPolicy"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+
+                <h:panelGroup id="panel_order_policy"
+                              rendered="#{orderPolicySponsorController.isOrderPolicy eq '1'}">
+                    <p:panel header="#{PP_SERVICEDECLARESPONSOR.orderPolicyTabDetail}" styleClass="box-primary">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                <p:commandButton id="btn_add_order_policy" value="#{PP_COMMONS.add}"
+                                                 actionListener="#{orderPolicySponsorController.changeStateAddOrderPolicy}"
+                                                 oncomplete="PF('dialogOrderPolicy').show();"
+                                                 rendered="#{orderPolicySponsorController.isEditDetailOrderPolicy eq '0'}"
+                                                 process="@this"
+                                                 styleClass="btn-primary"
+                                                 icon="fa fa-plus"
+                                                 resetValues="true"
+                                                 update=":form_main:panel_center :form_main:dialogOrderPolicy"/>
+                            </div>
+                        </div>
+                        <p:panel styleClass="box-info" style="overflow-x: auto; width: 100%;">
+                            <p:dataTable id="table_order_policy" var="orderPolicy" editable="true"
+                                         value="#{orderPolicySponsorController.listOrderPolicy}"
+                                         rowKey="#{orderPolicy.id}_#{orderPolicy.tabId}"
+                                         filteredValue="#{orderPolicySponsorController.listOrderPolicyFiltered}"
+                                         widgetVar="table_order_policy" rowIndexVar="rowIndex"
+                                         filterDelay="100"
+                                         emptyMessage="#{PP_COMMONS.empty_message}"
+                                         paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15,#{orderPolicySponsorController.listOrderPolicy.size()}"
+                                         paginator="true" rows="15"
+                            >
+                                <p:ajax global="false" event="filter"
+                                        listener="#{orderPolicySponsorController.onFilterChangeOrderPolicy}"
+                                        ignoreAutoUpdate="true"/>
+                                <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                                <p:ajax global="false" event="sort"/>
+                                <p:ajax global="false" event="page"/>
+                                <p:column headerText="#{PP_SERVICEDECLARE.minValue}" style="width:150px;"
+                                          sortBy="#{orderPolicy.minValue}">
+                                    <h:outputText value="#{orderPolicy.minValue}" title="#{orderPolicy.minValue}">
+                                        <f:convertNumber pattern="###,###.###"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARE.maxValue}" style="width:150px;"
+                                          sortBy="#{orderPolicy.maxValue}">
+                                    <h:outputText value="#{orderPolicy.maxValue}" title="#{orderPolicy.maxValue}">
+                                        <f:convertNumber pattern="###,###.###"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARE.activeDays}" style="width:150px;"
+                                          sortBy="#{orderPolicy.activeDays}">
+                                    <h:outputText value="#{orderPolicy.activeDays}" title="#{orderPolicy.activeDays}">
+                                        <f:convertNumber pattern="###,###.###"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARESPONSOR.promPct}" style="width:150px;"
+                                          sortBy="#{orderPolicy.promPct}">
+                                    <h:outputText value="#{orderPolicy.promPct}%" title="#{orderPolicy.promPct}">
+                                        <f:convertNumber pattern="###,###.###" type="percent" currencySymbol="%"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{PP_SERVICEDECLARE.action}"
+                                          rendered="#{orderPolicySponsorController.isEditDetailOrderPolicy eq '0'}"
+                                          style="text-align: center !important; width:150px;">
+                                    <p:commandLink id="btn_del_order_policy"
+                                                   actionListener="#{orderPolicySponsorController.handDeleteOrderPolicy(orderPolicy)}"
+                                                   process="@this" styleClass="fa fa-trash"
+                                                   style="font-size: 20px;"
+                                                   oncomplete="PF('table_order_policy').clearFilters();"
+                                                   update=":form_main:panel_center">&nbsp;
+                                        <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                                   message="#{PP_COMMONS.confirm_delete}"/>
+                                        &nbsp;</p:commandLink>
+                                    <p:tooltip for="btn_del_order_policy" value="#{PP_COMMONS.del}"/>
+                                    <p:commandLink id="btn_edit_order_policy" styleClass="fa fa-pencil"
+                                                   actionListener="#{orderPolicySponsorController.changeStateEditOrderPolicy(orderPolicy)}"
+                                                   process="@this" style="font-size: 20px;"
+                                                   resetValues="true"
+                                                   oncomplete=" PF('dialogOrderPolicy').show();"
+                                                   update=":form_main:panel_center  :form_main:dialogOrderPolicy"/>&nbsp;&nbsp;
+                                    <p:tooltip for="btn_edit_order_policy" value="#{PP_COMMONS.edit}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_cancel_order_policy"
+                                                 actionListener="#{orderPolicySponsorController.handleBackOrderPolicyTab()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" update="panel_center" icon="fa fa-undo">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <p:commandButton id="btn_save_order_policy"
+                                                 disabled="#{orderPolicySponsorController.isActionOrderPolicy eq '0'}"
+                                                 actionListener="#{orderPolicySponsorController.handleSaveOrderPolicy()}"
+                                                 process="@this" styleClass="btn-success" icon="fa fa-check-circle"
+                                                 value="#{PP_COMMONS.save}"
+                                                 update="panel_center :form_main:table_order_policy">
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-6 ui-lg-3"></div>
+                        </div>
+                    </p:panel>
+                </h:panelGroup>
+
+            </h:panelGroup>
+        </div>
+
+        <p:dialog header="#{PP_SERVICEDECLARE.dialogOrderPolicy}" id="dialogOrderPolicy"
+                  widgetVar="dialogOrderPolicy" modal="true" appendTo=":form_main"
+                  maximizable="true" closable="true"
+                  draggable="true" resizable="true" width="60%"
+                  closeOnEscape="true" styleClass="box-info">
+            <p:messages id="OrderPolicyMsg" showDetail="true" showSummary="false" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+            <div class="ui-fluid">
+                <p:panel id="pnlOrderPolicy">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="minValue" value="#{PP_SERVICEDECLARE.minValue}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="minValue" required="true" padControl="false" decimalPlaces="0"
+                                               decimalSeparator="." minValue="0" maxValue="999999999999999"
+                                               thousandSeparator=","
+                                               requiredMessage="#{PP_SERVICEDECLARE.minValue}#{PP_COMMONS.can_not_be_empty}"
+                                               value="#{orderPolicySponsorController.dspOrderPolicy.minValue}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="maxValue" value="#{PP_SERVICEDECLARE.maxValue}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="maxValue" required="true" padControl="false" decimalPlaces="0"
+                                               decimalSeparator="." minValue="0" maxValue="999999999999999"
+                                               thousandSeparator=","
+                                               requiredMessage="#{PP_SERVICEDECLARE.maxValue}#{PP_COMMONS.can_not_be_empty}"
+                                               value="#{orderPolicySponsorController.dspOrderPolicy.maxValue}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="activeDays" value="#{PP_SERVICEDECLARE.activeDays}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="activeDays" required="true"
+                                               padControl="false" decimalPlaces="0"
+                                               requiredMessage="#{PP_SERVICEDECLARE.activeDays}#{PP_COMMONS.can_not_be_empty}"
+                                               decimalSeparator="." minValue="0" maxValue="9999999999"
+                                               thousandSeparator=","
+                                               value="#{orderPolicySponsorController.dspOrderPolicy.activeDays}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-3">
+                            <p:outputLabel for="activeDays" value="#{PP_SERVICEDECLARESPONSOR.promPct}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-7">
+                            <div class="material">
+                                <p:inputNumber id="promPct" required="true"
+                                               padControl="false" decimalPlaces="0"
+                                               requiredMessage="#{PP_SERVICEDECLARESPONSOR.promPct}#{PP_COMMONS.can_not_be_empty}"
+                                               decimalSeparator="." minValue="0" maxValue="99999"
+                                               thousandSeparator=","
+                                               value="#{orderPolicySponsorController.dspOrderPolicy.promPct}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-12 ui-md-6 ui-lg-1"></div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_cancel_table_order_policy"
+                                             actionListener="#{orderPolicySponsorController.handleCancelTableOrderPolicy()}"
+                                             process="@this"
+                                             value="#{PP_COMMONS.back}" update=":form_main:panel_center"
+                                             oncomplete="PF('dialogOrderPolicy').hide();"
+                                             icon="fa fa-undo">
+                            </p:commandButton>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:commandButton id="btn_ok_table_order_policy"
+                                             actionListener="#{orderPolicySponsorController.handleOKOrderPolicy(orderPolicySponsorController.dspOrderPolicy)}"
+                                             process="@this pnlOrderPolicy"
+                                             styleClass="btn-success"
+                                             value="#{PP_COMMONS.ok}"
+                                             update="OrderPolicyMsg pnlOrderPolicy :form_main:panel_center :form_main:table_order_policy"
+                                             icon="fa fa-check-circle"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                    </div>
+                </p:panel>
+            </div>
+        </p:dialog>
+
+    </ui:composition>
+
+
+</h:body>
+
+</html>

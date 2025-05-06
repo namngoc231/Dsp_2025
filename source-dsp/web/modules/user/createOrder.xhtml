@@ -1,0 +1,988 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:o="http://omnifaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <script type="text/javascript">
+            function scrollToTop() {
+                window.scrollTo(0, 0);
+            }
+        </script>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:sticky target="pnl_control"/>
+                <h:panelGroup id="pnl_control">
+                    <h:panelGroup
+                            rendered="#{createOrderController.isDisplayBtnConfirm}">
+                        <div class="ui-g pnl-control">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel"
+                                                 actionListener="#{createOrderController.handleCancel()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" icon="fa fa-undo"
+                                                 update="panel_center">
+                                    <p:resetInput target="panel_add_order"/>
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok" rendered="#{not createOrderController.isVIEW}"
+                                                 actionListener="#{createOrderController.handleOK()}"
+                                                 process="@this :form_main:panel_add_order" styleClass=" btn-success"
+                                                 value="#{PP_COMMONS.ok}" icon="fa fa-check-circle"
+                                                 update="panel_center">
+                                    <p:resetInput target="panel_add_order, table_order"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <p:panel header="#{PP_CREATEORDER.filter_option}" styleClass="box-primary"
+                             rendered="#{not createOrderController.isDisplayBtnConfirm and not createOrderController.isOrderExtension()}">
+                        <h:panelGroup id="panel_filter_options" layout="grid" columns="6"
+                                      styleClass="ui-panelgrid-blank">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="search_contractCode"
+                                                       value="#{PP_CREATEORDER.contractCode}"/>
+                                        <p:inputText id="search_contractCode"
+                                                     value="#{createOrderController.msearchOrder.contractCode}"
+                                                     validator="ValidatorAlphaNum"
+                                                     validatorMessage="#{PP_CREATEORDER.contractCode}: #{PP_COMMONS.is_not_valid}"
+                                                     maxlength="100">
+                                            <!--                                            <p:keyFilter regEx="/[a-z0-9_]/i"/>-->
+                                        </p:inputText>
+                                        <p:message for="search_contractCode"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="search_status" value="#{PP_CREATEORDER.status}"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="search_status"
+                                                         value="#{createOrderController.msearchOrder.status}">
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.selectAll}" itemValue=""
+                                                          noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_0}" itemValue="0"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_1}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_2}" itemValue="2"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_3}" itemValue="3"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_4}" itemValue="4"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_5}" itemValue="5"/>
+                                            <f:selectItem itemLabel="#{PP_CREATEORDER.status_21}" itemValue="21"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="search_status"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="start_date" value="#{PP_CREATEORDER.createTimeFrom}"/>
+                                        <p:calendar value="#{createOrderController.mdStartDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="start_date" mode="popup" navigator="true"/>
+                                        <p:message for="start_date"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="end_date" value="#{PP_CREATEORDER.createTimeTo}"/>
+                                        <p:calendar value="#{createOrderController.mdEndDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="end_date" mode="popup" navigator="true"/>
+                                        <p:message for="end_date"/>
+                                        <o:validateOrder type="lte" components="start_date end_date"
+                                                         message="#{PP_COMMONS.sta_end_date_create_error}"
+                                                         showMessageFor="start_date"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="exp_start_date" value="#{PP_CREATEORDER.expTimeFrom}"/>
+                                        <p:calendar value="#{createOrderController.expStartDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="exp_start_date" mode="popup" navigator="true"/>
+                                        <p:message for="exp_start_date"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <div class="material">
+                                        <p:outputLabel for="exp_end_date" value="#{PP_CREATEORDER.expTimeTo}"/>
+                                        <p:calendar value="#{createOrderController.expEndDate}" pattern="dd/MM/yyyy"
+                                                    mask="true" id="exp_end_date" mode="popup" navigator="true"/>
+                                        <p:message for="exp_end_date"/>
+                                        <o:validateOrder type="lte" components="exp_start_date exp_end_date"
+                                                         message="#{PP_COMMONS.sta_end_date_exp_error}"
+                                                         showMessageFor="exp_start_date"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                    <p:commandButton id="btn_search" value="#{PP_COMMONS.search}"
+                                                     actionListener="#{createOrderController.handSearch}"
+                                                     process="@this :form_main:panel_filter_options"
+                                                     update="panel_filter_options, table_order,"
+                                                     icon="fa fa-search" styleClass="btn-adn"
+                                                     oncomplete="clearFilters('tableOrder');">
+                                        <p:resetInput target="table_order"/>
+                                    </p:commandButton>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                    <p:commandButton id="btn_add" value="#{PP_COMMONS.add}"
+                                                     disabled="#{!createOrderController.isDisplayBtnAdd()}"
+                                                     actionListener="#{createOrderController.changeStateAdd()}"
+                                                     process="@this" update="panel_center" oncomplete="scrollToTop();"
+                                                     icon="fa fa-plus" styleClass="btn-primary"/>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                    <p:commandButton id="btn_export_file" value="#{PP_CREATEORDER.export_file}" ajax="false"
+                                                     actionListener="#{createOrderController.exportToExcel}"
+                                                     process="@this"
+                                                     icon="fa fa-download" styleClass="btn-info">
+                                    </p:commandButton>
+                                </div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-3"></div>
+                            </div>
+                        </h:panelGroup>
+                    </p:panel>
+                    <p:watermark for="start_date" value="#{PP_COMMONS.click_to_choose}"/>
+                    <p:watermark for="end_date" value="#{PP_COMMONS.click_to_choose}"/>
+
+                    <p:panel header="#{PP_CREATEORDER.list_order}" styleClass="box-info"
+                             style="overflow-x: auto; width: 100%;"
+                             rendered="#{not createOrderController.isDisplayBtnConfirm and not createOrderController.isOrderExtension()}">
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_order"
+                                     widgetVar="tableOrder"
+                                     value="#{createOrderController.mlistOrder}"
+                                     filteredValue="#{createOrderController.mlistOrderFiltered}" var="order"
+                                     emptyMessage="#{PP_COMMONS.empty_message}" rowKey="#{order.orderId}"
+                                     rowIndexVar="rowIndex"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{createOrderController.mlistOrder.size()}"
+                                     paginator="true" rows="10" styleClass="no-border">
+
+                            <p:ajax global="false" event="rowSelect"/>
+                            <p:ajax global="false" event="rowUnselect"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+<!--                            <p:column headerText="#{PP_CREATEORDER.index}"-->
+<!--                                      style="text-align: center !important; width:50px;">-->
+<!--                                <h:outputText value="#{rowIndex+1}"/>-->
+<!--                            </p:column>-->
+
+                            <p:column headerText="#{PP_CREATEORDER.order_id}" sortBy="#{order.orderId}"
+                                      filterBy="#{order.orderId}" filterMatchMode="contains"
+                                      style="width:100px; word-break: break-word;">
+                                <h:outputText value="#{order.orderId}" title="#{order.orderId}"  styleClass="right"/>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.contractCode}" sortBy="#{order.contractCode}"
+                                      filterBy="#{order.contractCode}" filterMatchMode="contains"
+                                      style="width:250px; word-break: break-word;">
+                                <h:outputText value="#{order.contractCode}" title="#{order.contractCode}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.contractValue} (#{PP_CREATEORDER.currencySymbol})"
+                                      sortBy="#{order.contractValue}"
+                                      filterBy="#{order.contractValue}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{order.contractValue}" styleClass="right">
+                                    <f:convertNumber type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.remainQuotaValue} (#{PP_CREATEORDER.currencySymbol})"
+                                      sortBy="#{order.remainQuotaValue}"
+                                      filterBy="#{order.remainQuotaValue}" filterMatchMode="contains"
+                                      style="width:200px;">
+                                <h:outputText value="#{order.remainQuotaValue}" styleClass="right">
+                                    <f:convertNumber type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.reservedValue} (#{PP_CREATEORDER.currencySymbol})"
+                                      sortBy="#{order.reservedValue}"
+                                      filterBy="#{order.reservedValue}" filterMatchMode="contains" style="width:200px;">
+                                <h:outputText value="#{order.reservedValue}" styleClass="right">
+                                    <f:convertNumber type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.moneyUsed}"
+                                      sortBy="#{order.moneyUsed}"
+                                      filterBy="#{order.moneyUsed}" filterMatchMode="contains" style="width:220px;">
+                                <h:outputText value="#{order.moneyUsed}" styleClass="right">
+                                    <f:convertNumber type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.discountPercent}"
+                                      sortBy="#{order.discountPercent}"
+                                      filterBy="#{order.discountPercent}" filterMatchMode="contains" style="width:220px;">
+                                <h:outputText value="%" rendered="#{order.discountPercent != null}" styleClass="right"/>
+                                <h:outputText value="#{order.discountPercent}" styleClass="right">
+                                    <f:convertNumber type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.orderUser}" sortBy="#{order.userName}"
+                                      filterBy="#{order.userName}" filterMatchMode="contains"
+                                      style="width:170px; word-break: break-word;">
+                                <h:outputText value="#{order.userName}" title="#{order.userName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.orderTime}" sortBy="#{order.orderTime}"
+                                      filterBy="#{createOrderController.getDateStr(order.orderTime)}"
+                                      filterMatchMode="contains" style="width:180px;">
+                                <h:outputText value="#{order.orderTime}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.effectiveTime}" sortBy="#{order.effectiveTime}"
+                                      filterBy="#{createOrderController.getDateStr(order.effectiveTime)}"
+                                      filterMatchMode="contains" style="width:180px;">
+                                <h:outputText value="#{order.effectiveTime}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{PP_CREATEORDER.expireTime}" sortBy="#{order.expireTime}"
+                                      filterBy="#{createOrderController.getDateStr(order.expireTime)}"
+                                      filterMatchMode="contains" style="width:180px;">
+                                <h:outputText value="#{order.expireTime}" styleClass="right">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{PP_CREATEORDER.status}" sortBy="#{order.status}"
+                                      filterBy="#{order.status}" filterMatchMode="exact" style="width:200px;">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tableOrder').filter()" styleClass="custom-filter"
+                                                     style="width: 100%;">
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.selectAll}" itemValue="#{null}"
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_0}" itemValue="0"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_6}" itemValue="6"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_1}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_2}" itemValue="2"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_3}" itemValue="3"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_4}" itemValue="4"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_5}" itemValue="5"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_8}" itemValue="8"/>
+                                        <f:selectItem itemLabel="#{PP_CREATEORDER.status_21}" itemValue="21"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{PP_CREATEORDER.status_0}" rendered="#{order.status eq '0'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_6}" rendered="#{order.status eq '6'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_1}" rendered="#{order.status eq '1'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_2}" rendered="#{order.status eq '2'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_3}" rendered="#{order.status eq '3'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_4}" rendered="#{order.status eq '4'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_5}" rendered="#{order.status eq '5'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_8}" rendered="#{order.status eq '8'}"/>
+                                <h:outputText value="#{PP_CREATEORDER.status_21}" rendered="#{order.status eq '21'}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_CREATEORDER.action}"
+                                      style="text-align: left !important; width:160px;">
+                                <p:commandLink id="btn_view"
+                                               actionListener="#{createOrderController.changeStateView(order)}"
+                                               process="@this" styleClass="fa fa-eye" style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="scrollToTop();"
+                                               resetValues="true"/>
+                                <p:tooltip for="btn_view" value="#{PP_COMMONS.view}"/>
+
+                                <p:commandLink id="btn_confirm"
+                                               rendered="#{(createOrderController.userMvas and order.getDspCompany().getType() != 5)
+                                               and '1' eq order.getStatus()}"
+                                               actionListener="#{createOrderController.preConfirmOrder(order)}"
+                                               process="@this" styleClass="fa fa-check-square"
+                                               style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="scrollToTop();"/>
+                                <p:tooltip for="btn_confirm" value="#{PP_CREATEORDER.btnApproval}"/>
+
+                                <p:commandLink id="btn_approval"
+                                               rendered="#{order.managerUserId eq createOrderController.userDTL.userId and '8' eq order.getStatus()}"
+                                               actionListener="#{createOrderController.preApprovalOrder(order)}"
+                                               process="@this" styleClass="fa fa-check-square"
+                                               style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="scrollToTop();"/>
+                                <p:tooltip for="btn_approval" value="#{PP_CREATEORDER.btnApproval}"/>
+
+                                <p:commandLink id="btn_active"
+                                               rendered="#{createOrderController.isDisplayBtnActive(order)}"
+                                               actionListener="#{createOrderController.handActiveOrder(order)}"
+                                               process="@this" styleClass="fa fa-check" style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="clearFilters('tableOrder');">
+                                    <p:confirm header="#{PP_CREATEORDER.confirm_active_dialog_header}"
+                                               message="#{PP_CREATEORDER.confirm_active}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_active" value="#{PP_CREATEORDER.btnActive}"/>
+
+                                <p:commandLink id="btn_complete"
+                                               rendered="#{createOrderController.isDisplayBtnComplete(order)}"
+                                               actionListener="#{createOrderController.handCompleteOrder(order)}"
+                                               process="@this" styleClass="fa fa-check-circle" style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="clearFilters('tableOrder');">
+                                    <p:confirm header="#{PP_CREATEORDER.confirm_complete_dialog_header}"
+                                               message="#{PP_CREATEORDER.confirm_complete}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_complete" value="#{PP_CREATEORDER.btnComplete}"/>
+
+                                <p:commandLink id="btn_del"
+                                               rendered="#{createOrderController.isDisplayBtnDelete(order)}"
+                                               actionListener="#{createOrderController.handleDelete(order)}"
+                                               process="@this" styleClass="fa fa-trash" style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="clearFilters('tableOrder');">
+                                    <p:confirm header="#{PP_CREATEORDER.confirm_delete_dialog_header}"
+                                               message="#{PP_CREATEORDER.confirm_delete}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_del" value="#{PP_CREATEORDER.btnDelete}"/>
+
+                                <p:commandLink id="btn_edit" rendered="#{createOrderController.isDisplayBtnEdit(order)}"
+                                               actionListener="#{createOrderController.changeStateEdit(order)}"
+                                               process="@this" styleClass="fa fa-pencil" style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="scrollToTop();">
+                                </p:commandLink>
+                                <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                                <p:commandLink id="btn_transfer_approval"
+                                               rendered="#{createOrderController.isDisplayBtnTransferApproval(order)}"
+                                               actionListener="#{createOrderController.handTransferApprovalOrder(order)}"
+                                               process="@this" styleClass="fa fa-arrow-circle-right"
+                                               style="margin-right:15px;"
+                                               update=":form_main:panel_center"
+                                               oncomplete="clearFilters('tableOrder');">
+                                    <p:confirm header="#{PP_CREATEORDER.transfer_approval_dialog_header}"
+                                               message="#{PP_CREATEORDER.confirm_transfer_approval}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_transfer_approval" value="#{PP_CREATEORDER.btnTransferApproval}"/>
+                                <p:commandLink id="btn_extension"
+                                               rendered="#{createOrderController.isDisplayBtnExtension(order)}"
+                                               actionListener="#{createOrderController.changeStateOrderExtension(order)}"
+                                               process="@this" styleClass="fa fa-calendar"
+                                               resetValues="true"
+                                               style="margin-right:15px;"
+                                               update=":form_main:panel_center :form_main:panel_order_extension"
+                                               oncomplete="PF('table_history_extension').clearFilters();">
+                                </p:commandLink>
+                                <p:tooltip for="btn_extension" value="#{PP_CREATEORDER.extensionOrder}"/>
+                                <p:commandLink id="btn_download_file_order"
+                                               styleClass="fa fa-download"
+                                               immediate="true" ajax="false"
+                                               style="margin-right:15px;"
+                                               rendered="#{order.filePath ne null}"
+                                               onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                    <p:fileDownload
+                                            value="#{createOrderController.downloadFileOrder(order)}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_download_file_order"
+                                           value="#{PP_SERVICEDECLARESPONSOR.download}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:panel header="#{PP_CREATEORDER.extensionOrder}" styleClass="box-primary"
+                             rendered="#{createOrderController.isOrderExtension() and not createOrderController.isDisplayBtnConfirm}">
+                        <div class="ui-fluid">
+                            <p:focus context=":form_main:panel_add_order"/>
+                            <h:panelGroup id="panel_order_extension">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="newDateExpire" value="#{PP_CREATEORDER.newDateExpire}"/>
+                                            <p:calendar id="newDateExpire"
+                                                        value="#{createOrderController.newDateExpire}"
+                                                        pattern="dd/MM/yyyy" mask="true" mode="popup" navigator="true"
+                                                        required="true" mindate="#{createOrderController.oldDateExpire}"
+                                                        requiredMessage="#{PP_CREATEORDER.newDateExpire}: #{PP_COMMONS.can_not_be_empty}"
+                                                        validatorMessage="#{PP_CREATEORDER.eff_date_expire_error}">
+                                                <p:ajax event="dateSelect" global="false"
+                                                        process="@this numberDateExpire"
+                                                        listener="#{createOrderController.onDateSelect}"
+                                                        update=":form_main:panel_order_extension"/>
+                                            </p:calendar>
+                                            <p:message for="newDateExpire"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="numberDateExpire"
+                                                           value="#{PP_CREATEORDER.numberDateExpire}"/>
+                                            <p:inputNumber id="numberDateExpire" maxValue="9999999999" maxlength="15"
+                                                           value="#{createOrderController.numberDateExpire}"
+                                                           minValue="0"
+                                                           decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                           padControl="false"
+                                                           requiredMessage="#{PP_CREATEORDER.numberDateExpire}: #{PP_COMMONS.can_not_be_empty}"
+                                                           required="true">
+                                                <p:ajax event="keyup" global="false" process="@this newDateExpire"
+                                                        listener="#{createOrderController.onNumberDate()}"
+                                                        update=":form_main:panel_order_extension"/>
+                                            </p:inputNumber>
+                                            <p:message for="numberDateExpire"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                        <div class="material">
+                                            <p:outputLabel for="attactFile" value="#{PP_CREATEORDER.attactFile}"/>
+                                            <p:fileUpload
+                                                    listener="#{createOrderController.handleFileUploadFile}"
+                                                    invalidSizeMessage="#{PP_SERVICEDECLARESPONSOR.oversize}"
+                                                    fileLimit="1"
+                                                    mode="advanced" sizeLimit="10485760" id="attactFile"
+                                                    label="#{PP_ADDDATAISDN.choose}" update="@this"
+                                                    auto="true"
+                                                    dragDropSupport="true" multiple="false">
+                                                <h:outputText
+                                                        value="#{createOrderController.filePath}"/>
+                                            </p:fileUpload>
+                                        </div>
+                                        <p:message for="attactFile"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-6 ui-lg-4"></div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <p:commandButton id="btnExtension"
+                                                         value="#{PP_CREATEORDER.extension}"
+                                                         process="@this panel_order_extension"
+                                                         styleClass="btn btn-success"
+                                                         resetValues="true"
+                                                         actionListener="#{createOrderController.handOrderExtension()}"
+                                                         update="panel_order_extension :form_main:table_order panel_center"
+                                                         icon="fa fa-check-circle"/>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-2">
+                                        <p:commandButton id="btnDestroy"
+                                                         value="#{PP_COMMONS.back}"
+                                                         process="@this" styleClass="btn btn-adn"
+                                                         actionListener="#{createOrderController.handDestroyExtension()}"
+                                                         update="panel_center" icon="fa fa-undo"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-4"></div>
+                                <p:panel header="#{PP_CREATEORDER.historyExtension}" styleClass="box-info"
+                                         style="overflow-x: auto; width: 100%;">
+                                    <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                 id="table_history_extension"
+                                                 widgetVar="table_history_extension"
+                                                 value="#{createOrderController.lstDspOrderStatusExtension}"
+                                                 var="orderStatus"
+                                                 filteredValue="#{createOrderController.lstDspOrderStatusExtensionFiltered}"
+                                                 emptyMessage="#{PP_COMMONS.empty_message}"
+                                                 rowKey="#{orderStatus.oldExpireTime}_#{orderStatus.newExpireTime}"
+                                                 rowIndexVar="rowIndex"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="5,10,15,#{createOrderController.lstDspOrderStatusExtension.size()}"
+                                                 paginator="true" rows="10" styleClass="no-border">
+
+
+                                        <p:ajax global="false" event="rowSelect"/>
+                                        <p:ajax global="false" event="rowUnselect"/>
+                                        <p:ajax global="false" event="sort"/>
+                                        <p:ajax global="false" event="page"/>
+
+                                        <p:column headerText="#{PP_CREATEORDER.index}"
+                                                  style="text-align: center !important; width:40px;">
+                                            <h:outputText value="#{rowIndex+1}"/>
+                                        </p:column>
+                                        <p:column headerText="#{PP_CREATEORDER.date}"
+                                                  sortBy="#{orderStatus.issueTime}" style="width: 130px;"
+                                                  filterBy="#{createOrderController.getDateTimeStr(orderStatus.issueTime)}"
+                                                  filterMatchMode="contains">
+                                            <h:outputText
+                                                    value="#{orderStatus.issueTime}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="#{PP_CREATEORDER.user}" sortBy="#{orderStatus.userName}"
+                                                  filterBy="#{orderStatus.userName}" filterMatchMode="contains"
+                                                  style="width:100px;">
+                                            <h:outputText value="#{orderStatus.userName}"
+                                                          title="#{orderStatus.userName}"/>
+                                        </p:column>
+
+                                        <p:column headerText="#{PP_CREATEORDER.oldDateExpireTbl}"
+                                                  sortBy="#{orderStatus.oldExpireTime}" style="width: 150px;"
+                                                  filterBy="#{createOrderController.getDateStr(orderStatus.oldExpireTime)}"
+                                                  filterMatchMode="contains">
+                                            <h:outputText
+                                                    value="#{createOrderController.getDateStr(orderStatus.oldExpireTime)}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="#{PP_CREATEORDER.newDateExpireTbl}"
+                                                  sortBy="#{orderStatus.newExpireTime}" style="width: 160px;"
+                                                  filterBy="#{createOrderController.getDateStr(orderStatus.newExpireTime)}"
+                                                  filterMatchMode="contains">
+                                            <h:outputText
+                                                    value="#{createOrderController.getDateStr(orderStatus.newExpireTime)}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{PP_CREATEORDER.fileTbl}" width="110px;">
+                                            <p:commandButton id="btn_download_file" style="width: 100px;"
+                                                             value="#{PP_COMMONS.download}"
+                                                             immediate="true" ajax="false"
+                                                             styleClass="btn btn-info"
+                                                             rendered="#{orderStatus.filePath ne null}"
+                                                             onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                                <p:fileDownload
+                                                        value="#{createOrderController.downloadFileServicePriceTab(orderStatus.filePath)}"/>
+                                            </p:commandButton>
+                                            <p:tooltip for="btn_download_file"
+                                                       value="#{PP_SERVICEDECLARESPONSOR.download}"/>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panel>
+                            </h:panelGroup>
+
+                        </div>
+                    </p:panel>
+
+                    <p:panel header="#{PP_CREATEORDER.order_info}" styleClass="box-primary"
+                             rendered="#{createOrderController.isDisplayBtnConfirm}">
+                        <div class="ui-fluid">
+                            <p:focus context=":form_main:panel_add_order"/>
+                            <h:panelGroup id="panel_add_order">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="contractCode" value="#{PP_CREATEORDER.contractCode}"/>
+                                            <p:inputText maxlength="100" id="contractCode"
+                                                         value="#{createOrderController.mtmpOrder.contractCode}"
+                                                         validator="ValidatorAlphaNum"
+                                                         validatorMessage="#{PP_CREATEORDER.contractCode}: #{PP_COMMONS.is_not_valid}"
+                                                         disabled="#{createOrderController.isDISABLE or createOrderController.mtmpOrder.type eq '1'}" required="true"
+                                                         onblur="value=value.toUpperCase().trim()"
+                                                         style="text-transform: uppercase">
+                                                <!--                                            <p:keyFilter regEx="/[a-z0-9_]/i"/>-->
+                                            </p:inputText>
+                                            <p:message for="contractCode"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="payMethod" value="#{PP_CREATEORDER.payMethod}"/>
+                                            <p:selectOneMenu id="payMethod"
+                                                             value="#{createOrderController.mtmpOrder.payMethod}"
+                                                             disabled="#{createOrderController.isDISABLE or createOrderController.mtmpOrder.type eq '1'}"
+                                                             required="true">
+                                                <f:selectItem itemLabel="#{PP_CREATEORDER.selectOne}"
+                                                              itemValue="#{null}"
+                                                              noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="#{PP_CREATEORDER.payMethod_0}" itemValue="0"/>
+                                                <f:selectItem itemLabel="#{PP_CREATEORDER.payMethod_1}" itemValue="1"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="payMethod"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="company" value="#{PP_CREATEORDER.company}"/>
+                                            <p:autoComplete id="company"
+                                                            disabled="#{createOrderController.isDISABLE or createOrderController.mtmpOrder.type eq '1'}"
+                                                            placeholder="#{PP_CREATEORDER.com_search}" cache="false"
+                                                            onclick="this.select();"
+                                                            minQueryLength="3" maxResults="10"
+                                                            value="#{createOrderController.mtmpOrder.dspCompany}"
+                                                            completeMethod="#{createOrderController.completeCompanySearch}"
+                                                            required="true" effect="fade"
+                                                            converter="CompanyItemConverter" var="itemCompany"
+                                                            itemLabel="#{itemCompany.comName}"
+                                                            itemValue="#{itemCompany}" queryDelay="1000">
+
+                                                <p:ajax global="false" event="itemSelect"
+                                                        process="@this company contractValue"
+                                                        listener="#{createOrderController.getListOrderPolicy()}"
+                                                        update="paidCost"/>
+                                                <f:facet name="itemtip">
+                                                    <h:panelGrid columns="2" cellpadding="5">
+                                                        <h:outputText value="#{PP_CREATEORDER.com_name}: "/>
+                                                        <h:outputText value="#{itemCompany.comName}"/>
+
+                                                        <h:outputText value="#{PP_CREATEORDER.com_taxCode}: "/>
+                                                        <h:outputText value="#{itemCompany.taxCode}"/>
+
+                                                        <h:outputText value="#{PP_CREATEORDER.com_busCode}: "/>
+                                                        <h:outputText value="#{itemCompany.busCode}"/>
+
+                                                        <h:outputText value="#{PP_CREATEORDER.com_vasMobile}: "/>
+                                                        <h:outputText value="#{itemCompany.vasMobile}"/>
+                                                    </h:panelGrid>
+                                                </f:facet>
+
+                                                <!-- <p:column headerText="#{PP_CREATEORDER.com_taxCode}" style="width:25%">
+                                                     <h:outputText value="#{itemCompany.taxCode}"/>
+                                                 </p:column>
+                                                 <p:column headerText="#{PP_CREATEORDER.com_busCode}" style="width:25%">
+                                                     <h:outputText value="#{itemCompany.busCode}"/>
+                                                 </p:column>
+                                                 <p:column headerText="#{PP_CREATEORDER.com_name}">
+                                                     <h:outputText value="#{itemCompany.comName}"/>
+                                                 </p:column>-->
+                                            </p:autoComplete>
+                                            <p:tooltip for="company" value="#{PP_CREATEORDER.com_search}"
+                                                       rendered="#{not createOrderController.isDISABLE}"/>
+                                            <p:message for="company"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="contractValue" value="#{PP_CREATEORDER.contractValue}"/>
+                                            <p:inputNumber id="contractValue"
+                                                           maxlength="15" maxValue="999999999999999" minValue="0"
+                                                           decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                           value="#{createOrderController.mtmpOrder.contractValue}"
+                                                           disabled="#{createOrderController.isDISABLE or createOrderController.mtmpOrder.type eq '1'}"
+                                                           required="true"
+                                                           symbol="#{PP_CREATEORDER.currencySymbol} ">
+                                                <p:ajax event="blur" global="true"
+                                                        process="@this company contractValue"
+                                                        listener="#{createOrderController.getOrderPolicy()}"
+                                                        update="paidCost, discountPercent"/>
+                                            </p:inputNumber>
+                                            <p:message for="contractValue"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="paidCost" value="#{PP_CREATEORDER.paidCost}"/>
+                                            <p:inputNumber id="paidCost"
+                                                           maxlength="15" maxValue="999999999999999" minValue="0"
+                                                           decimalSeparator="," decimalPlaces="0" thousandSeparator="."
+                                                           value="#{createOrderController.mtmpOrder.paidCost}"
+                                                           disabled="true"
+                                                           required="true"
+                                                           symbol="#{PP_CREATEORDER.currencySymbol} "/>
+                                            <p:message for="paidCost"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="discountPercent" value="#{PP_CREATEORDER.discountPercent}"/>
+                                            <p:inputNumber id="discountPercent"
+                                                           maxlength="15" maxValue="999999999999999" minValue="0"
+                                                           decimalSeparator="." decimalPlaces="0" thousandSeparator=","
+                                                           value="#{createOrderController.mtmpOrder.discountPercent}"
+                                                           disabled="true" required="true"
+                                                           symbol="%" symbolPosition="s" emptyValue="zero"/>
+                                            <p:message for="discountPercent"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="effectiveTime" value="#{PP_CREATEORDER.effectiveTime}"/>
+                                            <p:calendar id="effectiveTime"
+                                                        value="#{createOrderController.mtmpOrder.effectiveTime}"
+                                                        disabled="#{createOrderController.isDISABLE}"
+                                                        pattern="dd/MM/yyyy" mask="true" mode="popup" navigator="true"
+                                                        required="true" mindate="#{createOrderController.currentDate}"
+                                                        validatorMessage="#{PP_CREATEORDER.eff_date_error}"/>
+                                            <p:message for="effectiveTime"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="expireTime" value="#{PP_CREATEORDER.expireTime}"/>
+                                            <p:calendar id="expireTime"
+                                                        value="#{createOrderController.mtmpOrder.expireTime}"
+                                                        disabled="#{createOrderController.isDISABLE}"
+                                                        pattern="dd/MM/yyyy" mask="true" mode="popup" navigator="true"
+                                                        required="true"/>
+                                            <p:message for="expireTime"/>
+                                            <o:validateOrder type="lte" components="effectiveTime expireTime"
+                                                             message="#{PP_CREATEORDER.eff_exp_date_error}"
+                                                             showMessageFor="expireTime"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="status" value="#{PP_CREATEORDER.status}"/>
+                                            <p:selectOneMenu id="status"
+                                                             value="#{createOrderController.mtmpOrder.status}"
+                                                             disabled="#{createOrderController.isDISABLE or (createOrderController.isEDIT and createOrderController.mtmpOrder.status ne '0')
+                                                              or createOrderController.mtmpOrder.type eq '1'}"
+                                                             required="true">
+                                                <f:selectItem itemLabel="#{PP_CREATEORDER.status_0}" itemValue="0"/>
+                                                <c:if test="#{createOrderController.userMvas or createOrderController.isDISABLE}"><!--User in MVAS-->
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_8}" itemValue="8"/>
+                                                </c:if>
+
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '1' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_1}" itemValue="1"/>
+                                                </c:if>
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '3' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_3}" itemValue="3"/>
+                                                </c:if>
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '4' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_4}" itemValue="4"/>
+                                                </c:if>
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '5' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_5}" itemValue="5"/>
+                                                </c:if>
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '2' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_2}" itemValue="2"/>
+                                                </c:if>
+                                                <c:if test="#{createOrderController.mtmpOrder.status eq '21' or createOrderController.isDISABLE}">
+                                                    <f:selectItem itemLabel="#{PP_CREATEORDER.status_21}" itemValue="21"/>
+                                                </c:if>
+                                            </p:selectOneMenu>
+                                            <p:message for="status"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="fileOrder" value="#{PP_CREATEORDER.file}"/>
+                                            <p:fileUpload
+                                                    rendered="#{!createOrderController.isDISABLE}"
+                                                    listener="#{createOrderController.handleFileUploadOrder}"
+                                                    invalidSizeMessage="#{PP_SERVICEDECLARESPONSOR.oversize}"
+                                                    fileLimit="1"
+                                                    mode="advanced" sizeLimit="10485760" id="fileOrder"
+                                                    label="#{PP_ADDDATAISDN.choose}" update="@this"
+                                                    auto="true"
+                                                    dragDropSupport="true" multiple="false">
+                                                <h:outputText
+                                                        value="#{createOrderController.mtmpOrder.filePath}"/>
+                                            </p:fileUpload>
+                                            <p:inputText disabled="true"
+                                                         rendered="#{createOrderController.isDISABLE}"
+                                                         value="#{createOrderController.mtmpOrder.filePath}"/>
+                                            <p:message for="fileOrder"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="description" value="#{PP_CREATEORDER.description}"/>
+                                            <p:inputTextarea rows="3" maxlength="100" id="description"
+                                                             value="#{createOrderController.mtmpOrder.description}"
+                                                             disabled="#{createOrderController.isDISABLE}"
+                                                             required="false">
+                                            </p:inputTextarea>
+                                            <p:message for="description"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </h:panelGroup>
+                            <h:panelGroup id="pnl_control_approval"
+                                          rendered="${createOrderController.isDisplayBtnConfirm and createOrderController.renderConfirm}">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btnApproval"
+                                                         value="#{PP_CREATEORDER.approval_dialog_header}"
+                                                         process="@this"
+                                                         styleClass="btn btn-success"
+                                                         actionListener="#{createOrderController.handConfirmOrder()}"
+                                                         update="panel_center"
+                                                         icon="fa fa-check-circle">
+                                            <p:confirm header="#{PP_CREATEORDER.confirm_approval_dialog_header}"
+                                                       message="#{PP_CREATEORDER.confirm_approval}"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btnReject"
+                                                         value="#{PP_CREATEORDER.btnReject}"
+                                                         process="@this" styleClass="btn btn-danger"
+                                                         actionListener="#{createOrderController.preRejectOrder()}"
+                                                         oncomplete="scrollToTop(); PF('dlgRejectOrder').show();"
+                                                         update=":form_main:dlgRejectOrder"
+                                                         icon="fa fa-check-circle">
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                                </div>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="pnl_control_confirm"
+                                          rendered="${createOrderController.isDisplayBtnConfirm and createOrderController.renderApproval}">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btnConfirm"
+                                                         value="#{PP_CREATEORDER.approval_dialog_header}"
+                                                         process="@this"
+                                                         styleClass="btn btn-success"
+                                                         actionListener="#{createOrderController.handApprovalOrder()}"
+                                                         update="panel_center"
+                                                         icon="fa fa-check-circle">
+                                            <p:confirm header="#{PP_CREATEORDER.confirm_approval_dialog_header}"
+                                                       message="#{PP_CREATEORDER.confirm_approval}"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btnAdminReject"
+                                                         value="#{PP_CREATEORDER.btnReject}"
+                                                         process="@this" styleClass="btn btn-danger"
+                                                         actionListener="#{createOrderController.preRejectOrder()}"
+                                                         oncomplete="scrollToTop(); PF('dlgRejectOrder').show();"
+                                                         update=":form_main:dlgRejectOrder"
+                                                         icon="fa fa-check-circle">
+                                        </p:commandButton>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </p:panel>
+
+                    <p:panel header="#{PP_CREATEORDER.order_info_approval}" styleClass="box-primary"
+                             rendered="#{createOrderController.isVIEW and (createOrderController.mtmpOrder.status eq '2' or createOrderController.mtmpOrder.status eq '3')}">
+                        <div class="ui-fluid">
+                            <h:panelGroup id="panel_approval_order">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.approvalUser}"/>
+                                            <p:inputText value="#{createOrderController.mtmpOrder.approvalUser}"
+                                                         disabled="#{createOrderController.isDISABLE}">
+                                            </p:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.approvalTime}"/>
+                                            <p:calendar value="#{createOrderController.mtmpOrder.approvalTime}"
+                                                        pattern="dd/MM/yyyy HH:mm:ss" disabled="true"
+                                                        mask="true" mode="popup" navigator="true"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.approvalDesc}"/>
+                                            <p:inputTextarea rows="3"
+                                                             value="#{createOrderController.mtmpOrder.approvalDesc}"
+                                                             disabled="#{createOrderController.isDISABLE}">
+                                            </p:inputTextarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </p:panel>
+
+                    <p:panel header="#{PP_CREATEORDER.order_info_reject}" styleClass="box-primary"
+                             rendered="#{createOrderController.isVIEW and createOrderController.mtmpOrder.status eq '5'}">
+                        <div class="ui-fluid">
+                            <h:panelGroup id="panel_reject_order">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.rejectUser}"/>
+                                            <p:inputText value="#{createOrderController.mtmpOrder.approvalUser}"
+                                                         disabled="#{createOrderController.isDISABLE}">
+                                            </p:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.rejectTime}"/>
+                                            <p:calendar value="#{createOrderController.mtmpOrder.approvalTime}"
+                                                        pattern="dd/MM/yyyy HH:mm:ss" disabled="true"
+                                                        mask="true" mode="popup" navigator="true"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="#{PP_CREATEORDER.rejectReason}"/>
+                                            <p:inputTextarea rows="3"
+                                                             value="#{createOrderController.mtmpOrder.rejectReason}"
+                                                             disabled="#{createOrderController.isDISABLE}">
+                                            </p:inputTextarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </p:panel>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <p:dialog header="#{PP_CREATEORDER.reject_dialog_header}" id="dlgRejectOrder"
+                  widgetVar="dlgRejectOrder" modal="true" appendTo=":form_main"
+                  closable="false" draggable="false" width="60%"
+                  closeOnEscape="true" styleClass="box-info">
+            <div class="ui-fluid">
+                <h:panelGroup id="pnlReject">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                            <p:outputLabel for="rejectReason" value="#{PP_CREATEORDER.rejectReason}"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-9">
+                            <div class="material">
+                                <p:inputTextarea rows="3" maxlength="100" id="rejectReason"
+                                                 value="#{createOrderController.mtmpOrder.rejectReason}">
+                                </p:inputTextarea>
+                                <p:message for="rejectReason"/>
+                            </div>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <p:commandButton process="@this pnlReject" value="#{PP_CREATEORDER.btnReject}"
+                                         actionListener="#{createOrderController.handRejectOrder()}"
+                                         styleClass="btn btn-danger"
+                                         update="panel_center pnlReject"
+                                         icon="fa fa-check-circle">
+                            <p:confirm header="#{PP_CREATEORDER.confirm_reject_dialog_header}"
+                                       message="#{PP_CREATEORDER.confirm_reject}"/>
+                            <p:resetInput target="dlgRejectOrder, table_order"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                        <p:commandButton process="@this"
+                                         styleClass="btn" value="#{PP_COMMONS.back}"
+                                         oncomplete="PF('dlgRejectOrder').hide();"
+                                         icon="fa fa-undo">
+                            <p:resetInput target="dlgRejectOrder"/>
+                        </p:commandButton>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                </div>
+            </div>
+        </p:dialog>
+    </ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:o="http://omnifaces.org/ui">
+
+
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:panel id="panel_data_request" header="#{PP_LOCKDEL.header}" styleClass="box-primary">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                            <h:panelGroup id="pnlControl">
+                                <div class="ui-g no-padding">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                        <div class="material">
+                                            <p:outputLabel value="#{PP_LOCKDEL.lock_object}"
+                                                           for="lock_object"/>
+                                            <p:selectOneMenu filter="true" filterMatchMode="contains"
+                                                             id="lock_object"
+                                                             required="true"
+                                                             requiredMessage="#{PP_LOCKDEL.lock_object} #{PP_COMMONS.can_not_be_empty}"
+                                                             value="#{lockDelController.lockDelEntitySelected.lockedObject}">
+                                                <f:selectItem itemLabel="#{PP_LOCKDEL.choose}"
+                                                              itemValue=""/>
+                                                <f:selectItems value="#{lockDelController.lsLockDel}" var="lock"
+                                                               itemLabel="#{lock.lockedObject} - [#{lockDelController.getType(lock.type)}]"
+                                                               itemValue="#{lock.lockedObject}"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="lock_object"/>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                        <p:commandButton id="btn_del"
+                                                         rendered="#{lockDelController.isAllowDelete}"
+                                                         actionListener="#{lockDelController.handleDelete()}"
+                                                         process="@this lock_object" icon="fa fa-trash"
+                                                         styleClass="btn-danger btn-sm"
+                                                         update=":form_main:panel_center">
+                                            <p:confirm header="#{PP_LOCKDEL.confirm_delete_dialog_header}"
+                                                       message="#{PP_LOCKDEL.confirm_delete}"/>
+                                            <p:resetInput target="lock_object"/>
+                                        </p:commandButton>
+                                        <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:panelGroup>
+
+        </div>
+
+    </ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:o="http://omnifaces.org/ui">
+
+
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+
+        <style type="text/css">
+            .columndefault {
+                width: 160px;
+                word-break: break-word;
+            }
+
+            .columndefaultsmaller {
+                width: 110px;
+                word-break: break-word;
+            }
+        </style>
+
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:panel id="panel_data_request" header="#{PP_ADDDATAISDN.header}" styleClass="box-primary">
+                    <h:panelGroup>
+                        <div class="ui-g">
+                            <h:panelGroup>
+                                <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                    <h:panelGroup rendered="#{addDataISDNController.render eq 0}">
+                                        <h:panelGroup id="pnlControl">
+                                            <div class="ui-g no-padding">
+                                                <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                                    <h:panelGroup rendered="false">
+                                                        <p:commandButton id="btnCreatGroup" process="@this"
+                                                                         rendered="#{addDataISDNController.isAllowInsert}"
+                                                                         actionListener="#{addDataISDNController.onCreatGroup}"
+                                                                         styleClass="btn-primary btn-sm"
+                                                                         value="#{PP_ADDDATAISDN.creatGroup}"
+                                                                         icon="fa fa-plus-square"
+                                                                         update=":form_main:panel_data_request"/>
+
+                                                    </h:panelGroup>
+                                                </div>
+                                                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                                    <p:commandButton id="btnCreat" process="@this"
+                                                                     rendered="#{addDataISDNController.isAllowInsert}"
+                                                                     actionListener="#{addDataISDNController.onCreat}"
+                                                                     styleClass="btn-primary btn-sm"
+                                                                     value="#{PP_ADDDATAISDN.creat}"
+                                                                     icon="fa fa-plus-square"
+                                                                     update=":form_main:panel_data_request"/>
+
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>
+                                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                     id="tableRequest"
+                                                     widgetVar="tableRequest"
+                                                     filterDelay="500" value="#{addDataISDNController.lsRequest}"
+                                                     var="re"
+                                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                                     paginator="true" rows="10"
+                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10,20,50,#{addDataISDNController.lsRequest.size()}"
+                                                     styleClass="no-border">
+                                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                                            <p:ajax global="false" event="sort"/>
+                                            <p:ajax global="false" event="page"/>
+
+                                            <p:column headerText="#{PP_ADDDATAISDN.transaction}"
+                                                      styleClass="columndefaultsmaller"
+                                                      sortBy="#{re.transactionID}"
+                                                      filterBy="#{re.transactionID}" filterMatchMode="contains">
+                                                <h:outputText title="#{re.transactionID}"
+                                                              value="#{re.transactionID}"/>
+                                            </p:column>
+                                            <p:column headerText="#{PP_ADDDATAISDN.com_name}" styleClass="columndefault"
+                                                      sortBy="#{re.comName}"
+                                                      filterBy="#{re.comName}" filterMatchMode="contains">
+                                                <h:outputText title="#{re.comName}"
+                                                              value="#{re.comName}"/>
+                                            </p:column>
+                                            <p:column headerText="#{PP_ADDDATAISDN.service_name}"
+                                                      styleClass="columndefault"
+                                                      sortBy="#{re.serviceName}"
+                                                      filterBy="#{re.serviceName}" filterMatchMode="contains">
+                                                <h:outputText title="#{re.serviceName}"
+                                                              value="#{re.serviceName}"/>
+                                            </p:column>
+                                            <p:column headerText="#{PP_COMMONS.description}" styleClass="columndefault"
+                                                      sortBy="#{re.description}"
+                                                      filterBy="#{re.description}" filterMatchMode="contains">
+                                                <h:outputText title="#{re.description}"
+                                                              value="#{re.description}"/>
+                                            </p:column>
+                                            <p:column styleClass="columndefault"
+                                                      headerText="#{PP_ADDDATAISDN.request_time}"
+                                                      sortBy="#{re.requestTime}"
+                                                      filterBy="#{addDataISDNController.getDateToStr(re.requestTime)}"
+                                                      filterMatchMode="contains">
+                                                <h:outputText
+                                                        title="#{addDataISDNController.getDateToStr(re.requestTime)}"
+                                                        value="#{addDataISDNController.getDateToStr(re.requestTime)}"/>
+                                            </p:column>
+                                            <p:column styleClass="columndefault"
+                                                      headerText="#{PP_ADDDATAISDN.delivery_time}"
+                                                      sortBy="#{re.deliveryTime}"
+                                                      filterBy="#{addDataISDNController.getDateToStr(re.planTime)}"
+                                                      filterMatchMode="contains">
+                                                <h:outputText
+                                                        title="#{addDataISDNController.getDateToStr(re.planTime)}"
+                                                        value="#{addDataISDNController.getDateToStr(re.planTime)}"/>
+                                            </p:column>
+                                            <p:column styleClass="columndefault"
+                                                      headerText="#{PP_ADDDATAISDN.amount} (VND)"
+                                                      sortBy="#{re.amount}"
+                                                      filterBy="#{re.amount}"
+                                                      filterMatchMode="contains">
+                                                <h:outputText style="float: right" title="#{re.amount}"
+                                                              value="#{re.amount}">
+                                                    <f:convertNumber pattern="###,###.###"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="#{PP_ADDDATAISDN.status}" styleClass="columndefault"
+                                                      sortBy="#{re.status}"
+                                                      filterBy="#{re.status}"
+                                                      filterMatchMode="exact">
+                                                <f:facet name="filter">
+                                                    <p:selectOneMenu onchange="PF('tableRequest').filter();">
+                                                        <f:selectItem itemLabel="#{PP_ADDDATAISDN.allstatus}"
+                                                                      itemValue=""/>
+                                                        <f:selectItem itemLabel="#{PP_ADDDATAISDN.status0}"
+                                                                      itemValue="0"/>
+                                                        <!--<f:selectItem itemLabel="#{PP_ADDDATAISDN.status1}"-->
+                                                        <!--itemValue="1"/>-->
+
+                                                        <f:selectItem itemLabel="#{PP_ADDDATAISDN.status2}"
+                                                                      itemValue="2"/>
+                                                        <!--<f:selectItem itemLabel="#{PP_ADDDATAISDN.status3}"-->
+                                                        <!--itemValue="3"/>-->
+                                                        <f:selectItem itemLabel="#{PP_ADDDATAISDN.status4}"
+                                                                      itemValue="4"/>
+                                                        <!--<f:selectItem itemLabel="#{PP_ADDDATAISDN.status5}"-->
+                                                        <!--itemValue="5"/>-->
+                                                        <f:selectItem itemLabel="#{PP_ADDDATAISDN.status6}"
+                                                                      itemValue="6"/>
+                                                    </p:selectOneMenu>
+                                                </f:facet>
+                                                <h:outputText rendered="#{re.status eq '0'}"
+                                                              title="#{PP_ADDDATAISDN.status0}"
+                                                              value="#{PP_ADDDATAISDN.status0}"/>
+                                                <!--<h:outputText rendered="#{re.status eq '1'}"-->
+                                                <!--title="#{PP_ADDDATAISDN.status1}"-->
+                                                <!--value="#{PP_ADDDATAISDN.status1}"/>-->
+                                                <h:outputText rendered="#{re.status eq '2'}"
+                                                              title="#{PP_ADDDATAISDN.status2}"
+                                                              value="#{PP_ADDDATAISDN.status2}"/>
+                                                <!--<h:outputText rendered="#{re.status eq '3'}"-->
+                                                <!--title="#{PP_ADDDATAISDN.status3}"-->
+                                                <!--value="#{PP_ADDDATAISDN.status3}"/>-->
+                                                <h:outputText rendered="#{re.status eq '4'}"
+                                                              title="#{PP_ADDDATAISDN.status4}"
+                                                              value="#{PP_ADDDATAISDN.status4}"/>
+                                                <!--<h:outputText rendered="#{re.status eq '5'}"-->
+                                                <!--title="#{PP_ADDDATAISDN.status5}"-->
+                                                <!--value="#{PP_ADDDATAISDN.status5}"/>-->
+                                                <h:outputText rendered="#{re.status eq '6'}"
+                                                              title="#{PP_ADDDATAISDN.status6}"
+                                                              value="#{PP_ADDDATAISDN.status6}"/>
+                                            </p:column>
+                                            <p:column width="115" headerText="#{PP_COMMONS.action}">
+                                                <p:commandLink id="btn_view"
+                                                               actionListener="#{addDataISDNController.onView(re)}"
+                                                               process="@this" styleClass="fa fa-eye"
+                                                               oncomplete="PF('tableView').clearFilters();"
+                                                               update=":form_main:panel_data_request :form_main:tableView"
+                                                               resetValues="true"/>&nbsp;&nbsp;&nbsp;
+                                                <p:tooltip for="btn_view" value="#{PP_COMMONS.view}"/>
+
+                                                <p:commandLink id="btn_edit"
+                                                               rendered="#{re.status eq '0' and addDataISDNController.userID eq re.userID}"
+                                                               actionListener="#{addDataISDNController.onEdit(re)}"
+                                                               process="@this" styleClass="fa fa-pencil"
+                                                               update=":form_main:panel_data_request">&nbsp;&nbsp;&nbsp;
+                                                </p:commandLink>
+                                                <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                                                <p:commandLink id="btn_approve"
+                                                               actionListener="#{addDataISDNController.doApprove(re)}"
+                                                               rendered="#{re.status eq '0' and addDataISDNController.userID eq re.userID}"
+                                                               process="@this" styleClass="fa fa-check-square mar"
+                                                               oncomplete="PF('tableRequest').clearFilters();"
+                                                               update=":form_main:panel_data_request :form_main:tableRequest">&nbsp;&nbsp;
+                                                    <p:confirm header="#{PP_ADDDATAISDN.confirm_dialog_header}"
+                                                               message="#{PP_ADDDATAISDN.confirm}"/>
+                                                </p:commandLink>
+                                                <p:tooltip for="btn_approve" value="#{PP_ADDDATAISDN.btn_confirm}"/>
+
+                                                <p:commandLink id="btn_del"
+                                                               rendered="#{re.status eq '0' and addDataISDNController.userID eq re.userID}"
+                                                               actionListener="#{addDataISDNController.onDel(re)}"
+                                                               process="@this" styleClass="fa fa-trash"
+                                                               oncomplete="PF('tableRequest').clearFilters();"
+                                                               update=":form_main:panel_data_request :form_main:tableRequest">&nbsp;&nbsp;&nbsp;
+                                                    <p:confirm header="#{PP_ADDDATAISDN.confirm_del_dialog_header}"
+                                                               message="#{PP_ADDDATAISDN.confirm_del}"/>
+                                                </p:commandLink>
+                                                <p:tooltip for="btn_del" value="#{PP_ADDDATAISDN.btnDel}"/>
+
+                                                <p:commandLink id="btn_download_ls_success"
+                                                               rendered="#{re.status eq '6'}"
+                                                               styleClass="fa fa-download"
+                                                               immediate="true" ajax="false"
+                                                               onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                                    <p:fileDownload
+                                                            value="#{addDataISDNController.downloadFileLsSuccess(re)}"/>
+                                                </p:commandLink>
+                                                <p:tooltip for="btn_download_ls_success"
+                                                           value="#{PP_ADDDATAISDN.file_name_success}"/>
+
+                                                <p:commandLink id="btn_download_ls_fail"
+                                                               rendered="#{re.status eq '6'}"
+                                                               style="text-decoration:none;color:red;"
+                                                               styleClass="fa fa-download"
+                                                               immediate="true" ajax="false"
+                                                               onclick="PrimeFaces.monitorDownload(downloadStart, downloadStop);">&nbsp;&nbsp;
+                                                    <p:fileDownload
+                                                            value="#{addDataISDNController.downloadFileLsFail(re)}"/>
+                                                </p:commandLink>
+                                                <p:tooltip for="btn_download_ls_fail"
+                                                           value="#{PP_ADDDATAISDN.file_name_fail}"/>
+
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="pnl_creat" rendered="#{addDataISDNController.render eq 1}">
+                                        <p:focus context="pnl_creat"/>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_ok"
+                                                             actionListener="#{addDataISDNController.handleOK()}"
+                                                             process="@this pnl_creat"
+                                                             disabled="#{addDataISDNController.disableButton eq 0 or addDataISDNController.lDataAmount == 0}"
+                                                             styleClass="btn-success"
+                                                             value="#{addDataISDNController.valueButton}"
+                                                             update=":form_main:panel_data_request :form_main:tableRequest"
+                                                             icon="ui-icon fa fa-check-circle"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_cancel"
+                                                             actionListener="#{addDataISDNController.onCancel()}"
+                                                             process="@this" value="#{PP_COMMONS.back}"
+                                                             update=":form_main:panel_data_request"
+                                                             icon="fa fa-undo"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_COMMONS.description}"
+                                                               for="description"/>
+                                                <p:inputText id="description" maxlength="255"
+                                                             value="#{addDataISDNController.description}"/>
+                                                <p:message for="description"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.file} #{PP_ADDDATAISDN.format}"/>
+
+                                                <p:fileUpload
+                                                        listener="#{addDataISDNController.handleFileUpload}"
+                                                        mode="advanced"
+                                                        label="#{PP_ADDDATAISDN.choose}"
+                                                        auto="true" allowTypes="/(\.|\/)(xlsx|xls|txt)$/"
+                                                        dragDropSupport="true" multiple="false"
+                                                        update=":form_main:delivery_time :form_main:trans_amount :form_main:btn_ok"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.delivery_time}"
+                                                               for="delivery_time"/>
+                                                <p:inputText id="delivery_time" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.getDateToStr(addDataISDNController.addDataISDNEntity.planTime)}"/>
+                                                <p:message for="delivery_time"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.trans_amount} (VND)"
+                                                               for="trans_amount"/>
+                                                <p:inputText id="trans_amount" maxlength="15" disabled="true"
+                                                             value="#{addDataISDNController.lDataAmount}">
+                                                    <f:convertNumber pattern="###,###.###"/>
+                                                </p:inputText>
+                                                <p:message for="trans_amount"/>
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="pnl_creat_group" rendered="#{addDataISDNController.render eq 2}">
+                                        <p:focus context="pnl_creat_group"/>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_ok_group"
+                                                             actionListener="#{addDataISDNController.handleOK()}"
+                                                             process="@this pnl_creat_group"
+                                                             disabled="#{addDataISDNController.disableButton eq 0}"
+                                                             styleClass="btn-success"
+                                                             value="#{addDataISDNController.valueButton}"
+                                                             update=":form_main:panel_data_request :form_main:tableRequest"
+                                                             icon="ui-icon fa fa-check-circle"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_cancel_group"
+                                                             actionListener="#{addDataISDNController.onCancel()}"
+                                                             process="@this" value="#{PP_COMMONS.back}"
+                                                             update=":form_main:panel_data_request"
+                                                             icon="fa fa-undo"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_COMMONS.description}"
+                                                               for="description_group"/>
+                                                <p:inputText id="description_group" maxlength="255"
+                                                             value="#{addDataISDNController.description}"/>
+                                                <p:message for="description_group"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.totalCap} (GB)"
+                                                               for="inputAmountData"/>
+                                                <p:inputNumber id="inputAmountData"
+                                                               required="true"
+                                                               value="#{addDataISDNController.inputAmountData}"
+                                                               maxlength="14" maxValue="99999999999999"
+                                                               decimalPlaces="0" minValue="0"
+                                                               padControl="false">
+                                                    <p:ajax event="blur" process="@this"
+                                                            update=":form_main:delivery_time_group :form_main:trans_amount_group"
+                                                            global="false"/>
+                                                    <p:ajax event="keyup" process="@this"
+                                                            update=":form_main:delivery_time_group :form_main:trans_amount_group"
+                                                            global="false"/>
+                                                </p:inputNumber>
+                                                <p:message for="inputAmountData"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.file} #{PP_ADDDATAISDN.format}"/>
+
+                                                <p:fileUpload
+                                                        id="upload"
+                                                        listener="#{addDataISDNController.handleFileUploadGroup}"
+                                                        label="#{PP_ADDDATAISDN.choose}"
+                                                        mode="advanced"
+                                                        auto="true"
+                                                        dragDropSupport="true" multiple="false"
+                                                        update=":form_main:btn_ok_group :form_main:delivery_time_group :form_main:trans_amount_group"
+                                                        onstart="submitCollection()"/>
+                                                <p:remoteCommand name="submitCollection"
+                                                                 process="@this inputAmountData"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.delivery_time}"
+                                                               for="delivery_time_group"/>
+                                                <p:inputText id="delivery_time_group" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.getDateToStr(addDataISDNController.addDataISDNEntity.planTime)}"/>
+                                                <p:message for="delivery_time_group"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.trans_amount}(VND)"
+                                                               for="trans_amount_group"/>
+                                                <p:inputText id="trans_amount_group" maxlength="15" disabled="true"
+                                                             value="#{addDataISDNController.lDataAmount}">
+                                                    <f:convertNumber pattern="###,###.###"/>
+                                                </p:inputText>
+                                                <p:message for="trans_amount_group"/>
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="pnl_approve" rendered="#{addDataISDNController.render eq 3}">
+                                        <p:focus context="pnl_approve"/>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-6"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_approve1"
+                                                             actionListener="#{addDataISDNController.doApprove()}"
+                                                             process="@this pnl_approve"
+                                                             styleClass="btn-success" value="#{PP_ADDDATAISDN.update}"
+                                                             oncomplete="PF('tableRequest').clearFilters();"
+                                                             update=":form_main:panel_data_request :form_main:tableRequest"
+                                                             icon="ui-icon fa fa-check-circle"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_cancel_approve1"
+                                                             actionListener="#{addDataISDNController.onCancelApprove()}"
+                                                             process="@this" value="#{PP_COMMONS.back}"
+                                                             update=":form_main:panel_data_request"
+                                                             icon="fa fa-undo"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.transaction}"
+                                                               for="app_transactionID"/>
+                                                <p:inputText id="app_transactionID" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.addDataISDNEntity.transactionID}"/>
+                                                <p:message for="app_transactionID"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.request_time}"
+                                                               for="app_request_time"/>
+                                                <p:inputText id="app_request_time" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.getDateToStr(addDataISDNController.addDataISDNEntity.requestTime)}"/>
+                                                <p:message for="app_request_time"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.delivery_time}"
+                                                               for="app_delivery_time"/>
+                                                <p:inputText id="app_delivery_time" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.getDateToStr(addDataISDNController.addDataISDNEntity.planTime)}"/>
+                                                <p:message for="app_delivery_time"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_ADDDATAISDN.com_name}"
+                                                               for="com_name"/>
+                                                <p:inputText id="com_name" maxlength="255" disabled="true"
+                                                             value="#{addDataISDNController.addDataISDNEntity.comName}"/>
+                                                <p:message for="com_name"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-8">
+                                            <div class="material">
+                                                <p:outputLabel value="#{PP_COMMONS.status}"
+                                                               for="app_status"/>
+                                                <p:selectOneMenu filter="true" filterMatchMode="contains"
+                                                                 id="app_status" rendered="true"
+                                                                 requiredMessage="#{PP_COMMONS.status}: #{PP_COMMONS.can_not_be_empty}"
+                                                                 value="#{addDataISDNController.addDataISDNEntity.status}">
+                                                    <f:selectItem itemLabel="#{PP_ADDDATAISDN.status2_1}"
+                                                                  itemValue="2"/>
+                                                    <f:selectItem itemLabel="#{PP_ADDDATAISDN.status5}"
+                                                                  itemValue="5"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="app_status"/>
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-5"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-3">
+                                            <p:commandButton id="btn_show_package"
+                                                             actionListener="#{addDataISDNController.onShow()}"
+                                                             process="@this"
+                                                             styleClass="btn-auto"
+                                                             value="#{PP_ADDDATAISDN.show_package}"
+                                                             update=":form_main:panel_data_request :form_main:table_packagedata"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-4"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <h:panelGroup id="table_packagedata"
+                                                          rendered="#{addDataISDNController.renderTable eq 1}">
+                                                <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                             id="tablePackagedata"
+                                                             widgetVar="tableRequest"
+                                                             filterDelay="500"
+                                                             value="#{addDataISDNController.lsPackageData}"
+                                                             var="pack"
+                                                             emptyMessage="#{PP_COMMONS.empty_message}"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="10,20,50,#{addDataISDNController.lsRequest.size()}"
+                                                             styleClass="no-border">
+                                                    <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                                                    <p:ajax global="false" event="sort"/>
+                                                    <p:ajax global="false" event="page"/>
+
+                                                    <p:column headerText="#{PP_ADDDATAISDN.amount_package}"
+                                                              filterBy="#{pack.amount}" filterMatchMode="contains"
+                                                              sortBy="#{pack.amount}">
+                                                        <h:outputText title="#{pack.amount}"
+                                                                      value="#{pack.amount}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{PP_ADDDATAISDN.active_day}"
+                                                              filterBy="#{pack.activeDay}" filterMatchMode="contains"
+                                                              sortBy="#{pack.activeDay}">
+                                                        <h:outputText title="#{pack.activeDay}"
+                                                                      value="#{pack.activeDay}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </h:panelGroup>
+                                        </div>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="pnl_view" rendered="#{addDataISDNController.render eq 4}">
+                                        <div class="ui-g-12 ui-md-12 ui-lg-10"></div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                            <p:commandButton id="btn_cancel_view"
+                                                             actionListener="#{addDataISDNController.onCancelView()}"
+                                                             process="@this" value="#{PP_COMMONS.back}"
+                                                             update=":form_main:panel_data_request"
+                                                             icon="fa fa-undo"/>
+                                        </div>
+                                        <div class="ui-g-12 ui-md-12 ui-lg-12">
+                                            <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                                         id="tableView"
+                                                         widgetVar="tableView"
+                                                         filterDelay="500"
+                                                         value="#{addDataISDNController.lsDDRequest}"
+                                                         var="dd"
+                                                         emptyMessage="#{PP_COMMONS.empty_message}"
+                                                         paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="10,20,50,#{addDataISDNController.lsDDRequest.size()}"
+                                                         styleClass="no-border">
+                                                <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                                                <p:ajax global="false" event="sort"/>
+                                                <p:ajax global="false" event="page"/>
+
+                                                <p:column headerText="#{PP_ADDDATAISDN.ISDN}"
+                                                          filterBy="#{dd.ISDN}" filterMatchMode="contains"
+                                                          sortBy="#{dd.ISDN}">
+                                                    <h:outputText title="#{dd.ISDN}"
+                                                                  value="#{dd.ISDN}"/>
+                                                </p:column>
+                                                <p:column headerText="#{PP_ADDDATAISDN.amount_package}(MB)"
+                                                          filterBy="#{dd.amount}" filterMatchMode="contains"
+                                                          sortBy="#{dd.amount}">
+                                                    <h:outputText title="#{dd.amount}"
+                                                                  value="#{dd.amount}"/>
+                                                </p:column>
+                                                <p:column headerText="#{PP_ADDDATAISDN.active_day}"
+                                                          filterBy="#{dd.activeDay}" filterMatchMode="contains"
+                                                          sortBy="#{dd.activeDay}">
+                                                    <h:outputText title="#{dd.activeDay}"
+                                                                  value="#{dd.activeDay}"/>
+                                                </p:column>
+                                                <p:column headerText="#{PP_ADDDATAISDN.amount} (VND)"
+                                                          filterBy="#{dd.reqCost}" filterMatchMode="contains"
+                                                          sortBy="#{dd.reqCost}">
+                                                    <h:outputText title="#{dd.reqCost}"
+                                                                  value="#{dd.reqCost}">
+                                                        <f:convertNumber pattern="###,###.###"/>
+                                                    </h:outputText>
+
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+
+                                    </h:panelGroup>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </h:panelGroup>
+
+        </div>
+
+    </ui:composition>
+</h:body>
+</html>

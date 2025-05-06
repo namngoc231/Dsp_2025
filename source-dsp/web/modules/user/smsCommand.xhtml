@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:sticky target="pnl_control"/>
+                <h:panelGroup id="pnl_control">
+                    <h:panelGroup rendered="#{not smsCommandController.isDisplayBtnConfirm}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_add1" rendered="#{smsCommandController.isAllowInsert}"
+                                                 actionListener="#{smsCommandController.changeStateAdd()}"
+                                                 process="@this" styleClass="btn-primary" value="#{PP_COMMONS.add}"
+                                                 update="panel_center" icon="fa fa-plus"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_del1"
+                                                 rendered="#{smsCommandController.isAllowDelete and not smsCommandController.isDisplayBtnConfirm}"
+                                                 actionListener="#{smsCommandController.handleDelete()}"
+                                                 disabled="#{not smsCommandController.isSelectedSMS}" process="@this"
+                                                 styleClass=" btn-danger" value="#{PP_COMMONS.del}"
+                                                 update="panel_center" icon="fa fa-trash">
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{smsCommandController.isDisplayBtnConfirm}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel" rendered="#{smsCommandController.isDisplayBtnConfirm}"
+                                                 actionListener="#{smsCommandController.handleCancel()}" process="@this"
+                                                 value="#{PP_COMMONS.back}" update="panel_center" icon="fa fa-undo">
+                                    <p:resetInput target="panel_add"/>
+                                </p:commandButton>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok" rendered="#{smsCommandController.isDisplayBtnConfirm}"
+                                                 actionListener="#{smsCommandController.handleOK()}"
+                                                 process="@this :form_main:panel_add" styleClass=" btn-success"
+                                                 value="#{PP_COMMONS.ok}" update="panel_center"
+                                                 icon="fa fa-check-circle"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <p:panel header="#{PP_SMSCOMMAND.header}" styleClass="box-info"
+                             rendered="#{not smsCommandController.isDisplayBtnConfirm}">
+                        <p:dataTable id="table_sms" widgetVar="table_sms" value="#{smsCommandController.mlistSMS}"
+                                     var="sms"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     disabledSelection="#{smsCommandController.isDisplayBtnConfirm}"
+                                     rowKey="#{sms.cmdId}"
+                                     selection="#{smsCommandController.mselectedSMS}" rowSelectMode="checkbox"
+                                     styleClass="no-border">
+
+                            <p:ajax global="false" event="rowSelectCheckbox" process="table_sms"
+                                    update=":form_main:pnl_control"/>
+                            <p:ajax global="false" event="rowUnselectCheckbox" process="table_sms"
+                                    update=":form_main:pnl_control"/>
+                            <p:ajax global="false" event="toggleSelect" process="table_sms"
+                                    update=":form_main:pnl_control"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+
+                            <p:column headerText="#{PP_SMSCOMMAND.cmdCode}"
+                                      filterBy="#{sms.cmdCode}" filterMatchMode="contains">
+                                #{sms.cmdCode}
+                            </p:column>
+
+                            <p:column headerText="#{PP_SMSCOMMAND.cmdType}" priority="2"
+                                      filterBy="#{sms.cmdType}" filterMatchMode="contains">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('table_sms').filter()" styleClass="custom-filter">
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.all}" itemValue=""
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.in}" itemValue="I"/>
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.out}" itemValue="O"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText rendered="#{sms.cmdType eq 'I'}" value="#{PP_SMSCOMMAND.in}"/>
+                                <h:outputText rendered="#{sms.cmdType eq 'O'}" value="#{PP_SMSCOMMAND.out}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SMSCOMMAND.cmdMsgContent}" priority="3"
+                                      filterBy="#{sms.cmdMsgContent}" filterMatchMode="contains">
+                                #{sms.cmdMsgContent}
+                            </p:column>
+                            <p:column headerText="#{PP_SMSCOMMAND.cmdParamCount}" priority="4"
+                                      filterBy="#{sms.cmdParamCount}" filterMatchMode="contains">
+                                #{sms.cmdParamCount}
+                            </p:column>
+                            <p:column headerText="#{PP_SMSCOMMAND.cmdRegex}" priority="5"
+                                      filterBy="#{sms.cmdRegex}" filterMatchMode="contains">
+                                #{sms.cmdRegex}
+                            </p:column>
+
+                            <p:column headerText="#{PP_SMSCOMMAND.sysType}" priority="8"
+                                      filterBy="#{sms.sysType}" filterMatchMode="contains">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('table_sms').filter()" styleClass="custom-filter">
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.all}" itemValue=""
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.syskhdn}" itemValue="0"/>
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.syskhcn}" itemValue="1"/>
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.sysall}" itemValue="3"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText rendered="#{sms.sysType eq '0'}" value="#{PP_SMSCOMMAND.syskhdn}"/>
+                                <h:outputText rendered="#{sms.sysType eq '1'}" value="#{PP_SMSCOMMAND.syskhcn}"/>
+                                <h:outputText rendered="#{sms.sysType eq '3'}" value="#{PP_SMSCOMMAND.sysall}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_COMMONS.description}" priority="6"
+                                      filterBy="#{sms.description}" filterMatchMode="contains">
+                                #{sms.description}
+                            </p:column>
+
+                            <p:column headerText="#{PP_COMMONS.status}" priority="7"
+                                      filterBy="#{sms.status}" filterMatchMode="contains">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('table_sms').filter()" styleClass="custom-filter">
+                                        <f:selectItem itemLabel="#{PP_SMSCOMMAND.all}" itemValue=""
+                                                      noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                        <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText styleClass="label label-success" rendered="#{sms.status eq '1'}"
+                                              value="#{PP_COMMONS.enable}"/>
+                                <h:outputText styleClass="label label-warning" rendered="#{sms.status ne '1'}"
+                                              value="#{PP_COMMONS.disable}"/>
+                            </p:column>
+
+                            <p:column width="80" style="text-align: center !important;">
+                                <p:commandLink id="btn_edit" rendered="#{smsCommandController.isAllowUpdate}"
+                                               actionListener="#{smsCommandController.changeStateEdit(sms)}"
+                                               process="@this" styleClass="fa fa-pencil"
+                                               update=":form_main:panel_center"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                                <p:commandLink id="btn_copy"
+                                               rendered="#{smsCommandController.isAllowInsert and not smsCommandController.isDisplayBtnConfirm}"
+                                               actionListener="#{smsCommandController.changeStateCopy(sms)}"
+                                               process="@this" styleClass="fa fa-clone"
+                                               update=":form_main:panel_center"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_copy" value="#{PP_COMMONS.copy}"/>
+
+                                <p:commandLink id="btn_del"
+                                               rendered="#{smsCommandController.isAllowDelete and not smsCommandController.isDisplayBtnConfirm}"
+                                               actionListener="#{smsCommandController.handleDelete(sms)}"
+                                               process="@this" styleClass="fa fa-trash"
+                                               update=":form_main:panel_center">
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:panel header="#{PP_SMSCOMMAND.header}" styleClass="box-primary"
+                             rendered="#{smsCommandController.isDisplayBtnConfirm}">
+                        <p:focus context=":form_main:panel_add"/>
+                        <h:panelGroup id="panel_add">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="cmdCode" value="#{PP_SMSCOMMAND.cmdCode}"/>
+                                        <p:inputText maxlength="100" id="cmdCode"
+                                                     value="#{smsCommandController.mtmpSMS.cmdCode}"
+                                                     validator="ValidatorAlphaNum"
+                                                     validatorMessage="#{PP_SMSCOMMAND.cmdCode}#{PP_COMMONS.is_not_valid}"
+                                                     disabled="#{smsCommandController.isDISABLE}" required="true">
+                                        </p:inputText>
+                                        <p:message for="cmdCode"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="cmdType" value="#{PP_SMSCOMMAND.cmdType}"/>
+                                        <p:selectOneMenu id="cmdType" value="#{smsCommandController.mtmpSMS.cmdType}"
+                                                         required="true"
+                                                         disabled="#{smsCommandController.isDISABLE}">
+                                            <f:selectItem itemLabel="#{PP_SMSCOMMAND.in}" itemValue="I"/>
+                                            <f:selectItem itemLabel="#{PP_SMSCOMMAND.out}" itemValue="O"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="cmdType"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="cmdMsgContent" value="#{PP_SMSCOMMAND.cmdMsgContent}"/>
+                                        <p:inputText maxlength="500" id="cmdMsgContent"
+                                                     value="#{smsCommandController.mtmpSMS.cmdMsgContent}"
+                                                     disabled="#{smsCommandController.isDISABLE}"/>
+                                        <p:message for="cmdMsgContent"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="cmdParamCount" value="#{PP_SMSCOMMAND.cmdParamCount}"/>
+                                        <p:inputText maxlength="255" id="cmdParamCount"
+                                                     value="#{smsCommandController.mtmpSMS.cmdParamCount}"
+                                                     disabled="#{smsCommandController.isDISABLE}" required="true">
+                                            <p:keyFilter regEx="/[\d\-]/"/>
+                                        </p:inputText>
+                                        <p:message for="cmdParamCount"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="cmdRegex" value="#{PP_SMSCOMMAND.cmdRegex}"/>
+                                        <p:inputText maxlength="1000" id="cmdRegex"
+                                                     value="#{smsCommandController.mtmpSMS.cmdRegex}"
+                                                     disabled="#{smsCommandController.isDISABLE}"/>
+                                        <p:message for="cmdRegex"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="status" value="#{PP_COMMONS.status}"/>
+                                        <p:selectOneMenu id="status" value="#{smsCommandController.mtmpSMS.status}"
+                                                         disabled="#{smsCommandController.isDISABLE}">
+                                            <f:selectItem itemLabel="#{PP_COMMONS.enable}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_COMMONS.disable}" itemValue="0"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="status"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="sysType" value="#{PP_SMSCOMMAND.sysType}"/>
+                                        <p:selectOneMenu id="sysType" value="#{smsCommandController.mtmpSMS.sysType}"
+                                                         disabled="#{smsCommandController.isDISABLE}">
+                                            <f:selectItem itemLabel="#{PP_SMSCOMMAND.syskhdn}" itemValue="0"/>
+                                            <f:selectItem itemLabel="#{PP_SMSCOMMAND.syskhcn}" itemValue="1"/>
+                                            <f:selectItem itemLabel="#{PP_SMSCOMMAND.sysall}" itemValue="3"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="sysType"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-6">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="description" value="#{PP_COMMONS.description}"/>
+                                        <p:inputTextarea maxlength="2000" id="description"
+                                                         value="#{smsCommandController.mtmpSMS.description}"
+                                                         disabled="#{smsCommandController.isDISABLE}">
+                                        </p:inputTextarea>
+                                        <p:message for="description"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </p:panel>
+                </div>
+            </h:panelGroup>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

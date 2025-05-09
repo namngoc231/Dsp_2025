@@ -7,7 +7,6 @@ package vn.com.telsoft.model;
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import com.faplib.lib.admin.gui.entity.UserDTL;
 import com.faplib.util.DateUtil;
-import com.faplib.util.StringUtil;
 import vn.com.telsoft.entity.DSPCompany;
 
 import java.io.Serializable;

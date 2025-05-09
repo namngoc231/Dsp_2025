@@ -5,7 +5,6 @@
 package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.util.SQLUtil;
 import vn.com.telsoft.entity.DSPComOrderPol;
 import vn.com.telsoft.entity.DSPCompany;
 import vn.com.telsoft.entity.DSPCompanyExt;
@@ -149,15 +148,13 @@ public class DspComOrderPolModel extends AMDataPreprocessor implements Serializa
     public void delete(DSPComOrderPol dto, String table) throws Exception {
         try {
             open();
-            String strSQL = " UPDATE "+ table + " SET status = ?, removed_Date = sysdate WHERE tab_Id=? and com_Id = ? and status = 1 and APPLIED_DATE = ? ";
+            String strSQL = " UPDATE "+ table + " SET status = ?, removed_Date = sysdate WHERE tab_Id=? and com_Id = ? and status = 1";
             mConnection.setAutoCommit(false);
 //            logBeforeDelete("DSP_Com_Order_Pol", "SERVICE_ID=" + dto.getServiceId());
             mStmt = mConnection.prepareStatement(strSQL);
             mStmt.setString(1,dto.getStatus());
             mStmt.setLong(2, dto.getTabId());
             mStmt.setLong(3, dto.getComId());
-            java.sql.Date sqlAppliDate = new java.sql.Date(dto.getAppliedDate().getTime());
-            mStmt.setDate(4, sqlAppliDate);
             mStmt.execute();
             mConnection.commit();
         } catch (Exception ex) {

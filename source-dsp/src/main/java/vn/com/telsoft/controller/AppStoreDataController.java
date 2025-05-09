@@ -2,21 +2,17 @@ package vn.com.telsoft.controller;
 
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
-import com.faplib.lib.TelsoftException;
-import com.faplib.lib.util.DataUtil;
 import com.faplib.lib.util.ResourceBundleUtil;
 import org.apache.commons.lang3.SerializationUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import vn.com.telsoft.entity.AppStoreData;
-import vn.com.telsoft.entity.CBStore;
 import vn.com.telsoft.entity.CBStoreAttr;
 import vn.com.telsoft.model.AppStoreDataModel;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

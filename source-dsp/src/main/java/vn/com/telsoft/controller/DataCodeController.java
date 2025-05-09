@@ -3,9 +3,7 @@ package vn.com.telsoft.controller;
 import com.faplib.admin.security.AdminUser;
 import com.faplib.lib.*;
 import com.faplib.lib.util.ResourceBundleUtil;
-
 import com.faplib.util.FileUtil;
-import org.apache.cassandra.thrift.Cassandra;
 import org.apache.commons.lang3.SerializationUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
@@ -15,7 +13,9 @@ import vn.com.telsoft.model.DSPCompanyModel;
 import vn.com.telsoft.model.DSPOrderModel;
 import vn.com.telsoft.model.DataCodeModel;
 import vn.com.telsoft.model.DspServiceModel;
-import vn.com.telsoft.ws.*;
+import vn.com.telsoft.ws.DcApiRequest;
+import vn.com.telsoft.ws.DcApiResponse;
+import vn.com.telsoft.ws.DspApiClient;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;

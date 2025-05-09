@@ -10,13 +10,13 @@
 <h:body>
     <ui:composition>
         <div class="ui-fluid">
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-12 ui-lg-10">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-12 ui-lg-10">
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-2">
+                    <p:commandButton value="#{PP_POLICY.SAVE}" rendered="#{policyController.isAllowUpdate}" process="@form" actionListener="#{policyController.handUpdate}" update="@form" icon="ui-icon fa fa-check-circle" styleClass="btn-success"/>
+                </div>
             </div>
-            <div class="ui-g-12 ui-md-12 ui-lg-2">
-                <p:commandButton value="#{PP_POLICY.SAVE}" rendered="#{policyController.isAllowUpdate}" process="@form" actionListener="#{policyController.handUpdate}" update="@form" icon="ui-icon fa fa-check-circle" styleClass="btn-success"/>
-            </div>
-        </div>
             <p:panel header="#{PP_POLICY.module_name}" styleClass="box-primary">
                 <h:panelGroup id="pnl_edit">
                     <div class="ui-g">
@@ -48,14 +48,14 @@
 
                         <div class="ui-g-12 ui-md-12 ui-lg-12">
                             <div class="material">
-                                <p:selectBooleanCheckbox value="#{policyController.blREQUIRE_STRONG_PASSWORD}" itemLabel="#{PP_POLICY.MINIMUM_PASSWORD_LENGTH}">
-                                    <p:ajax global="false" update="pwd_length"/>
+                                <p:selectBooleanCheckbox value="#{policyController.blREQUIRE_STRONG_PASSWORD}" itemLabel="#{PP_POLICY.REQUIRE_STRONG_PASSWORD}">
+                                    <!--<p:ajax global="false" update="pwd_length"/>-->
                                 </p:selectBooleanCheckbox>
-                                <p:outputLabel for="pwd_length" value="#{PP_POLICY.MINIMUM_PASSWORD_LENGTH}" styleClass="hide" />
+                                <!--<p:outputLabel for="pwd_length" value="#{PP_POLICY.MINIMUM_PASSWORD_LENGTH}" styleClass="hide" />
                                 <p:inputText id="pwd_length" maxlength="6" disabled="#{!policyController.blREQUIRE_STRONG_PASSWORD}" value="#{policyController.MINIMUM_PASSWORD_LENGTH}" required="true">
                                     <p:keyFilter regEx="/[0-9]/i"/>
                                 </p:inputText>
-                                <p:message for="pwd_length"/>
+                                <p:message for="pwd_length"/>-->
                             </div>
                         </div>
 

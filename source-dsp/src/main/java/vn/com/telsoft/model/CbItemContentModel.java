@@ -6,7 +6,6 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import vn.com.telsoft.entity.CBItemContent;
-import vn.com.telsoft.entity.CBItemContentExt;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

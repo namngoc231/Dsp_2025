@@ -3,15 +3,14 @@ package vn.com.telsoft.model;
 import com.faplib.lib.TelsoftException;
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import com.faplib.lib.util.SQLUtil;
-import org.apache.commons.dbutils.DbUtils;
-import org.primefaces.model.SortOrder;
 import vn.com.telsoft.entity.Content;
 import vn.com.telsoft.entity.ContentRecognize;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManageContentModel extends AMDataPreprocessor implements Serializable {
 

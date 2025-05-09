@@ -11,7 +11,7 @@ import com.faplib.lib.SystemLogger;
 import com.faplib.lib.TSFuncTemplate;
 import com.faplib.lib.admin.gui.entity.UserDTL;
 import com.faplib.lib.config.Constant;
-import com.faplib.lib.util.PasswordUtil;
+import com.faplib.util.PasswordUtil;
 import com.faplib.lib.util.ResourceBundleUtil;
 import com.faplib.util.FileUtil;
 import com.faplib.util.StringUtil;
@@ -51,6 +51,7 @@ import static com.faplib.lib.admin.security.PolicyProcessor.getPolicy;
 public class DspCompanyController extends TSFuncTemplate implements Serializable {
 
     static final String RESOURCE_BUNDLE = "PP_DSPCOMPANY";
+    static final String RESOURCE_BUNDLE_MNGGROUP = "PP_MNGGROUP";
     static final String API_DATACODE_RESOURCE_BUNDLE = "PP_API_DATACODE";
     private String password;
     private String passwordAPI;
@@ -363,12 +364,14 @@ public class DspCompanyController extends TSFuncTemplate implements Serializable
             return false;
         }
 
-        if (!"".equals(password) && password != null || !"".equals(passwordAPI) && passwordAPI != null) {
+//      TH userCompany.getType = 1 (CTKV) không check password api
+        boolean isType1 = mcompany.getType() == 1;
+        if (!"".equals(password) && password != null || (!isType1 && !"".equals(passwordAPI) && passwordAPI != null)) {
             if (checkPolicyPassword) {
                 boolean passUser = PasswordUtil.isValidPassword(password);
-                boolean passUserApi = PasswordUtil.isValidPassword(passwordAPI);
+                boolean passUserApi = isType1 ? true : PasswordUtil.isValidPassword(passwordAPI);
                 if (!passUser || !passUserApi) {
-                    ClientMessage.logErr(ClientMessage.MESSAGE_TYPE.ERR, ResourceBundleUtil.getCTObjectAsString(RESOURCE_BUNDLE, "require_strong_password"));
+                    ClientMessage.logErr(ClientMessage.MESSAGE_TYPE.ERR, ResourceBundleUtil.getAMObjectAsString(RESOURCE_BUNDLE_MNGGROUP, "require_strong_password"));
                     return false;
                 }
             }

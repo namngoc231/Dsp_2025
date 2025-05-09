@@ -5,15 +5,11 @@
 package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.util.SQLUtil;
 import vn.com.telsoft.entity.CBItemContent;
 import vn.com.telsoft.entity.CBItemContentExt;
-import vn.com.telsoft.entity.CBList;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

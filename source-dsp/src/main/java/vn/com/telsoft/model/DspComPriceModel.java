@@ -6,9 +6,6 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import vn.com.telsoft.entity.DSPComPrice;
-import vn.com.telsoft.entity.DSPComPrice;
-import vn.com.telsoft.entity.DSPCompany;
-import vn.com.telsoft.entity.DSPCompanyExt;
 
 import java.io.Serializable;
 import java.util.ArrayList;

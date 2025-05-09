@@ -5,8 +5,6 @@
 package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import vn.com.telsoft.entity.CBStore;
-import vn.com.telsoft.entity.Content;
 
 import java.io.Serializable;
 import java.util.ArrayList;

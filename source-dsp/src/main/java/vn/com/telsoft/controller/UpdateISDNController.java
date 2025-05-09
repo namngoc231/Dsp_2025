@@ -5,7 +5,6 @@
 package vn.com.telsoft.controller;
 
 import com.faplib.lib.ClientMessage;
-import com.faplib.lib.util.ResourceBundleUtil;
 import vn.com.telsoft.entity.CBStore;
 import vn.com.telsoft.entity.CBSubStore;
 import vn.com.telsoft.entity.CBSubscriber;

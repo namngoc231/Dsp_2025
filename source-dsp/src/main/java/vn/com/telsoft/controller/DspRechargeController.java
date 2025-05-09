@@ -1,6 +1,5 @@
 package vn.com.telsoft.controller;
 
-import com.faplib.admin.security.AdminUser;
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.SystemLogger;
 import com.faplib.lib.TSFuncTemplate;

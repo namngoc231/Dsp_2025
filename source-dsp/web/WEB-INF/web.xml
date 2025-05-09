@@ -16,11 +16,6 @@
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 
-    <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Production</param-value>
-    </context-param>
-
     <filter>
         <filter-name>CacheFilter</filter-name>
         <filter-class>com.faplib.admin.security.CacheFilter</filter-class>
@@ -71,6 +66,11 @@
         <dispatcher>ERROR</dispatcher>
         <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
+
+    <context-param>
+        <param-name>javax.faces.RESOURCE_EXCLUDES</param-name>
+        <param-value>WEB-INF/*,META-INF/*</param-value>
+    </context-param>
 
     <context-param>
         <param-name>primefaces.THEME</param-name>
@@ -229,4 +229,13 @@
         <location>/faces/optimistic.xhtml</location>
     </error-page>
 	<distributable/>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Restricted</web-resource-name>
+            <url-pattern>/*WEB-INF/*</url-pattern>
+            <url-pattern>/*META-INF/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint/>
+    </security-constraint>
 </web-app>

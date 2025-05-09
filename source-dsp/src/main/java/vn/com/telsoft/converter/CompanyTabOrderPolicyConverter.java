@@ -1,7 +1,6 @@
 package vn.com.telsoft.converter;
 
 import vn.com.telsoft.controller.OrderPolicySponsorController;
-import vn.com.telsoft.controller.ServiceDeclareSponsorController;
 import vn.com.telsoft.entity.DSPCompany;
 
 import javax.faces.application.FacesMessage;

@@ -6,7 +6,6 @@ package vn.com.telsoft.controller;
 
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
-import com.faplib.lib.util.DataUtil;
 import com.faplib.lib.util.ResourceBundleUtil;
 import com.faplib.util.DateUtil;
 import org.primefaces.PrimeFaces;
@@ -16,10 +15,12 @@ import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import vn.com.telsoft.entity.*;
+import vn.com.telsoft.entity.CBItemContentExt;
+import vn.com.telsoft.entity.CBList;
+import vn.com.telsoft.entity.CBStore;
+import vn.com.telsoft.entity.Content;
 import vn.com.telsoft.model.*;
 
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;

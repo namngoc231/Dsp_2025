@@ -10,6 +10,8 @@ import com.faplib.lib.ClientMessage;
 import com.faplib.lib.SystemLogger;
 import com.faplib.lib.TSFuncTemplate;
 import com.faplib.lib.admin.gui.entity.UserDTL;
+import com.faplib.lib.config.Constant;
+import com.faplib.util.PasswordUtil;
 import com.faplib.lib.util.ResourceBundleUtil;
 import com.faplib.util.StringUtil;
 import org.apache.commons.lang.SerializationUtils;
@@ -24,13 +26,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-/**
- * @author HoangNH
- */
+import static com.faplib.lib.admin.security.PolicyProcessor.getPolicy;
+
 @Named
 @ViewScoped
 public class DspCompanyChangePasswordController extends TSFuncTemplate implements Serializable {
-    static final String RESOURCE_BUNDLE = "PP_DSPCOMPANY";
+    private static final String RESOURCE_BUNDLE = "PP_DSPCOMPANY";
+    private static final String RESOURCE_BUNDLE_MNGGROUP = "PP_MNGGROUP";
     private List<DSPCompany> mlistCompany;
     private DSPCompany mtmpCompany;
     private int userOrApi;
@@ -38,6 +40,7 @@ public class DspCompanyChangePasswordController extends TSFuncTemplate implement
     private String password, rePassword;
     private DSPCompanyUpdatedKeyModel mmodel = new DSPCompanyUpdatedKeyModel();
     private boolean disableBtn = true;
+    private final boolean checkPolicyPassword;
 
     public DspCompanyChangePasswordController() throws Exception {
         mUser = new UserDTL();
@@ -46,6 +49,7 @@ public class DspCompanyChangePasswordController extends TSFuncTemplate implement
         this.mtmpCompany = (DSPCompany) SerializationUtils.clone(this.mlistCompany.get(0));
         if (mtmpCompany.getApiUserId() != 0)
             disableBtn = false;
+        checkPolicyPassword = "1".equalsIgnoreCase(getPolicy(Constant.GP_REQUIRE_STRONG_PASSWORD).trim());
     }
 
     public void changeStateEdit(DSPCompany app) throws Exception {
@@ -73,8 +77,14 @@ public class DspCompanyChangePasswordController extends TSFuncTemplate implement
         }
     }
 
-    private boolean check_Password(String password, String rePassword) throws Exception {
+    private boolean check_Password(String password, String rePassword) {
         try {
+            if (checkPolicyPassword) {
+                if (!PasswordUtil.isValidPassword(password)) {
+                    ClientMessage.logErr(ClientMessage.MESSAGE_TYPE.ERR, ResourceBundleUtil.getAMObjectAsString(RESOURCE_BUNDLE_MNGGROUP, "require_strong_password"));
+                    return false;
+                }
+            }
             if (!password.equals(rePassword)) {
                 ClientMessage.logErr(ClientMessage.MESSAGE_TYPE.ERR, ResourceBundleUtil.getCTObjectAsString(RESOURCE_BUNDLE, "duplicatePassword"));
                 return false;

@@ -9,10 +9,8 @@ import com.faplib.lib.admin.data.AMDataPreprocessor;
 import com.faplib.lib.admin.gui.entity.AccessRight;
 import com.faplib.lib.admin.gui.entity.AppGUI;
 import com.faplib.lib.admin.gui.entity.ModuleGUI;
-import com.faplib.lib.config.Config;
 import com.faplib.lib.util.SQLUtil;
 import com.faplib.util.StringUtil;
-import com.faplib.ws.client.ClientRequestProcessor;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -155,9 +153,6 @@ public class AppModel extends AMDataPreprocessor implements Serializable {
 
     public List<AppGUI> getListAppObj(String strAppCode) throws Exception {
 
-        if (Config.isWSEnabled()) {
-            return ClientRequestProcessor.getListAppGUI(strAppCode);
-        }
 
         List<AppGUI> listReturn = new ArrayList<>();
 

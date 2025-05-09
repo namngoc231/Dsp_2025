@@ -120,7 +120,9 @@
                             <p:commandButton process="@this" id="btn_cancel" value="#{PP_COMMONS.back}"
                                              rendered="#{declareApiController.isDisplayBtnConfirm}"
                                              actionListener="#{declareApiController.handleCancel()}"
-                                             update="pnl_center" icon="fa fa-undo" style="margin-bottom: 5px;"/>
+                                             update="pnl_center" icon="fa fa-undo" style="margin-bottom: 5px;">
+                                <p:resetInput target="api path status description"/>
+                            </p:commandButton>
                         </div>
                         <div class="clear"/>
                     </div>

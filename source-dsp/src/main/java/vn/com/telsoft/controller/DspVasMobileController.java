@@ -73,7 +73,7 @@ public class DspVasMobileController extends TSFuncTemplate implements Serializab
                 ClientMessage.logErr(ResourceBundleUtil.getCTObjectAsString(RESOURCE_BUNDLE, "duplicateVasMobile"));
             } else {
                 dspVasMobileModel.insert(vasMobile);
-                lstVasMobile = dspVasMobileModel.getListById(comId, userId);
+                lstVasMobile = dspVasMobileModel.getListById(comId, comIdLogin);
                 PrimeFaces.current().executeScript("PF('dialog_add_mobile').hide();");
                 PrimeFaces.current().executeScript("PF('table_vasmobile').clearFilters();");
                 ClientMessage.logAdd();
@@ -92,7 +92,7 @@ public class DspVasMobileController extends TSFuncTemplate implements Serializab
     public void handleDelete(DspComVasMobile obj) throws Exception {
         vasMobile = obj;
         dspVasMobileModel.delete(vasMobile);
-        lstVasMobile = dspVasMobileModel.getListById(comId, userId);
+        lstVasMobile = dspVasMobileModel.getListById(comId, comIdLogin);
         ClientMessage.logDelete();
     }
 

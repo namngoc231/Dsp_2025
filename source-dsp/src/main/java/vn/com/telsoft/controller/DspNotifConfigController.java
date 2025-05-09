@@ -57,6 +57,7 @@ public class DspNotifConfigController extends TSFuncTemplate implements Serializ
 
     public void delete(DspNotifConfig object) throws Exception {
         dspNotifConfigModel.delete(object);
+        ClientMessage.logDelete();
         handleCancel();
         PrimeFaces.current().executeScript("PF('table_noti').clearFilters();");
     }

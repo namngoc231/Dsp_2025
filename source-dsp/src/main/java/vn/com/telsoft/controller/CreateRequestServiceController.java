@@ -6,25 +6,14 @@ package vn.com.telsoft.controller;
 
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
-import com.faplib.lib.TelsoftException;
 import com.faplib.lib.util.ResourceBundleUtil;
-import org.apache.commons.lang3.SerializationUtils;
-import vn.com.telsoft.entity.CBItemContent;
-import vn.com.telsoft.entity.CBItemIsdn;
-import vn.com.telsoft.entity.CBList;
 import vn.com.telsoft.entity.DSPService;
-import vn.com.telsoft.model.CBItemIsdnModel;
-import vn.com.telsoft.model.CbItemContentModel;
-import vn.com.telsoft.model.CbListModel;
 import vn.com.telsoft.model.DspServiceModel;
 
-import javax.annotation.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

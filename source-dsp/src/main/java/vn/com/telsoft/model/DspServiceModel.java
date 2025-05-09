@@ -6,15 +6,10 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import com.faplib.lib.util.SQLUtil;
-import vn.com.telsoft.entity.CBItemContent;
-import vn.com.telsoft.entity.CBItemIsdn;
-import vn.com.telsoft.entity.CBList;
 import vn.com.telsoft.entity.DSPService;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

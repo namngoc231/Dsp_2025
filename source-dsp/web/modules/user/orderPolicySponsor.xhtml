@@ -81,7 +81,6 @@
 
                                         <p:column headerText="#{PP_SERVICEDECLARESPONSOR.listCom}"
                                                   style="text-align: center !important; width:150px;"
-                                                  filterValue="#{orderPolicySponsorController.filterStateComOrder.get('nameCom')}"
                                                   filterBy="#{comOrder.comName}" filterMatchMode="contains"
                                                   sortBy="#{comOrder.comName}">
                                             <h:outputText value="#{comOrder.comName}"
@@ -187,14 +186,12 @@
                                 <p:ajax global="false" event="page"/>
                                 <p:column headerText="#{PP_SERVICEDECLARESPONSOR.description}"
                                           sortBy="#{orderPolicyTab.description}" width="180px;"
-                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('description')}"
                                           filterBy="#{orderPolicyTab.description}" filterMatchMode="contains">
                                     <h:outputText value="#{orderPolicyTab.description}"
                                                   title="#{orderPolicyTab.description}"/>
                                 </p:column>
                                 <p:column headerText="#{PP_SERVICEDECLARESPONSOR.startDate}"
                                           sortBy="#{orderPolicyTab.startDate}" width="120px;"
-                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('startDate')}"
                                           filterBy="#{orderPolicySponsorController.getDateToStr(orderPolicyTab.startDate)}" filterMatchMode="contains">
                                     <h:outputText value="#{orderPolicyTab.startDate}">
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
@@ -202,7 +199,6 @@
                                 </p:column>
                                 <p:column headerText="#{PP_SERVICEDECLARESPONSOR.endDate}"
                                           sortBy="#{orderPolicyTab.endDate}" style="width:120px;"
-                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('endDate')}"
                                           filterBy="#{orderPolicySponsorController.getDateToStr(orderPolicyTab.endDate)}" filterMatchMode="contains">
                                     <h:outputText value="#{orderPolicyTab.endDate}">
                                         <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+7"/>
@@ -210,7 +206,6 @@
                                 </p:column>
                                 <p:column headerText="#{PP_SERVICEDECLARE.status}" filterStyleClass="columnFilter"
                                           sortBy="#{orderPolicyTab.status}" style="width:150px;"
-                                          filterValue="#{orderPolicySponsorController.filterStateOrderPolicyTab.get('status')}"
                                           filterBy="#{orderPolicyTab.status}"
                                           filterOptions="#{orderPolicySponsorController.mFilterOptionStatus}"
                                           filterMatchMode="exact">
@@ -228,7 +223,6 @@
                                 </p:column>
                                 <p:column headerText="#{PP_SERVICEDECLARESPONSOR.defaultValue}" style="width:120px;"
                                           sortBy="#{orderPolicyTab.defaultValue}" filterStyleClass="columnFilter"
-                                          filterValue="#{orderPolicySponsorController.filterState.get('defaultValue')}"
                                           filterOptions="#{orderPolicySponsorController.mFilterOptionDefault}"
                                           filterBy="#{orderPolicyTab.defaultValue}" filterMatchMode="exact">
                                     <h:outputText value="#{PP_COMMONS.yes}" title="#{PP_COMMONS.yes}"
@@ -744,6 +738,7 @@
                                              styleClass="btn-success"
                                              value="#{PP_COMMONS.ok}"
                                              update="OrderPolicyMsg pnlOrderPolicy :form_main:panel_center :form_main:table_order_policy"
+                                             oncomplete="PF('table_order_policy').filter()"
                                              icon="fa fa-check-circle"/>
                         </div>
                         <div class="ui-g-12 ui-md-12 ui-lg-3"></div>

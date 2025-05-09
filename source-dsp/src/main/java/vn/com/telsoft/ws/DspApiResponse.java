@@ -1,11 +1,5 @@
 package vn.com.telsoft.ws;
 
-import vn.com.telsoft.entity.DSPCompany;
-import vn.com.telsoft.entity.DSPService;
-
-import java.io.Serializable;
-import java.util.Date;
-
 /**
  * @author TUNGLM
  */

@@ -1,7 +1,6 @@
 package vn.com.telsoft.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  *

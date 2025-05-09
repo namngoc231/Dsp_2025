@@ -295,7 +295,7 @@
         <dependency>
             <groupId>data-sponsor</groupId>
             <artifactId>TLS-ADMIN-JSF</artifactId>
-            <version>8.0.3</version>
+            <version>8.0.5</version>
         </dependency>
 
         <!--        <dependency>-->
@@ -391,8 +391,8 @@
                 <version>3.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
 
@@ -416,6 +416,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>dsp-admin-${config}</finalName>
+        <finalName>ROOT</finalName>
     </build>
 </project>

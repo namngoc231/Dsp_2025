@@ -5,7 +5,6 @@ import vn.com.telsoft.entity.DSPCompany;
 import vn.com.telsoft.entity.DSPTransaction;
 
 import java.io.Serializable;
-import java.sql.PreparedStatement;
 
 public class ViewDcModel extends AMDataPreprocessor implements Serializable {
 

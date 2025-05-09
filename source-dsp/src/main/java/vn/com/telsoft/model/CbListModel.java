@@ -4,21 +4,12 @@
  */
 package vn.com.telsoft.model;
 
-import com.faplib.lib.SystemLogger;
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.admin.gui.entity.AccessRight;
-import com.faplib.lib.admin.gui.entity.AppGUI;
-import com.faplib.lib.admin.gui.entity.ModuleGUI;
-import com.faplib.lib.config.Config;
 import com.faplib.lib.util.SQLUtil;
-import com.faplib.util.StringUtil;
-import com.faplib.ws.client.ClientRequestProcessor;
 import vn.com.telsoft.entity.CBItemContent;
 import vn.com.telsoft.entity.CBList;
 
 import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 

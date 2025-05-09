@@ -4,17 +4,14 @@
  */
 package vn.com.telsoft.model;
 
-import com.faplib.lib.SystemConfig;
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.util.SQLUtil;
-import com.faplib.util.DateUtil;
-import com.faplib.util.StringUtil;
-import vn.com.telsoft.entity.*;
+import vn.com.telsoft.entity.DSPOrder;
+import vn.com.telsoft.entity.DSPOrderStatus;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Types;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Trieunv, TELSOFT

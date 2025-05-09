@@ -13,7 +13,6 @@ import vn.com.telsoft.entity.DSPOrderPolicyTab;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -333,8 +332,13 @@ public class DspOrderPolicyTabModel extends AMDataPreprocessor implements Serial
         List<Object> parameter = new ArrayList<>();
         try {
             open();
-            String strSQL = " select * from DSP_ORDER_POLICY_TAB where  DEF = 1 and STATUS = 1 " +
+            String strSQL = " select * from DSP_ORDER_POLICY_TAB where DEF = 1 and STATUS = 1 " +
                     "   ";
+            if (dto.getCustType() != null) {
+                strSQL += " and cust_type = ? ";
+                parameter.add(dto.getCustType());
+            }
+
             if (dateIsNull) {
                 strSQL += " and start_date is null and end_date is null ";
             } else {
@@ -353,7 +357,6 @@ public class DspOrderPolicyTabModel extends AMDataPreprocessor implements Serial
                     parameter.add(sqlDateEnd);
                 }
             }
-
 
             mStmt = mConnection.prepareStatement(strSQL);
             int i = 0;

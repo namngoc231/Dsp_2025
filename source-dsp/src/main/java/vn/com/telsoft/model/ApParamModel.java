@@ -2,7 +2,6 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import vn.com.telsoft.entity.ApParam;
-import vn.com.telsoft.entity.DeclareApi;
 
 import java.io.Serializable;
 import java.util.ArrayList;

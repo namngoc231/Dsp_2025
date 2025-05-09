@@ -57,6 +57,7 @@
                                                  actionListener="#{decentralizeUserController.addListApiTable}"
                                                  process="@this listComboApi" icon="fa fa-plus"
                                                  styleClass="btn btn-primary btn-xs"
+                                                 oncomplete="PF('tbl_api').clearFilters();"
                                                  update=":form_main:panel_center"/>
                                 <p:tooltip for="btn_add_api" value="#{PP_COMMONS.add}"/>
                             </div>
@@ -68,6 +69,7 @@
                                      emptyMessage="#{PP_COMMONS.empty_message}">
                             <p:ajax global="false" event="sort"/>
                             <p:ajax global="false" event="page"/>
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
 
                             <p:column headerText="#{PP_DECENTRALIZEUSER.api}"
                                       sortBy="#{api.apiName}">

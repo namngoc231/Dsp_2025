@@ -1539,8 +1539,14 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
 
 
     public void handDeleteServicePrice(DSPServicePrice dto) {
-        int indexDto = findIndexByIdOfListServicePrice(dto.getPriceId());
-        int indexChange = findIndexByIdOfListServicePriceChange(dto.getPriceId());
+        int indexDto, indexChange ;
+        if (dto.getPriceId() != null) {
+             indexDto = findIndexByIdOfListServicePrice(dto.getPriceId());
+             indexChange = findIndexByIdOfListServicePriceChange(dto.getPriceId());
+        } else {
+            indexDto = listServicePrice.indexOf(dto);
+            indexChange = listServicePriceChange.indexOf(dto);
+        }
         listServicePrice.remove(indexDto);
         dto.setType(DELETE);
         listServicePriceChange.set(indexChange, dto);

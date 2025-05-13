@@ -416,5 +416,13 @@
                 PP_PACKAGE_IMPORT
             </var>
         </resource-bundle>
+        <resource-bundle>
+            <base-name>
+                vn.com.telsoft.bundle.PP_W2G_PROM_MAPPING
+            </base-name>
+            <var>
+                PP_W2G_PROM_MAPPING
+            </var>
+        </resource-bundle>
     </application>
 </faces-config>

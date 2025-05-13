@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<h:body>
+    <ui:composition>
+        <div class="ui-fluid">
+            <h:panelGroup id="panel_center">
+                <p:sticky target="pnl_control"/>
+                <h:panelGroup id="pnl_control">
+                    <h:panelGroup rendered="#{not w2gPromMappingController.isDisplayBtnConfirm}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-10"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_add" rendered="#{w2gPromMappingController.isAllowInsert}"
+                                                 actionListener="#{w2gPromMappingController.changeStateAdd()}"
+                                                 process="@this" styleClass="btn-primary" value="#{PP_COMMONS.add}"
+                                                 update=":form_main:panel_center" icon="fa fa-plus"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{w2gPromMappingController.isDisplayBtnConfirm}">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12 ui-lg-8"></div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_ok"
+                                                 rendered="#{w2gPromMappingController.isDisplayBtnConfirm and not w2gPromMappingController.isIsVIEW()}"
+                                                 actionListener="#{w2gPromMappingController.handleOK()}"
+                                                 disabled="#{w2gPromMappingController.isDISABLE}"
+                                                 process="@this :form_main:panel_add_app"
+                                                 styleClass=" btn-success" value="#{PP_COMMONS.ok}"
+                                                 update=":form_main:panel_center"
+                                                 icon="fa fa-check-circle"/>
+                            </div>
+                            <div class="ui-g-12 ui-md-12 ui-lg-2">
+                                <p:commandButton id="btn_cancel"
+                                                 rendered="#{w2gPromMappingController.isDisplayBtnConfirm}"
+                                                 actionListener="#{w2gPromMappingController.handleCancel()}"
+                                                 process="@this"
+                                                 value="#{PP_COMMONS.back}" update=":form_main:panel_center"
+                                                 icon="fa fa-undo">
+                                    <p:resetInput target="panel_add_app"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <div class="grid-padding">
+                    <p:panel header="#{PP_W2G_PROM_MAPPING.w2g_prom_mapping_management}" styleClass="box-info"
+                             rendered="#{not w2gPromMappingController.isDisplayBtnConfirm}"
+                             style="overflow-x: auto; width: 100%;">
+                        <p:dataTable id="table_w2g_prom_mapping" widgetVar="table_w2g_prom_mapping"
+                                     value="#{w2gPromMappingController.w2gPromMappingList}" var="w2gPromMapping"
+                                     emptyMessage="#{PP_COMMONS.empty_message}"
+                                     disabledSelection="#{w2gPromMappingController.isDisplayBtnConfirm}"
+                                     rowKey="#{w2gPromMapping.id}"
+                                     selection="#{w2gPromMappingController.selectW2gPromMapping}"
+                                     rowSelectMode="checkbox"
+                                     filteredValue="#{w2gPromMappingController.w2gPromMappingFiltered}"
+                                     rows="10" rowIndexVar="rowIndex"
+                                     paginator="true" paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{w2gPromMappingController.w2gPromMappingList.size()}"
+                                     styleClass="no-border">
+
+                            <p:ajax global="false" event="filter" ignoreAutoUpdate="true"/>
+                            <p:ajax global="false" event="sort"/>
+                            <p:ajax global="false" event="page"/>
+
+                            <p:column headerText="#{PP_W2G_PROM_MAPPING.index}" width="60"
+                                      style="width:100px; text-align: center !important;">
+                                <h:outputText value="#{rowIndex+1}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{w2gPromMapping.comId}" filterBy="#{w2gPromMapping.comId}"
+                                      filterMatchMode="contains" headerText="#{PP_W2G_PROM_MAPPING.com_id}"
+                                      style="width:130px;">
+                                #{w2gPromMapping.comId}
+                            </p:column>
+
+                            <p:column sortBy="#{w2gPromMapping.comName}" filterBy="#{w2gPromMapping.comName}"
+                                      filterMatchMode="contains" headerText="#{PP_W2G_PROM_MAPPING.com_name}"
+                                      style="width:260px;">
+                                #{w2gPromMapping.comName}
+                            </p:column>
+
+                            <p:column sortBy="#{w2gPromMapping.profileCode}" filterBy="#{w2gPromMapping.profileCode}"
+                                      filterMatchMode="contains" headerText="#{PP_W2G_PROM_MAPPING.profile_code}"
+                                      style="width:260px;">
+                                #{w2gPromMapping.profileCode}
+                            </p:column>
+
+                            <p:column sortBy="#{w2gPromMapping.promCode}" filterBy="#{w2gPromMapping.promCode}"
+                                      filterMatchMode="contains" headerText="#{PP_W2G_PROM_MAPPING.prom_code}"
+                                      style="width:260px;">
+                                #{w2gPromMapping.promCode.toUpperCase()}
+                            </p:column>
+
+                            <p:column headerText="#{PP_W2G_PROM_MAPPING.action}"
+                                      style="text-align: center !important;width: 130px">
+                                <p:commandLink id="btn_view"
+                                               rendered="#{not w2gPromMappingController.isDisplayBtnConfirm}"
+                                               actionListener="#{w2gPromMappingController.changeStateView(w2gPromMapping)}"
+                                               process="@this" styleClass="fa fa-eye"
+                                               style="padding-right:10px"
+                                               update=":form_main:panel_center"/>
+                                <p:tooltip for="btn_view" value="#{PP_COMMONS.view}"/>
+
+                                <p:commandLink id="btn_edit"
+                                               rendered="#{w2gPromMappingController.isAllowUpdate}"
+                                               actionListener="#{w2gPromMappingController.changeStateEdit(w2gPromMapping)}"
+                                               process="@this" styleClass="fa fa-pencil"
+                                               update=":form_main:panel_center"/>&nbsp;&nbsp;
+                                <p:tooltip for="btn_edit" value="#{PP_COMMONS.edit}"/>
+
+                                <p:commandLink id="btn_del"
+                                               rendered="#{w2gPromMappingController.isAllowDelete and not w2gPromMappingController.isDisplayBtnConfirm}"
+                                               actionListener="#{w2gPromMappingController.handleDelete(w2gPromMapping)}"
+                                               process="@this"
+                                               styleClass="fa fa-trash" update=":form_main:panel_center">
+                                    <p:confirm header="#{PP_COMMONS.delete_dialog_header}"
+                                               message="#{PP_COMMONS.confirm_delete}"/>
+                                </p:commandLink>
+                                <p:tooltip for="btn_del" value="#{PP_COMMONS.del}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:panel header="#{PP_W2G_PROM_MAPPING.w2g_prom_mapping_detail}" styleClass="box-primary"
+                             rendered="#{w2gPromMappingController.isDisplayBtnConfirm}">
+                        <p:focus context=":form_main:panel_add_app"/>
+                        <h:panelGroup id="panel_add_app">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="code_id" value="#{PP_W2G_PROM_MAPPING.com_name}"/>
+                                        <p:selectOneMenu id="code_id"
+                                                         value="#{w2gPromMappingController.w2gPromMapping.comId}"
+                                                         required="true" filter="true"
+                                                         disabled="#{w2gPromMappingController.isIsDISABLE()}"
+                                                         filterMatchMode="contains">
+                                            <f:selectItems value="#{w2gPromMappingController.listDSPCompany}"
+                                                           var="listComId"
+                                                           itemLabel="#{listComId.comName}"
+                                                           itemValue="#{listComId.comId}"/>
+                                            <f:ajax listener="#{w2gPromMappingController.listProfileCodeByCodeId()}"
+                                                    execute="@this" render=":form_main:profile_code"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="code_id"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="profile_code" value="#{PP_W2G_PROM_MAPPING.profile_code}"/>
+                                        <p:selectOneMenu id="profile_code"
+                                                         value="#{w2gPromMappingController.w2gPromMapping.profileCode}"
+                                                         required="true" filter="true"
+                                                         disabled="#{w2gPromMappingController.isIsDISABLE()}"
+                                                         filterMatchMode="contains">
+                                            <f:selectItems value="#{w2gPromMappingController.listProfileCode}"
+                                                           var="profileCode"
+                                                           itemLabel="#{profileCode.name}"
+                                                           itemValue="#{profileCode.name}"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="profile_code"/>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-12 ui-md-12 ui-lg-4">
+                                    <div class="ui-material">
+                                        <p:outputLabel for="prom_code" value="#{PP_W2G_PROM_MAPPING.prom_code}"/>
+                                        <p:inputText id="prom_code" maxlength="100"
+                                                     value="#{w2gPromMappingController.w2gPromMapping.promCode}"
+                                                     disabled="#{w2gPromMappingController.isIsDISABLE()}"
+                                                     validatorMessage="#{PP_W2G_PROM_MAPPING.err_prom_code}"
+                                                     style="text-transform:uppercase" required="true"
+                                                     onblur="value=value.toUpperCase().trim()">
+                                            <f:validateRegex pattern="^[a-zA-Z0-9]*$"/>
+                                        </p:inputText>
+                                        <p:message for="prom_code"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </p:panel>
+                </div>
+            </h:panelGroup>
+        </div>
+    </ui:composition>
+</h:body>
+</html>

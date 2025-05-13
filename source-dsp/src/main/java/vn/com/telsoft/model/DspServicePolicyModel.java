@@ -5,7 +5,6 @@
 package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.util.SQLUtil;
 import vn.com.telsoft.entity.DSPServicePolicy;
 
 import java.io.Serializable;

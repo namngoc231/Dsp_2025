@@ -1,6 +1,5 @@
 package vn.com.telsoft.controller;
 
-import com.faplib.admin.security.AdminUser;
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.SystemConfig;
 import com.faplib.lib.SystemLogger;
@@ -8,39 +7,26 @@ import com.faplib.lib.TSFuncTemplate;
 import com.faplib.lib.util.ResourceBundleUtil;
 import com.faplib.util.DateUtil;
 import com.faplib.util.FileUtil;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.jboss.weld.context.RequestContext;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.PrimeRequestContext;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.FilterMeta;
 import vn.com.telsoft.entity.*;
 import vn.com.telsoft.model.*;
-import vn.com.telsoft.util.CsvReader;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.io.File;
+import java.io.Serializable;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
-import static vn.com.telsoft.controller.CreateOrderController.RESOURCE_BUNDLE;
 
 @ViewScoped
 @Named
@@ -72,12 +58,12 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     private DspPolicyModel dspPolicyModel;
     private DspServicePriceModel dspServicePriceModel;
 
-    private Map<String, Object> filterState = new HashMap<>();
-    private Map<String, Object> filterStateOrderPolicy = new HashMap<>();
-    private Map<String, Object> filterStateServicePolicy = new HashMap<>();
-    private Map<String, Object> filterStateServicePrice = new HashMap<>();
-    private Map<String, Object> filterStateOrderPolicyTab = new HashMap<>();
-    private Map<String, Object> filterStateServicePriceTab = new HashMap<>();
+    private Map<String, FilterMeta> filterState = new HashMap<>();
+    private Map<String, FilterMeta> filterStateOrderPolicy = new HashMap<>();
+    private Map<String, FilterMeta> filterStateServicePolicy = new HashMap<>();
+    private Map<String, FilterMeta> filterStateServicePrice = new HashMap<>();
+    private Map<String, FilterMeta> filterStateOrderPolicyTab = new HashMap<>();
+    private Map<String, FilterMeta> filterStateServicePriceTab = new HashMap<>();
 
     private Long serviceId;
     private String isAddService;
@@ -157,7 +143,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     private DSPServicePriceTabModel dspServicePriceTabModel;
     private List<DSPServicePriceTab> listServicePriceTabFiltered;
     private String isAddComServicePrice;
-    private Map<String, Object> filterStateComOrder = new HashMap<>();
+    private Map<String, FilterMeta> filterStateComOrder = new HashMap<>();
     private Integer indexListComOrder;
     private Integer indexListComPrice;
     private Integer indexEditServicePriceChange;
@@ -249,7 +235,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         isDisplayAddComServicePrice = "1";
     }
 
-    public void changeStateEditService(DSPService dto) throws Exception {
+    public void changeStateEditService(DSPService dto) {
         dspService = (DSPService) SerializationUtils.clone(dto);
         isEditService = "1";
         isListService = "0";
@@ -261,7 +247,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateEditOrderPolicy(DSPOrderPolicy dto) throws Exception {
+    public void changeStateEditOrderPolicy(DSPOrderPolicy dto) {
         dspOrderPolicy = (DSPOrderPolicy) SerializationUtils.clone(dto);
         isEditOrderPolicy = 1;
         isViewOrderPolicyTab = "0";
@@ -274,14 +260,14 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         listService = dspServiceModel.getDSPService(dto);
     }
 
-    public void loadListOrderPolicy() throws Exception {
+    public void loadListOrderPolicy() {
         dspOrderPolicy = new DSPOrderPolicy();
         dspOrderPolicy.setTabId(serviceId);
 //        listOrderPolicy = dspOrderPolicyModel.getDSPOrderPolicy(dspOrderPolicy);
     }
 
 
-    public void changeStateAddSevice() throws Exception {
+    public void changeStateAddSevice() {
         isAddService = "1";
         isListService = "0";
         checkAddService = false;
@@ -289,7 +275,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
 //        dspOrderPolicy.setServiceId(serviceId);
     }
 
-    public void changeStateAddOrderPolicyTab() throws Exception {
+    public void changeStateAddOrderPolicyTab() {
         isAddOrderPolicyTab = "1";
         isEditOrderPolicyTab = "0";
         isListService = "0";
@@ -309,7 +295,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isAddServicePriceTab = isAddServicePriceTab;
     }
 
-    public void changeStateAddSevicePrice() throws Exception {
+    public void changeStateAddSevicePrice() {
         isAddServicePrice = "1";
         isServicePrice = "0";
         isEditServicePrice = "0";
@@ -320,7 +306,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handleCancelService() throws Exception {
+    public void handleCancelService() {
         isAddService = "0";
         isListService = "1";
         isEditService = "0";
@@ -335,7 +321,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public void handleCancelOrderPolicyTab() throws Exception {
+    public void handleCancelOrderPolicyTab() {
         isAddOrderPolicyTab = "0";
         isOrderPolicyTab = "1";
         isListService = "0";
@@ -353,7 +339,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public void handleCancelServicePriceTab() throws Exception {
+    public void handleCancelServicePriceTab() {
         isAddServicePriceTab = "0";
         isServicePriceTab = "1";
         isListService = "0";
@@ -372,7 +358,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handleFileUploadOrderPolicy(FileUploadEvent event) throws Exception {
+    public void handleFileUploadOrderPolicy(FileUploadEvent event) {
         try {
             File file = new File(FileUtil.uploadFile(event.getFile(), SystemConfig.getConfig("FileUploadPath")));
             String pathFile = file.getName();
@@ -383,7 +369,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public void handleFileUploadServicePrice(FileUploadEvent event) throws Exception {
+    public void handleFileUploadServicePrice(FileUploadEvent event) {
         try {
             File file = new File(FileUtil.uploadFile(event.getFile(), SystemConfig.getConfig("FileUploadPath")));
             String pathFile = file.getName();
@@ -395,7 +381,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handleCancelServicePrice() throws Exception {
+    public void handleCancelServicePrice() {
         isAddServicePrice = "0";
         isServicePrice = "1";
         isEditServicePrice = "0";
@@ -407,11 +393,22 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
             DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("form_main:table_service_price");
             dataTable.setValueExpression("sortBy", null);
         }
+        resetTableFilters();
+    }
 
+    public void resetTableFilters() {
+        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance()
+                .getViewRoot()
+                .findComponent("form_main:table_service_price");
+
+        if (dataTable != null) {
+            dataTable.setFirst(0);
+            dataTable.reset();
+        }
     }
 
 
-    public void handleBackComOrder() throws Exception {
+    public void handleBackComOrder() {
 
         isAddComOrder = "0";
         statusOrderAddCom = "0";
@@ -438,7 +435,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         indexListComPrice = null;
     }
 
-    public void handleBackServiceFromServicePolicy() throws Exception {
+    public void handleBackServiceFromServicePolicy() {
         isListService = "1";
         isServicePolicy = "0";
         dspServicePolicy = new DSPServicePolicy();
@@ -479,7 +476,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateEditOrderPolicyTab(DSPOrderPolicyTab dto) throws Exception {
+    public void changeStateEditOrderPolicyTab(DSPOrderPolicyTab dto) {
         dspOrderPolicyTab = (DSPOrderPolicyTab) SerializationUtils.clone(dto);
         isEditOrderPolicyTab = "1";
         isOrderPolicyTab = "0";
@@ -500,7 +497,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isEditServicePriceTab = isEditServicePriceTab;
     }
 
-    public void changeStateEditServicePriceTab(DSPServicePriceTab dto) throws Exception {
+    public void changeStateEditServicePriceTab(DSPServicePriceTab dto) {
         dspServicePriceTab = (DSPServicePriceTab) SerializationUtils.clone(dto);
         isEditServicePriceTab = "1";
         isServicePriceTab = "0";
@@ -515,7 +512,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateViewOrderPolicyTab(DSPOrderPolicyTab dto) throws Exception {
+    public void changeStateViewOrderPolicyTab(DSPOrderPolicyTab dto) {
         dspOrderPolicyTab = (DSPOrderPolicyTab) SerializationUtils.clone(dto);
         isViewOrderPolicyTab = "1";
         isOrderPolicyTab = "0";
@@ -523,7 +520,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         isAddOrderPolicyTab = "1";
     }
 
-    public void changeStateViewServicePriceTab(DSPServicePriceTab dto) throws Exception {
+    public void changeStateViewServicePriceTab(DSPServicePriceTab dto) {
         dspServicePriceTab = (DSPServicePriceTab) SerializationUtils.clone(dto);
         isViewServicePriceTab = "1";
         isServicePriceTab = "0";
@@ -532,7 +529,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public DefaultStreamedContent downloadFileOrderPolicyTab(DSPOrderPolicyTab dto) throws Exception {
+    public DefaultStreamedContent downloadFileOrderPolicyTab(DSPOrderPolicyTab dto) {
         try {
             String path = SystemConfig.getConfig("FileUploadPath") + dto.getFilePath();
             return FileUtil.downloadFile(dto.getFilePath(), path);
@@ -543,7 +540,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return null;
     }
 
-    public DefaultStreamedContent downloadFileServicePriceTab(DSPServicePriceTab dto) throws Exception {
+    public DefaultStreamedContent downloadFileServicePriceTab(DSPServicePriceTab dto) {
         try {
             String path = SystemConfig.getConfig("FileUploadPath") + dto.getFilePath();
             return FileUtil.downloadFile(dto.getFilePath(), path);
@@ -743,7 +740,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public Boolean addComOrderTable(DSPCompany dto) throws Exception {
+    public Boolean addComOrderTable(DSPCompany dto) {
         listCompanyTable.add(0, dto);
         listCompanyAutoCom.remove(dto);
         if (listCompanyTableInit.size() > 0) {
@@ -763,7 +760,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return true;
     }
 
-    public void handDeleteComOrder(DSPCompany dto) throws Exception {
+    public void handDeleteComOrder(DSPCompany dto) {
         listCompanyTable.remove(dto);
         listCompanyAutoCom.add(dto);
         if (listCompanyTableInit.size() > 0) {
@@ -877,7 +874,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return allThemes;
     }
 
-    public void changeStateCopyOrderPolicy(DSPOrderPolicyTab dto) throws Exception {
+    public void changeStateCopyOrderPolicy(DSPOrderPolicyTab dto) {
         isAddOrderPolicyTab = "1";
         isOrderPolicyTab = "0";
         isEditOrderPolicyTab = "0";
@@ -1137,7 +1134,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public Boolean validateServicePriceTab(DSPServicePriceTab dto) throws Exception {
+    public Boolean validateServicePriceTab(DSPServicePriceTab dto) {
         if (dto.getStrBlock().contains("G")) {
             blockServicePrice = Long.parseLong(dto.getStrBlock().substring(0, dto.getStrBlock().length() - 2)) * 1024 * 1024;
         } else if (dto.getStrBlock().contains("M")) {
@@ -1154,7 +1151,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return true;
     }
 
-    public void handleOKOrderPolicy(DSPOrderPolicy dto) throws Exception {
+    public void handleOKOrderPolicy(DSPOrderPolicy dto) {
         if (1 == isEditOrderPolicy) {
             if (dspOrderPolicy.getMinValue() > dspOrderPolicy.getMaxValue()) {
                 PrimeFaces.current().ajax().update("form_main:OrderPolicyMsg");
@@ -1204,9 +1201,10 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
             }
             isActionServicePrice = "1";
         }
+        resetTableFilters();
     }
 
-    public Boolean validateServicePrice() throws Exception {
+    public Boolean validateServicePrice() {
         if (!checkDuplicateServicePriceName()) {
             return false;
         }
@@ -1281,7 +1279,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return check;
     }
 
-    public void insertServicePrice(DSPServicePrice dto) throws Exception {
+    public void insertServicePrice(DSPServicePrice dto) {
         checkAddServicePrice = true;
         listServicePrice.add(0, dto);
         dto.setType(INSERT);
@@ -1303,7 +1301,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handleBackOrderPolicyTab() throws Exception {
+    public void handleBackOrderPolicyTab() {
         isOrderPolicy = "0";
         isOrderPolicyTab = "1";
         dspOrderPolicy = new DSPOrderPolicy();
@@ -1311,7 +1309,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         listOrderPolicyChange = new ArrayList<>();
     }
 
-    public void handleBackServicePriceTab() throws Exception {
+    public void handleBackServicePriceTab() {
         isServicePrice = "0";
         isServicePriceTab = "1";
         dspServicePrice = new DSPServicePrice();
@@ -1319,7 +1317,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         listServicePriceChange = new ArrayList<>();
     }
 
-    public void handleBackService() throws Exception {
+    public void handleBackService() {
         isListService = "1";
         isOrderPolicy = "0";
         isServicePrice = "0";
@@ -1425,7 +1423,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handleOKServicePolicy(DSPServicePolicy dto) throws Exception {
+    public void handleOKServicePolicy(DSPServicePolicy dto) {
         if (!"-1".equals(dspServicePolicy.getPolicyName())) {
             if ("1".equals(isEditServicePolicy)) {
                 listServicePolicy.set(indexEditServicePolicy, dspServicePolicy);
@@ -1453,7 +1451,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateEditServicePolicy(DSPServicePolicy dto) throws Exception {
+    public void changeStateEditServicePolicy(DSPServicePolicy dto) {
         dspServicePolicy = (DSPServicePolicy) SerializationUtils.clone(dto);
         isEditServicePolicy = "1";
         isAddServicePolicy = "0";
@@ -1463,7 +1461,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         loadListPolicy();
     }
 
-    public void loadListPolicy() throws Exception {
+    public void loadListPolicy() {
         listDspPolicyChange = new ArrayList<>();
         if (listDspPolicy != null && listDspPolicy.size() > 0) {
             for (DSPPolicy dsp : listDspPolicy) {
@@ -1486,7 +1484,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public void onDescriptionServicePolicyChanged() throws Exception {
+    public void onDescriptionServicePolicyChanged() {
         for (DSPPolicy dsp : listDspPolicyChange) {
             if (dspServicePolicy.getPolicyName() != null && "-1".equals(dspServicePolicy.getPolicyName())) {
                 dspServicePolicy.setDescription("");
@@ -1497,7 +1495,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         }
     }
 
-    public void handDeleteOrderPolicy(DSPOrderPolicy dto) throws Exception {
+    public void handDeleteOrderPolicy(DSPOrderPolicy dto) {
         int indexDto = listOrderPolicy.indexOf(dto);
         int indexChange = listOrderPolicyChange.indexOf(dto);
         listOrderPolicy.remove(indexDto);
@@ -1507,7 +1505,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         ClientMessage.logDelete();
     }
 
-    public void handDeleteServicePolicy(DSPServicePolicy dto) throws Exception {
+    public void handDeleteServicePolicy(DSPServicePolicy dto) {
         if (!dto.getPolicyName().equals("CHECK_PRICE_TABLE")) {
             int indexChange = listServicePolicyChange.indexOf(dto);
             int indexDto = listServicePolicy.indexOf(dto);
@@ -1524,13 +1522,13 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateAddOrderPolicy() throws Exception {
+    public void changeStateAddOrderPolicy() {
         isEditOrderPolicy = 0;
         dspOrderPolicy = new DSPOrderPolicy();
         dspOrderPolicy.setTabId(tabIdOrder);
     }
 
-    public void changeStateAddServicePolicy() throws Exception {
+    public void changeStateAddServicePolicy() {
         isEditServicePolicy = "0";
         isAddServicePolicy = "1";
         dspServicePolicy = new DSPServicePolicy();
@@ -1540,14 +1538,21 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void handDeleteServicePrice(DSPServicePrice dto) throws Exception {
-        int indexDto = listServicePrice.indexOf(dto);
-        int indexChange = listServicePriceChange.indexOf(dto);
+    public void handDeleteServicePrice(DSPServicePrice dto) {
+        int indexDto, indexChange ;
+        if (dto.getPriceId() != null) {
+             indexDto = findIndexByIdOfListServicePrice(dto.getPriceId());
+             indexChange = findIndexByIdOfListServicePriceChange(dto.getPriceId());
+        } else {
+            indexDto = listServicePrice.indexOf(dto);
+            indexChange = listServicePriceChange.indexOf(dto);
+        }
         listServicePrice.remove(indexDto);
         dto.setType(DELETE);
         listServicePriceChange.set(indexChange, dto);
         isActionServicePrice = "1";
         ClientMessage.logDelete();
+        resetTableFilters();
     }
 
     public Boolean validateSaveOrderPolicy() {
@@ -1599,21 +1604,45 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         return true;
     }
 
-    public void changeStateEditServicePrice(DSPServicePrice dto) throws Exception {
+    public void changeStateEditServicePrice(DSPServicePrice dto) {
         dspServicePrice = (DSPServicePrice) SerializationUtils.clone(dto);
         dspServicePrice.setStrCapMin(dspServicePrice.getStrCapMin().replace('.', ' ').replaceAll("\\s+", ""));
         dspServicePrice.setStrCapMax(dspServicePrice.getStrCapMax().replace('.', ' ').replaceAll("\\s+", ""));
         isEditServicePrice = "1";
         isServicePrice = "0";
         isAddServicePrice = "1";
-        indexEditServicePrice = listServicePrice.indexOf(dto);
+
+        if (dto.getPriceId() != null) {
+            indexEditServicePrice = findIndexByIdOfListServicePrice(dto.getPriceId());
+            indexEditServicePriceChange = findIndexByIdOfListServicePriceChange(dto.getPriceId());
+        } else {
+            indexEditServicePrice = listServicePrice.indexOf(dto);
 //        if (listServicePriceFiltered != null && listServicePriceFiltered.size() > 0) {
 //            indexEditServicePriceFiltered = listServicePriceFiltered.indexOf(dto);
 //        }
-        indexEditServicePriceChange = listServicePriceChange.indexOf(dto);
+            indexEditServicePriceChange = listServicePriceChange.indexOf(dto);
+        }
     }
 
-    public String numberPrice(String price) throws Exception {
+    private int findIndexByIdOfListServicePrice(Long priceId) {
+        for (int i = 0; i < listServicePrice.size(); i++) {
+            if (listServicePrice.get(i).getPriceId() != null && listServicePrice.get(i).getPriceId().equals(priceId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findIndexByIdOfListServicePriceChange(Long priceId) {
+        for (int i = 0; i < listServicePriceChange.size(); i++) {
+            if (listServicePriceChange.get(i).getPriceId() != null && listServicePriceChange.get(i).getPriceId().equals(priceId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public String numberPrice(String price) {
         int size = price.length();
         String resultAf = "";
         String resultBef = "";
@@ -1659,7 +1688,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
     }
 
 
-    public void changeStateAddServicePriceTab() throws Exception {
+    public void changeStateAddServicePriceTab() {
         isAddServicePriceTab = "1";
         isEditServicePriceTab = "0";
         isViewServicePriceTab = "0";
@@ -1709,6 +1738,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
             isActionServicePrice = "0";
             ClientMessage.log(ResourceBundleUtil.getCTObjectAsString("PP_SERVICEDECLARE", "saveDataSuccess"));
         }
+        resetTableFilters();
     }
 
     public void handleSaveOrderPolicy() throws Exception {
@@ -1852,49 +1882,49 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         mFilterOptionDefault[2] = new SelectItem("0", ResourceBundleUtil.getCTObjectAsString("PP_SERVICEDECLARESPONSOR", "no"));
     }
 
-    public void handleCancelTableOrderPolicy() throws Exception {
+    public void handleCancelTableOrderPolicy() {
         isOrderPolicy = "1";
         isEditOrderPolicy = 0;
     }
 
-    public void handleCancelTableServicePolicy() throws Exception {
+    public void handleCancelTableServicePolicy() {
         isServicePolicy = "1";
         isEditServicePolicy = "0";
     }
 
     public void onFilterChange(FilterEvent filterEvent) {
-        filterState = filterEvent.getFilters();
+        filterState = filterEvent.getFilterBy();
         listServiceFiltered = (List<DSPService>) filterEvent.getData();
     }
 
     public void onFilterChangeOrderPolicy(FilterEvent filterEvent) {
-        filterStateOrderPolicy = filterEvent.getFilters();
+        filterStateOrderPolicy = filterEvent.getFilterBy();
         listOrderPolicyFiltered = (List<DSPOrderPolicy>) filterEvent.getData();
     }
 
     public void onFilterChangeServicePolicy(FilterEvent filterEvent) {
-        filterStateServicePolicy = filterEvent.getFilters();
+        filterStateServicePolicy = filterEvent.getFilterBy();
         listServicePolicyFiltered = (List<DSPServicePolicy>) filterEvent.getData();
     }
 
     public void onFilterChangeServicePrice(FilterEvent filterEvent) {
-        filterStateServicePrice = filterEvent.getFilters();
+        filterStateServicePrice = filterEvent.getFilterBy();
         listServicePriceFiltered = (List<DSPServicePrice>) filterEvent.getData();
     }
 
     public void onFilterOrderPolicyTabChange(FilterEvent filterEvent) {
-        filterStateOrderPolicyTab = filterEvent.getFilters();
+        filterStateOrderPolicyTab = filterEvent.getFilterBy();
         listOrderPolicyTabFiltered = (List<DSPOrderPolicyTab>) filterEvent.getData();
     }
 
     public void onFilterServicePriceTabChange(FilterEvent filterEvent) {
-        filterStateServicePriceTab = filterEvent.getFilters();
+        filterStateServicePriceTab = filterEvent.getFilterBy();
         listServicePriceTabFiltered = (List<DSPServicePriceTab>) filterEvent.getData();
     }
 
 
     public void onFilterComOrder(FilterEvent filterEvent) {
-        filterStateComOrder = filterEvent.getFilters();
+        filterStateComOrder = filterEvent.getFilterBy();
         listCompanyTableFiltered = (List<DSPCompany>) filterEvent.getData();
     }
 
@@ -1916,7 +1946,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.mFilterOptionStatusService = mFilterOptionStatusService;
     }
 
-    public Map<String, Object> getFilterStateServicePriceTab() {
+    public Map<String, FilterMeta> getFilterStateServicePriceTab() {
         return filterStateServicePriceTab;
     }
 
@@ -1936,7 +1966,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isViewServicePriceTab = isViewServicePriceTab;
     }
 
-    public void setFilterStateServicePriceTab(Map<String, Object> filterStateServicePriceTab) {
+    public void setFilterStateServicePriceTab(Map<String, FilterMeta> filterStateServicePriceTab) {
         this.filterStateServicePriceTab = filterStateServicePriceTab;
     }
 
@@ -1972,11 +2002,11 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isDisplayAddComServicePrice = isDisplayAddComServicePrice;
     }
 
-    public Map<String, Object> getFilterStateComOrder() {
+    public Map<String, FilterMeta> getFilterStateComOrder() {
         return filterStateComOrder;
     }
 
-    public void setFilterStateComOrder(Map<String, Object> filterStateComOrder) {
+    public void setFilterStateComOrder(Map<String, FilterMeta> filterStateComOrder) {
         this.filterStateComOrder = filterStateComOrder;
     }
 
@@ -2004,7 +2034,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isEditServicePrice = isEditServicePrice;
     }
 
-    public boolean getIsDisplayBtnConfirm() throws Exception {
+    public boolean getIsDisplayBtnConfirm() {
         return this.isADD || this.isEDIT || this.isCOPY;
     }
 
@@ -2160,11 +2190,11 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isListService = isListService;
     }
 
-    public Map<String, Object> getFilterState() {
+    public Map<String, FilterMeta> getFilterState() {
         return filterState;
     }
 
-    public void setFilterState(Map<String, Object> filterState) {
+    public void setFilterState(Map<String, FilterMeta> filterState) {
         this.filterState = filterState;
     }
 
@@ -2193,7 +2223,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.listOrderPolicy = listOrderPolicy;
     }
 
-    public Map<String, Object> getFilterStateServicePrice() {
+    public Map<String, FilterMeta> getFilterStateServicePrice() {
         return filterStateServicePrice;
     }
 
@@ -2229,7 +2259,7 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.dspServicePriceTabModel = dspServicePriceTabModel;
     }
 
-    public void setFilterStateServicePrice(Map<String, Object> filterStateServicePrice) {
+    public void setFilterStateServicePrice(Map<String, FilterMeta> filterStateServicePrice) {
         this.filterStateServicePrice = filterStateServicePrice;
     }
 
@@ -2241,11 +2271,11 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.isAddComOrder = isAddComOrder;
     }
 
-    public Map<String, Object> getFilterStateOrderPolicyTab() {
+    public Map<String, FilterMeta> getFilterStateOrderPolicyTab() {
         return filterStateOrderPolicyTab;
     }
 
-    public void setFilterStateOrderPolicyTab(Map<String, Object> filterStateOrderPolicyTab) {
+    public void setFilterStateOrderPolicyTab(Map<String, FilterMeta> filterStateOrderPolicyTab) {
         this.filterStateOrderPolicyTab = filterStateOrderPolicyTab;
     }
 
@@ -2265,11 +2295,11 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.dspOrderPolicy = dspOrderPolicy;
     }
 
-    public Map<String, Object> getFilterStateOrderPolicy() {
+    public Map<String, FilterMeta> getFilterStateOrderPolicy() {
         return filterStateOrderPolicy;
     }
 
-    public void setFilterStateOrderPolicy(Map<String, Object> filterStateOrderPolicy) {
+    public void setFilterStateOrderPolicy(Map<String, FilterMeta> filterStateOrderPolicy) {
         this.filterStateOrderPolicy = filterStateOrderPolicy;
     }
 
@@ -2345,11 +2375,11 @@ public class ServiceDeclareSponsorController extends TSFuncTemplate implements S
         this.listServicePolicyFiltered = listServicePolicyFiltered;
     }
 
-    public Map<String, Object> getFilterStateServicePolicy() {
+    public Map<String, FilterMeta> getFilterStateServicePolicy() {
         return filterStateServicePolicy;
     }
 
-    public void setFilterStateServicePolicy(Map<String, Object> filterStateServicePolicy) {
+    public void setFilterStateServicePolicy(Map<String, FilterMeta> filterStateServicePolicy) {
         this.filterStateServicePolicy = filterStateServicePolicy;
     }
 

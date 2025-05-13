@@ -16,8 +16,9 @@
 package org.primefaces.model.filter;
 
 import com.faplib.util.StringUtil;
-import java.util.Locale;
 import org.primefaces.util.Constants;
+
+import java.util.Locale;
 
 public class ContainsFilterConstraint implements FilterConstraint {
 

@@ -6,16 +6,11 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.admin.data.AMDataPreprocessor;
 import com.faplib.lib.util.SQLUtil;
-import vn.com.telsoft.entity.DSPComOrderPol;
-import vn.com.telsoft.entity.DSPOrderPolicy;
 import vn.com.telsoft.entity.DSPServicePriceTab;
 
 import java.io.Serializable;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author TrieuNV

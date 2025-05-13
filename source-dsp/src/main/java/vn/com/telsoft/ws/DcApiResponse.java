@@ -1,7 +1,5 @@
 package vn.com.telsoft.ws;
 
-import java.util.Date;
-
 /**
  * @author TUNGLM
  */

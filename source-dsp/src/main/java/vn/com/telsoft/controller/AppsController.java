@@ -6,7 +6,6 @@ package vn.com.telsoft.controller;
 
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
-import com.faplib.lib.admin.gui.data.AppGuiModel;
 import com.faplib.lib.admin.gui.entity.AppGUI;
 import org.apache.commons.lang3.SerializationUtils;
 import vn.com.telsoft.model.AppModel;

@@ -7,7 +7,6 @@ package vn.com.telsoft.model;
 
 import com.faplib.lib.SystemLogger;
 import com.faplib.lib.admin.data.AMDataPreprocessor;
-import com.faplib.lib.admin.gui.entity.AppGUI;
 import com.faplib.lib.util.SQLUtil;
 import vn.com.telsoft.entity.SMSCommand;
 

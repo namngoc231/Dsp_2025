@@ -4,8 +4,8 @@ import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
 import com.faplib.lib.util.ResourceBundleUtil;
 import org.primefaces.PrimeFaces;
-import vn.com.telsoft.entity.DipService;
 import vn.com.telsoft.entity.DipPackage;
+import vn.com.telsoft.entity.DipService;
 import vn.com.telsoft.model.DipPackageModel;
 
 import javax.faces.context.FacesContext;

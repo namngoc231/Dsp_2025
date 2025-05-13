@@ -4,36 +4,24 @@
  */
 package vn.com.telsoft.controller;
 
-import com.ctc.wstx.util.DataUtil;
 import com.faplib.lib.ClientMessage;
 import com.faplib.lib.TSFuncTemplate;
 import com.faplib.lib.TelsoftException;
-import com.faplib.lib.admin.gui.entity.AppGUI;
 import org.apache.commons.lang3.SerializationUtils;
-import org.jboss.weld.context.RequestContext;
-import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.menu.DefaultMenuItem;
-import org.primefaces.model.menu.DefaultMenuModel;
-import org.primefaces.model.menu.DefaultSubMenu;
-import org.primefaces.model.menu.MenuModel;
 import vn.com.telsoft.entity.CBItemContent;
 import vn.com.telsoft.entity.CBItemIsdn;
 import vn.com.telsoft.entity.CBList;
-import vn.com.telsoft.model.*;
+import vn.com.telsoft.model.CBItemIsdnModel;
+import vn.com.telsoft.model.CbItemContentModel;
+import vn.com.telsoft.model.CbListModel;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author HoangNH

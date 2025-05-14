@@ -143,21 +143,27 @@ public class W2gPromMappingModel extends AMDataPreprocessor implements Serializa
         }
         try {
             open();
-            String strSQL = "SELECT name FROM dsp_service_price " +
-                    "WHERE tab_id = NVL((SELECT a.tab_id " +
-                    "                    FROM dsp_com_price a, " +
+            String strSQL = "select name " +
+                    "from dsp_service_price " +
+                    "where tab_id = nvl((select a.tab_id " +
+                    "                    from dsp_com_price a, " +
                     "                         dsp_service_price_tab b " +
-                    "                    WHERE a.com_id = ? " +
-                    "                      AND a.tab_id = b.tab_id " +
-                    "                      AND b.service_id = 77 " +
-                    "                      AND a.status = 1 " +
-                    "                      AND b.status = 1), (SELECT tab_id " +
-                    "                                          FROM dsp_service_price_tab " +
-                    "                                          WHERE def = 1 " +
-                    "                                            AND status = 1 " +
-                    "                                            AND service_id = 77 " +
-                    "                                            AND start_time <= SYSDATE " +
-                    "                                            AND (end_time IS NULL OR SYSDATE < end_time + 1))) " +
+                    "                    where a.com_id = ? " +
+                    "                      and a.tab_id = b.tab_id " +
+                    "                      and b.service_id = 77 " +
+                    "                      and a.status = 1 " +
+                    "                      and start_time <= sysdate " +
+                    "                      and (end_time is null or sysdate < end_time + 1) " +
+                    "                      and b.status = 1), (select tab_id from (select tab_id " +
+                    "                                          from dsp_service_price_tab " +
+                    "                                          where def = 1 " +
+                    "                                            and status = 1 " +
+                    "                                            and service_id = 77 " +
+                    "                                            and start_time <= sysdate " +
+                    "                                            and (end_time is null or sysdate < end_time + 1) " +
+                    "                                            order by (sysdate - nvl(start_time, to_date('1990-01-01','yyyy-MM-dd'))), " +
+                    "                                                     (nvl(end_time, to_date('2100-12-31','yyyy-MM-dd')) - sysdate)) " +
+                    "                                                        where rownum = 1)) " +
                     "order by name";
             mStmt = mConnection.prepareStatement(strSQL);
             mStmt.setLong(1, comId);

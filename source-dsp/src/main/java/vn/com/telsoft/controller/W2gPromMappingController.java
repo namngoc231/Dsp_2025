@@ -47,6 +47,7 @@ public class W2gPromMappingController extends TSFuncTemplate implements Serializ
     public void changeStateAdd() throws Exception {
         super.changeStateAdd();
         this.w2gPromMapping = new W2gPromMapping();
+        listProfileCode = new ArrayList<>();
     }
 
     public void changeStateEdit(W2gPromMapping p) throws Exception {

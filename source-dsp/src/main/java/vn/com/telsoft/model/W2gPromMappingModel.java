@@ -112,7 +112,7 @@ public class W2gPromMappingModel extends AMDataPreprocessor implements Serializa
             open();
             boolean hasComName = comName != null && !comName.trim().isEmpty();
             String strSQL = "select com_id, com_name from dsp_company " +
-                    "where status = 1 " +
+                    "where status = 1 and type in (2,3) " +
                     (hasComName ? "and lower(a.com_name) like ? " : "") +
                     "order by com_name, com_id";
             mStmt = mConnection.prepareStatement(strSQL);
@@ -149,6 +149,7 @@ public class W2gPromMappingModel extends AMDataPreprocessor implements Serializa
                     "                         dsp_service_price_tab b " +
                     "                    WHERE a.com_id = ? " +
                     "                      AND a.tab_id = b.tab_id " +
+                    "                      AND b.service_id = 77 " +
                     "                      AND a.status = 1 " +
                     "                      AND b.status = 1), (SELECT tab_id " +
                     "                                          FROM dsp_service_price_tab " +

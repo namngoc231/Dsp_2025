@@ -167,6 +167,7 @@
                                                          required="true" filter="true"
                                                          disabled="#{w2gPromMappingController.isIsDISABLE()}"
                                                          filterMatchMode="contains">
+                                            <f:selectItem  itemLabel="#{PP_W2G_PROM_MAPPING.select_dest_system}" itemValue=""/>
                                             <f:selectItems value="#{w2gPromMappingController.listProfileCode}"
                                                            var="profileCode"
                                                            itemLabel="#{profileCode.name}"

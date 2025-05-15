@@ -342,7 +342,7 @@
                                             <p:commandLink id="btn_service_price_tab_com"
                                                            styleClass="btn btn-info"
                                                            value="#{PP_SERVICEDECLARESPONSOR.applyCom}"
-                                                           rendered="#{servicePriceTab.defaultValue eq '0'}"
+                                                           rendered="#{servicePriceTab.defaultValue eq '0' and (servicePriceTab.status eq '1' or servicePriceTab.status eq '2')}"
                                                            style="padding: 0 !important; font-size: 13px;"
                                                            actionListener="#{serviceDeclareSponsorController.changeStateAddComServicePrice(servicePriceTab)}"
                                                            process="@this :form_main:table_service_price_tab"

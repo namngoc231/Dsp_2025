@@ -587,7 +587,7 @@ public class DSPServicePriceTabModel extends AMDataPreprocessor implements Seria
             parameter.add(comId);
             java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
             parameter.add(sqlDateStart);
-            java.sql.Date sqlDateEnd = new java.sql.Date(dto.getStartTime().getTime());
+            java.sql.Date sqlDateEnd = dto.getEndTime() != null ? new java.sql.Date(dto.getEndTime().getTime()) : null;
             parameter.add(sqlDateEnd);
             parameter.add(sqlDateEnd);
 

@@ -577,116 +577,19 @@ public class DSPServicePriceTabModel extends AMDataPreprocessor implements Seria
 //                    parameter.add(sqlEndStart);
 //                }
 //            } else{
-                strSQL = "  select a.tab_Id,a.service_id,a.start_Time,a.end_Time,a.status,a.description,a.def,a.file_Path  " +
-                        "from DSP_SERVICE_PRICE_TAB a, dsp_com_price b " +
-                        "where 1 = 1 " +
-                        "    and a.DEF = 0 " +
-                        "    and a.SERVICE_ID = ? " +
-                        "    and a.TAB_ID = b.TAB_ID " +
-                        "    and a.STATUS = 1 " +
-                        "    and b.com_id = ?   and b.status = 1  " +
-                        "    and ((a.start_Time is null and a.end_Time is null)  " +
-                        "        or (? is null and ? is null) " +
-                        // 1 p_start_Time   2 p_end_Time
-                        "        or (? is null and ? is not null and (a.start_Time is null or (a.start_Time is not null and a.start_Time <= ?))) " +
-//                   3 p_start_Time  4 p_end_Time 5p_end_Time
-                        "        or (? is not null and ? is null and (a.end_Time is null or (a.end_Time is not null and a.end_Time >= ?))) " +
-//                    6p_start_Time  7p_end_Time  8p_start_Time
-                        "        or ((a.start_Time BETWEEN ? and ?) " +
-//                    9p_start_Time  10p_end_Time
-                        "        or (a.end_Time BETWEEN ? and ?))) ";
-//                11p_start_Time  12p_end_Time
-                parameter.add(dto.getServiceId());
-                parameter.add(comId);
-//        1    parameter.add(dto.getStartTime());
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
 
-//          2  parameter.add(dto.getEndTime());
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-//3
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
-//4
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-//5
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-//6
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
-                //7
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-                //8
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
-                //9
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
-                //10
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-                //11
-                if (dto.getStartTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
-                    parameter.add(sqlDateStart);
-                }
-                //12
-                if (dto.getEndTime() == null) {
-                    parameter.add(null);
-                } else {
-                    java.sql.Date sqlEndStart = new java.sql.Date(dto.getEndTime().getTime());
-                    parameter.add(sqlEndStart);
-                }
-//            }
-
-
-
+            strSQL = "select a.tab_Id,a.service_id,a.start_Time,a.end_Time,a.status,a.description,a.def,a.file_Path " +
+                    "FROM DSP_SERVICE_PRICE_TAB a, DSP_COM_PRICE b " +
+                    "     WHERE 1 = 1 AND a.DEF = 0 AND a.SERVICE_ID = ? AND a.TAB_ID = b.TAB_ID " +
+                    "     AND a.STATUS = 1 AND b.COM_ID = ? AND b.STATUS = 1 " +
+                    "     AND ((a.END_TIME IS NULL OR (? <= a.END_TIME)) AND (? IS NULL OR (? >= a.START_TIME)))";
+            parameter.add(dto.getServiceId());
+            parameter.add(comId);
+            java.sql.Date sqlDateStart = new java.sql.Date(dto.getStartTime().getTime());
+            parameter.add(sqlDateStart);
+            java.sql.Date sqlDateEnd = dto.getEndTime() != null ? new java.sql.Date(dto.getEndTime().getTime()) : null;
+            parameter.add(sqlDateEnd);
+            parameter.add(sqlDateEnd);
 
             mStmt = mConnection.prepareStatement(strSQL);
             int i = 0;
